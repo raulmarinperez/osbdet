@@ -1,0 +1,13 @@
+# Contents of /etc/systemd/system/jupyter.service
+[Unit]
+Description=Jupyter Notebook
+After=network.target
+[Service]
+Type=simple
+Restart=always
+User=osbdet
+Environment="SPARK_HOME=/opt/spark-3.0.0-bin-hadoop3.2"
+WorkingDirectory=/home/osbdet/notebooks
+ExecStart=jupyter notebook
+[Install]
+WantedBy=multi-user.target
