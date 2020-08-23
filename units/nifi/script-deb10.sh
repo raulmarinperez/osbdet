@@ -7,11 +7,11 @@ SCRIPT_PATH=""
 
 # Aux functions
 _nifi_getandextract(){
-  wget http://apache.uvigo.es/nifi/1.11.4/nifi-1.11.4-bin.tar.gz \
-       -O /opt/nifi-1.11.4-bin.tar.gz 
-  tar zxf /opt/nifi-1.11.4-bin.tar.gz -C /opt
-  rm /opt/nifi-1.11.4-bin.tar.gz
-  ln -s /opt/nifi-1.11.4 /opt/nifi
+  wget http://apache.uvigo.es/nifi/1.12.0/nifi-1.12.0-bin.tar.gz \
+       -O /opt/nifi-1.12.0-bin.tar.gz
+  tar zxf /opt/nifi-1.12.0-bin.tar.gz -C /opt
+  rm /opt/nifi-1.12.0-bin.tar.gz
+  ln -s /opt/nifi-1.12.0 /opt/nifi
   chown -R osbdet:osbdet /opt/nifi*
 }
 _nifi_remove(){
