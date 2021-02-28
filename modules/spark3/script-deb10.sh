@@ -79,13 +79,12 @@ unit_install(){
 }
 
 unit_status() {
-  echo Checking spark3 unit installation status...
   if [ -d "/opt/spark-3.0.0-bin-hadoop3.2" ]
   then
-    echo "    Spark3 unit is installed [OK]"
+    echo "Unit is installed [OK]"
     exit 0
   else
-    echo "    Spark3 unit is not installed [KO]"
+    echo "Unit is not installed [KO]"
     exit -1
   fi
 }

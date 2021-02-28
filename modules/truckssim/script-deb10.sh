@@ -46,13 +46,12 @@ unit_install(){
 }
 
 unit_status() {
-  echo Checking truckssim unit installation status...
   if [ -d "/opt/Data-Loader/truck-sensor-data" ]
   then
-    echo "    Trucks simulator unit is installed [OK]"
+    echo "Unit is installed [OK]"
     exit 0
   else
-    echo "    Trucks simulator unit is not installed [KO]"
+    echo "Unit is not installed [KO]"
     exit -1
   fi
 }

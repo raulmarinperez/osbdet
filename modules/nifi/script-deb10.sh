@@ -59,13 +59,12 @@ unit_install(){
 }
 
 unit_status() {
-  echo Checking nifi unit installation status...
   if [ -L "/opt/nifi" ]
   then
-    echo "    NiFi unit is installed [OK]"
+    echo "Unit is installed [OK]"
     exit 0
   else
-    echo "    NiFi unit is not installed [KO]"
+    echo "Unit is not installed [KO]"
     exit -1
   fi
 }

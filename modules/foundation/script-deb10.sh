@@ -76,13 +76,12 @@ unit_install(){
 }
 
 unit_status() {
-  echo Checking foundation unit installation status...
   if [ -d "/home/osbdet" ]
   then
-    echo "    Foundation unit is installed [OK]"
+    echo "Unit is installed [OK]"
     exit 0
   else
-    echo "    Foundation unit is not installed [KO]"
+    echo "Unit is not installed [KO]"
     exit -1
   fi
 }

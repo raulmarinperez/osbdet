@@ -54,13 +54,12 @@ unit_install(){
 }
 
 unit_status() {
-  echo Checking jupyter unit installation status...
   if [ -d "/home/osbdet/.jupyter" ]
   then
-    echo "    Jupyter unit is installed [OK]"
+    echo "Unit is installed [OK]"
     exit 0
   else
-    echo "    Jupyter unit is not installed [KO]"
+    echo "Unit is not installed [KO]"
     exit -1
   fi
 }
