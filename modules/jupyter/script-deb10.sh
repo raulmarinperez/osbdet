@@ -45,12 +45,12 @@ _jupyter_remove_serviceinstall(){
 unit_install(){
   echo Starting jupyter_install...
 
-  _jupyter_install
-  echo "    Jupyter and additional packages installed [Done]"
-  _jupyter_initialsetup
-  echo "    Folder for notebooks creation and initial setup [Done]"
-  _jupyter_serviceinstall
-  echo "    Init script creation and automatic start after booting [Done]"
+  #_jupyter_install
+  #echo "    Jupyter and additional packages installed [Done]"
+  #_jupyter_initialsetup
+  #echo "    Folder for notebooks creation and initial setup [Done]"
+  #_jupyter_serviceinstall
+  #echo "    Init script creation and automatic start after booting [Done]"
 }
 
 unit_status() {
@@ -60,7 +60,7 @@ unit_status() {
     exit 0
   else
     echo "Unit is not installed [KO]"
-    exit -1
+    exit 1
   fi
 }
 

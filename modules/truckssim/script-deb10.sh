@@ -39,10 +39,10 @@ _truckssim_remove_serviceinstall(){
 unit_install(){
   echo Starting truckssim_install...
 
-  _truckssim_getandextract
-  echo "    Trucks Simulator downloading and extraction [Done]"
-  _truckssim_serviceinstall
-  echo "    Init script creation [Done]"
+  #_truckssim_getandextract
+  #echo "    Trucks Simulator downloading and extraction [Done]"
+  #_truckssim_serviceinstall
+  #echo "    Init script creation [Done]"
 }
 
 unit_status() {
@@ -52,7 +52,7 @@ unit_status() {
     exit 0
   else
     echo "Unit is not installed [KO]"
-    exit -1
+    exit 1
   fi
 }
 

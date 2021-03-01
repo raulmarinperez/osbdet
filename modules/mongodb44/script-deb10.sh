@@ -27,8 +27,8 @@ _mongodb44_remove_addrepoandinstall(){
 unit_install(){
   echo Starting mongodb44_install...
 
-  _mongodb44_addrepoandinstall
-  echo "    MongoDB 4.4 CE repo addition and installation [Done]"
+  #_mongodb44_addrepoandinstall
+  #echo "    MongoDB 4.4 CE repo addition and installation [Done]"
 }
 
 unit_status() {
@@ -38,7 +38,7 @@ unit_status() {
     exit 0
   else
     echo "Unit is not installed [KO]"
-    exit -1
+    exit 1
   fi
 }
 

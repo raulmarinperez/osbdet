@@ -127,21 +127,21 @@ _hadoop3_remove_userprofile(){
 unit_install(){
   echo Starting Hadoop 3 deployment...
 
-  _hadoop3_getandextract
-  echo "    Hadoop 3.2.1 extraction and initial setup [Done]"
-  _hadoop3_setenvvars
-  _hadoop3_configfilessetup
-  echo "    Configuration files adding and edition [Done]"
-  _hadoop3_sshsetup
-  echo "    SSH password-less authentication setup [Done]"
+  #_hadoop3_getandextract
+  #echo "    Hadoop 3.2.1 extraction and initial setup [Done]"
+  #_hadoop3_setenvvars
+  #_hadoop3_configfilessetup
+  #echo "    Configuration files adding and edition [Done]"
+  #_hadoop3_sshsetup
+  #echo "    SSH password-less authentication setup [Done]"
 
-  _hadoop3_hdfsinit
-  echo "    HDFS initialization [Done]"
-  _hadoop3_scriptscopy
-  echo "    Hadoop util scripts copy [Done]"
+  #_hadoop3_hdfsinit
+  #echo "    HDFS initialization [Done]"
+  #_hadoop3_scriptscopy
+  #echo "    Hadoop util scripts copy [Done]"
 
-  _hadoop3_userprofile
-  echo "    User's environment variables setup [Done]"
+  #_hadoop3_userprofile
+  #echo "    User's environment variables setup [Done]"
 }
 
 unit_status() {
@@ -151,7 +151,7 @@ unit_status() {
     exit 0
   else
     echo "Unit is not installed [KO]"
-    exit -1
+    exit 1
   fi
 }
 

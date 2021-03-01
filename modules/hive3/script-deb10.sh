@@ -138,23 +138,23 @@ _hive3_remove_userprofile() {
 unit_install(){
   echo Starting Hive 3 deployment...
 
-  _hive3_getandextract
-  echo "    Hive 3.1.2 extraction and initial setup [Done]"
-  _hive3_setenvvars
-  _hive3_metastoreinit
-  echo "    Hive metastore setup [Done]"
-  _hive3_hadoopsetup
-  echo "    Update Hadoop files for impersonation [Done]"
-  _hive3_tezinstall
-  echo "    Extracting Tez 0.9.2 (custom build) [Done]"
-  _hadoop3_setenvvars
-  _hive3_tezhdfssetup
-  echo "    Adding Tez 0.9.2 jar file into HDFS [Done]"
+  #_hive3_getandextract
+  #echo "    Hive 3.1.2 extraction and initial setup [Done]"
+  #_hive3_setenvvars
+  #_hive3_metastoreinit
+  #echo "    Hive metastore setup [Done]"
+  #_hive3_hadoopsetup
+  #echo "    Update Hadoop files for impersonation [Done]"
+  #_hive3_tezinstall
+  #echo "    Extracting Tez 0.9.2 (custom build) [Done]"
+  #_hadoop3_setenvvars
+  #_hive3_tezhdfssetup
+  #echo "    Adding Tez 0.9.2 jar file into HDFS [Done]"
 
-  _hive3_initscript
-  echo "    Init script creation and automatic start after booting [Done]"
-  _hive3_userprofile
-  echo "    User's environment variables setup [Done]"
+  #_hive3_initscript
+  #echo "    Init script creation and automatic start after booting [Done]"
+  #_hive3_userprofile
+  #echo "    User's environment variables setup [Done]"
 }
 
 unit_status() {
@@ -164,7 +164,7 @@ unit_status() {
     exit 0
   else
     echo "Unit is not installed [KO]"
-    exit -1
+    exit 1
   fi
 }
 

@@ -50,12 +50,12 @@ _nifi_remove_userprofile(){
 unit_install(){
   echo Starting nifi_install...
 
-  _nifi_getandextract
-  echo "    NiFi downloading and extraction [Done]"
-  _nifi_setjavahome
-  echo "    Setting up JAVA_HOME for NiFi [Done]"
-  _nifi_userprofile
-  echo "    Adding NiFi's bin folder to user's PATH [Done]"
+  #_nifi_getandextract
+  #echo "    NiFi downloading and extraction [Done]"
+  #_nifi_setjavahome
+  #echo "    Setting up JAVA_HOME for NiFi [Done]"
+  #_nifi_userprofile
+  #echo "    Adding NiFi's bin folder to user's PATH [Done]"
 }
 
 unit_status() {
@@ -65,7 +65,7 @@ unit_status() {
     exit 0
   else
     echo "Unit is not installed [KO]"
-    exit -1
+    exit 1
   fi
 }
 

@@ -70,12 +70,12 @@ _spark3_remove_userprofile(){
 unit_install(){
   echo Starting spark3_install...
 
-  _spark3_getandextract
-  echo "    Spark 3 extraction and findspark installation  [Done]"
-  _spark3_jupyterspark
-  echo "    Spark support for Jupyter service setup [Done]"
-  _spark3_userprofile
-  echo "    User's environment variables setup [Done]"
+  #_spark3_getandextract
+  #echo "    Spark 3 extraction and findspark installation  [Done]"
+  #_spark3_jupyterspark
+  #echo "    Spark support for Jupyter service setup [Done]"
+  #_spark3_userprofile
+  #echo "    User's environment variables setup [Done]"
 }
 
 unit_status() {
@@ -85,7 +85,7 @@ unit_status() {
     exit 0
   else
     echo "Unit is not installed [KO]"
-    exit -1
+    exit 1
   fi
 }
 
