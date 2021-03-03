@@ -137,7 +137,7 @@ userprofile(){
   echo '# set HADOOP_HOME and add its bin folder to the PATH' >> /home/osbdet/.profile
   echo 'export HADOOP_HOME=/opt/hadoop3' >> /home/osbdet/.profile
   echo 'PATH="$PATH:$HADOOP_HOME/bin"' >> /home/osbdet/.profile
-  debug "hadoop3.userprofile DEBUG [`date +"%Y-%m-%d %T"`] User profile setup to run Hadoop 3" >> $OSBDET_LOGFILE
+  debug "hadoop3.userprofile DEBUG [`date +"%Y-%m-%d %T"`] User profile to run Hadoop 3 setup" >> $OSBDET_LOGFILE
 }
 remove_userprofile(){
   debug "hadoop3.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] Remove user profile settings to run Hadoop 3" >> $OSBDET_LOGFILE
@@ -161,7 +161,7 @@ remove_userprofile(){
 #
 module_install(){
   debug "hadoop3.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
-  # The uninstallation of this module consists on:
+  # The installation of this module consists on:
   #   1. Get Hadoop3 and extract it
   #   2. Set up environment variables for the rest of the installation process
   #   3. Copy Hadoop 3 configuration files
@@ -212,16 +212,22 @@ module_uninstall(){
 }
 
 usage() {
-  echo Starting \'hadoop3\' unit
+  echo Starting \'hadoop3\' module
   echo Usage: script.sh [OPTION]
   echo 
   echo Available options for this unit:
-  echo "  install             unit installation"
-  echo "  status              unit installation status check"
-  echo "  uninstall           unit uninstallation"
+  echo "  install             module installation"
+  echo "  status              module installation status check"
+  echo "  uninstall           module uninstallation"
 }
 
 main(){
+  # 1. Set logfile to /dev/null if it doesn't exist
+  if [ -z "$OSBDET_LOGFILE" ] ; then
+    export OSBDET_LOGFILE=/dev/null
+  fi
+  # 2. Main function
+  debug "hadoop3 DEBUG [`date +"%Y-%m-%d %T"`] Starting activity with the hadoop3 module" >> $OSBDET_LOGFILE
   if [ $# -eq 1 ]
   then
     if [ "$1" == "install" ]
@@ -241,6 +247,7 @@ main(){
     usage
     exit -1
   fi
+  debug "hadoop3 DEBUG [`date +"%Y-%m-%d %T"`] Activity with the hadoop3 module is done" >> $OSBDET_LOGFILE
 }
 
 if ! [ -z "$*" ]
