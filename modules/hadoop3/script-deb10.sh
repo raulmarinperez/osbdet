@@ -4,31 +4,47 @@
 
 # Variables
 SCRIPT_PATH=""
+HADOOP_BINARY_URL=https://apache.brunneis.com/hadoop/common/hadoop-3.2.2/hadoop-3.2.2.tar.gz
+HADOOP_TGZ_FILE=hadoop-3.2.2.tar.gz
+HADOOP_DEFAULT_DIR=hadoop-3.2.2
 
 # Aux functions
-_hadoop3_getandextract(){
-  wget http://apache.rediris.es/hadoop/common/hadoop-3.2.1/hadoop-3.2.1.tar.gz \
-       -O /opt/hadoop-3.2.1.tar.gz
-  echo "    Hadoop 3.2.1 download [Done]"
 
-  tar zxf /opt/hadoop-3.2.1.tar.gz -C /opt
-  rm /opt/hadoop-3.2.1.tar.gz
-  ln -s /opt/hadoop-3.2.1 /opt/hadoop
-  chown -R osbdet:osbdet /opt/hadoop*
-  chmod +x /opt/hadoop/etc/hadoop/*-env.sh
-}
-_hadoop3_removal(){
-  rm -rf /opt/hadoop-3.2.1
-  rm /opt/hadoop
+# debug
+#   desc: Display a debug message if LOGLEVEL is DEBUG
+#   params:
+#     $1 - Debug message
+#   return (status code/stdout):
+debug() {
+  if [[ "$LOGLEVEL" == "DEBUG" ]]; then
+    echo $1
+  fi
 }
 
-_hadoop3_setenvvars(){
-  export HADOOP_HOME=/opt/hadoop
-  export HADOOP_COMMON_HOME=/opt/hadoop
-  export HADOOP_HDFS_HOME=/opt/hadoop
-  export HADOOP_MAPRED_HOME=/opt/hadoop
-  export HADOOP_YARN_HOME=/opt/hadoop
-  export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+getandextract(){
+  debug "hadoop3.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting Hadoop 3" >> $OSBDET_LOGFILE
+  wget $HADOOP_BINARY_URL -O /opt/$HADOOP_TGZ_FILE >> $OSBDET_LOGFILE 2>&1
+  tar zxf /opt/$HADOOP_TGZ_FILE -C /opt >> $OSBDET_LOGFILE 2>&1
+  rm /opt/$HADOOP_TGZ_FILE 
+  mv /opt/$HADOOP_DEFAULT_DIR /opt/hadoop3
+  chown -R osbdet:osbdet /opt/hadoop3
+  chmod +x /opt/hadoop3/etc/hadoop/*-env.sh
+  debug "hadoop3.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Hadoop 3 downloading and extracting process done" >> $OSBDET_LOGFILE
+}
+binaries_removal(){
+  debug "hadoop3.binaries_removal DEBUG [`date +"%Y-%m-%d %T"`] Removing Hadoop 3 files" >> $OSBDET_LOGFILE
+  rm -rf /opt/hadoop3
+  debug "hadoop3.binaries_removal DEBUG [`date +"%Y-%m-%d %T"`] Hadoop 3 files removed" >> $OSBDET_LOGFILE
+}
+
+setenvvars(){
+  debug "hadoop3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Setting the environment variables for the installation process" >> $OSBDET_LOGFILE
+  export HADOOP_HOME=/opt/hadoop3
+  export HADOOP_COMMON_HOME=/opt/hadoop3
+  export HADOOP_HDFS_HOME=/opt/hadoop3
+  export HADOOP_MAPRED_HOME=/opt/hadoop3
+  export HADOOP_YARN_HOME=/opt/hadoop3
+  export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop3
   export HDFS_DATANODE_USER=osbdet
   export HDFS_NAMENODE_USER=osbdet
   export HDFS_SECONDARYNAMENODE_USER=osbdet
@@ -37,10 +53,12 @@ _hadoop3_setenvvars(){
   export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
   export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
   export PATH=$PATH:$JAVA_HOME/bin
+  debug "hadoop3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Environment variables already defined" >> $OSBDET_LOGFILE
 }
 
-_hadoop3_configfilessetup(){
-  sed -i '/^# export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64/\nexport HADOOP_HOME=/opt/hadoop\n:' \
+configfilessetup(){
+  debug "hadoop3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Copying Hadoop 3 configuration files" >> $OSBDET_LOGFILE
+  sed -i '/^# export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64/\nexport HADOOP_HOME=/opt/hadoop3\n:' \
          $HADOOP_HOME/etc/hadoop/hadoop-env.sh
   sed -i '/^# export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop:' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
   cp $SCRIPT_PATH/core-site.xml.template $HADOOP_HOME/etc/hadoop/core-site.xml.template
@@ -49,9 +67,11 @@ _hadoop3_configfilessetup(){
   cp $SCRIPT_PATH/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
   chown osbdet:osbdet $HADOOP_HOME/etc/hadoop/core-site.xml.template $HADOOP_HOME/etc/hadoop/hdfs-site.xml \
                       $HADOOP_HOME/etc/hadoop/mapred-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
+  debug "hadoop3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Hadoop 3 configuration files copied" >> $OSBDET_LOGFILE
 }
 
-_hadoop3_sshsetup(){
+sshsetup(){
+  debug "hadoop3.sshsetup DEBUG [`date +"%Y-%m-%d %T"`] Passwordless SSH access setup" >> $OSBDET_LOGFILE
   echo -e 'y\n' | ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key > /dev/null
   echo -e 'y\n' | ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key > /dev/null
   su - osbdet -c 'echo -e "y\n" | ssh-keygen -q -N "" -t rsa -f /home/osbdet/.ssh/id_rsa'
@@ -59,54 +79,68 @@ _hadoop3_sshsetup(){
   cp $SCRIPT_PATH/ssh_config /home/osbdet/.ssh/config
   chmod 600 /home/osbdet/.ssh/config
   chown osbdet:osbdet /home/osbdet/.ssh/config
+  debug "hadoop3.sshsetup DEBUG [`date +"%Y-%m-%d %T"`] Passwordless SSH access setup done" >> $OSBDET_LOGFILE
 }
-_hadoop3_remove_sshsetup(){
+remove_sshsetup(){
+  debug "hadoop3.remove_sshsetup DEBUG [`date +"%Y-%m-%d %T"`] Removing password-less SSH access setup" >> $OSBDET_LOGFILE
   rm /etc/ssh/ssh_host_dsa_key*
   rm /etc/ssh/ssh_host_rsa_key*
   rm -rf /home/osbdet/.ssh
+  debug "hadoop3.remove_sshsetup DEBUG [`date +"%Y-%m-%d %T"`] Password-less SSH access setup removed" >> $OSBDET_LOGFILE
 }
 
-_hadoop3_hdfsinit(){
+hdfsinit(){
+  debug "hadoop3.hdfsinit DEBUG [`date +"%Y-%m-%d %T"`] HDFS initialization" >> $OSBDET_LOGFILE
   mkdir -p /data/hdfs/namenode
   mkdir -p /data/hdfs/datanode
   chown osbdet:osbdet -R /data
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs namenode -format'
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs namenode -format" >> $OSBDET_LOGFILE 2>&1
   sed s/HOSTNAME/localhost/ $HADOOP_HOME/etc/hadoop/core-site.xml.template > $HADOOP_HOME/etc/hadoop/core-site.xml
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/sbin/start-dfs.sh'
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chown hdfs:hadoop /'
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chmod 755 /'
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -mkdir -p /user/osbdet'
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chown hdfs:hadoop /user'
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chmod 755 /user'
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -mkdir /tmp'
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chmod 777 /tmp'
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chown hdfs:hadoop /tmp'
-  su - osbdet -c '. /opt/hadoop/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/sbin/stop-dfs.sh'
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/sbin/start-dfs.sh" >> $OSBDET_LOGFILE 2>&1
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chown hdfs:hadoop /" >> $OSBDET_LOGFILE 2>&1
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chmod 755 /" >> $OSBDET_LOGFILE 2>&1
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -mkdir -p /user/osbdet" >> $OSBDET_LOGFILE 2>&1
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chown hdfs:hadoop /user" >> $OSBDET_LOGFILE 2>&1
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chmod 755 /user" >> $OSBDET_LOGFILE 2>&1
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -mkdir /tmp" >> $OSBDET_LOGFILE 2>&1
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chmod 777 /tmp" >> $OSBDET_LOGFILE 2>&1
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/bin/hdfs dfs -chown hdfs:hadoop /tmp" >> $OSBDET_LOGFILE 2>&1
+  su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/sbin/stop-dfs.sh" >> $OSBDET_LOGFILE 2>&1
+  debug "hadoop3.hdfsinit DEBUG [`date +"%Y-%m-%d %T"`] HDFS initialization done" >> $OSBDET_LOGFILE
 }
-_hadoop3_remove_hdfsinit(){
+remove_hdfsinit(){
+  debug "hadoop3.remove_hdfsinit DEBUG [`date +"%Y-%m-%d %T"`] Removing HDFS initialization (data folder)" >> $OSBDET_LOGFILE
   rm -rf /data
+  debug "hadoop3.remove_hdfsinit DEBUG [`date +"%Y-%m-%d %T"`] HDFS initialization removed" >> $OSBDET_LOGFILE
 }
 
-_hadoop3_scriptscopy(){
+scriptscopy(){
+  debug "hadoop3.scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Copying scripts to operate the pseudo-cluster" >> $OSBDET_LOGFILE
   mkdir -p /home/osbdet/bin
   cp $SCRIPT_PATH/hadoop-start.sh /home/osbdet/bin
   cp $SCRIPT_PATH/hadoop-stop.sh /home/osbdet/bin
   chown -R osbdet:osbdet /home/osbdet/bin
+  debug "hadoop3.scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Scripts to operate the pseudo-cluster copied" >> $OSBDET_LOGFILE
 }
-_hadoop3_remove_scriptscopy(){
+remove_scriptscopy(){
+  debug "hadoop3.remove_scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Removing scripts to operate the pseudo-cluster" >> $OSBDET_LOGFILE
   rm /home/osbdet/bin/hadoop-start.sh
   rm /home/osbdet/bin/hadoop-stop.sh
   # rmdir only removes empty folders (hide stderr output)
   rmdir /home/osbdet/bin 2> /dev/null
+  debug "hadoop3.remove_scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Scripts to operate the pseudo-cluster removed" >> $OSBDET_LOGFILE
 }
 
-_hadoop3_userprofile(){
+userprofile(){
+  debug "hadoop3.userprofile DEBUG [`date +"%Y-%m-%d %T"`] Setting up user profile to run Hadoop 3" >> $OSBDET_LOGFILE
   echo >> /home/osbdet/.profile
   echo '# set HADOOP_HOME and add its bin folder to the PATH' >> /home/osbdet/.profile
-  echo 'export HADOOP_HOME=/opt/hadoop' >> /home/osbdet/.profile
+  echo 'export HADOOP_HOME=/opt/hadoop3' >> /home/osbdet/.profile
   echo 'PATH="$PATH:$HADOOP_HOME/bin"' >> /home/osbdet/.profile
+  debug "hadoop3.userprofile DEBUG [`date +"%Y-%m-%d %T"`] User profile setup to run Hadoop 3" >> $OSBDET_LOGFILE
 }
-_hadoop3_remove_userprofile(){
+remove_userprofile(){
+  debug "hadoop3.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] Remove user profile settings to run Hadoop 3" >> $OSBDET_LOGFILE
   # remove the break line before the user profile setup for Hadoop
   #   - https://stackoverflow.com/questions/4396974/sed-or-awk-delete-n-lines-following-a-pattern
   #   - https://unix.stackexchange.com/questions/29906/delete-range-of-lines-above-pattern-with-sed-or-awk
@@ -120,56 +154,61 @@ _hadoop3_remove_userprofile(){
   # remove user profile setup for Hadoop
   sed -i '/^# set HADOOP.*/,+3d' /home/osbdet/.profile
   rm -f /home/osbdet/.eliforp
+  debug "hadoop3.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] User profile settings to run Hadoop 3 removed" >> $OSBDET_LOGFILE
 }
 
 # Primary functions
 #
-unit_install(){
-  echo Starting Hadoop 3 deployment...
-
-  #_hadoop3_getandextract
-  #echo "    Hadoop 3.2.1 extraction and initial setup [Done]"
-  #_hadoop3_setenvvars
-  #_hadoop3_configfilessetup
-  #echo "    Configuration files adding and edition [Done]"
-  #_hadoop3_sshsetup
-  #echo "    SSH password-less authentication setup [Done]"
-
-  #_hadoop3_hdfsinit
-  #echo "    HDFS initialization [Done]"
-  #_hadoop3_scriptscopy
-  #echo "    Hadoop util scripts copy [Done]"
-
-  #_hadoop3_userprofile
-  #echo "    User's environment variables setup [Done]"
+module_install(){
+  debug "hadoop3.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
+  # The uninstallation of this module consists on:
+  #   1. Get Hadoop3 and extract it
+  #   2. Set up environment variables for the rest of the installation process
+  #   3. Copy Hadoop 3 configuration files
+  #   4. Password-less ssh connections setup
+  #   5. HDFS initialization
+  #   6. Copy of scripts to operate Hadoop 3 (start and stop)
+  #   7. Update of osdbet user profile to have access to Hadoop 3 binaries
+  printf "  Installing module 'hadoop3' ... "
+  getandextract
+  setenvvars
+  configfilessetup
+  sshsetup
+  hdfsinit
+  scriptscopy
+  userprofile
+  printf "[Done]\n"
+  debug "hadoop3.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
 
-unit_status() {
-  if [ -L "/opt/hadoop" ]
+module_status() {
+  if [ -d "/opt/hadoop3" ]
   then
-    echo "Unit is installed [OK]"
+    echo "Module is installed [OK]"
     exit 0
   else
-    echo "Unit is not installed [KO]"
+    echo "Module is not installed [KO]"
     exit 1
   fi
 }
 
-unit_uninstall(){
-  echo Starting hadoop3_uninstall...
-
-  _hadoop3_remove_userprofile
-  echo "    User's environment variables removal [Done]"
-
-  _hadoop3_remove_scriptscopy
-  echo "    Hadoop util scripts removal [Done]"
-  _hadoop3_remove_hdfsinit
-  echo "    HDFS initialization removal [Done]"
-
-  _hadoop3_remove_sshsetup
-  echo "    SSH password-less authentication setup removal [Done]"
-  _hadoop3_removal
-  echo "    Hadoop 3.2.1 removal [Done]"
+module_uninstall(){
+  debug "hadoop3.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
+  # The uninstallation of this module consists on:
+  #   1. Remove references to Hadoop 3 binaries from osbdet's profile
+  #   2. Remove scripts to operate the Hadoop 3 pseudo-cluster
+  #   3. Remove HDFS initialization (data folder)
+  #   4. Remove password-less ssh access setup
+  #   5. Remove Hadoop 3 binaries
+  #
+  printf "  Uninstalling module 'hadoop3' ... "
+  remove_userprofile
+  remove_scriptscopy
+  remove_hdfsinit
+  remove_sshsetup
+  binaries_removal
+  printf "[Done]\n"
+  debug "hadoop3.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }
 
 usage() {
@@ -187,13 +226,13 @@ main(){
   then
     if [ "$1" == "install" ]
     then
-      unit_install
+      module_install
     elif [ "$1" == "status" ]
     then
-      unit_status
+      module_status
     elif [ "$1" == "uninstall" ]
     then
-      unit_uninstall
+      module_uninstall
     else
       usage
       exit -1
