@@ -175,15 +175,17 @@ remove_userprofile() {
 # Primary functions
 #
 module_install(){
-  debug "hive3.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
-  # The uninstallation of this module consists on:
+  debug "hive3.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
+  # The installation of this module consists on:
   #   1. Get Hive 3 and extract it
-  #   2. Set up environment variables for the rest of the installation process
-  #   3. Copy Hadoop 3 configuration files
-  #   4. Password-less ssh connections setup
-  #   5. HDFS initialization
-  #   6. Copy of scripts to operate Hadoop 3 (start and stop)
-  #   7. Update of osdbet user profile to have access to Hadoop 3 binaries
+  #   2. Set up Hive 3 environment variables for the rest of the installation process
+  #   3. Hive metastore initialization
+  #   4. Update Hadoop 3 configuration to enable integration with Hive 3
+  #   5. Installation of TEZ
+  #   6. Set up Hadoop 3 environment variables to copy TEZ binaries into HDFS
+  #   7. Copy TEZ binaries into HDFS
+  #   8. Systemd init script installation
+  #   9. osbdet profile update to make Hive 3 binaries accessible.
   printf "  Installing module 'hive3' ... "
   getandextract
   setenvvars
@@ -196,7 +198,6 @@ module_install(){
   userprofile
   printf "[Done]\n"
   debug "hive3.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
-
 }
 
 module_status() {
@@ -213,8 +214,13 @@ module_status() {
 module_uninstall(){
   debug "hive.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
-  #   1. Remove references to Hadoop 3 binaries from osbdet's profile
-  #
+  #   1. osbdet profile update to remove any Hive 3 reference
+  #   2. Systemd init script removal
+  #   3. Set up Hadoop 3 environment variables to remove TEZ binaries from HDFS
+  #   4. Remove TEZ binaries from HDFS
+  #   5. Remove TEZ from the system
+  #   6. Update Hadoop 3 configuration to remove integration with Hive 3
+  #   7. Remove Hive 3 from the system
   printf "  Uninstalling module 'hive3' ... "
   remove_userprofile
   remove_initscript

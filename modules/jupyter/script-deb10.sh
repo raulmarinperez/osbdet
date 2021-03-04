@@ -7,53 +7,79 @@ SCRIPT_PATH=""
 
 # Aux functions
 
-_jupyter_install(){
-  pip3 install jupyter numpy mcpi 
-}
-_jupyter_remove(){
-  pip3 uninstall -y jupyter numpy mcpi
-}
-
-_jupyter_initialsetup(){
-  su osbdet -c "mkdir /home/osbdet/notebooks"
-  su osbdet -c "jupyter notebook --generate-config"
-  sed -i "s/^#c\.NotebookApp\.ip = 'localhost'/c\.NotebookApp\.ip = '\*'/" /home/osbdet/.jupyter/jupyter_notebook_config.py
-  sed -i "s/^#c\.NotebookApp\.password = ''/c\.NotebookApp\.password = 'sha1:51a108786a75:0798779c484abd8a6218db7d4e9d3370ffbcd9c8'/"\
-         /home/osbdet/.jupyter/jupyter_notebook_config.py
-  sed -i "s/^#c\.NotebookApp\.notebook\_dir = ''/c\.NotebookApp\.notebook\_dir = '\/home\/osbdet\/notebooks'/"\
-         /home/osbdet/.jupyter/jupyter_notebook_config.py
-}
-_jupyter_remove_initialsetup(){
-  rm -rf /home/osbdet/.jupyter /home/osbdet/notebooks
+# debug
+#   desc: Display a debug message if LOGLEVEL is DEBUG
+#   params:
+#     $1 - Debug message
+#   return (status code/stdout):
+debug() {
+  if [[ "$LOGLEVEL" == "DEBUG" ]]; then
+    echo $1
+  fi
 }
 
-_jupyter_serviceinstall(){
+dsenv_install(){
+  debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the data science environment" >> $OSBDET_LOGFILE
+  pip3 install jupyter numpy pandas seaborn >> $OSBDET_LOGFILE 2>&1
+  debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the data science environment installed" >> $OSBDET_LOGFILE
+}
+remove_dsenv(){
+  debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Removing data science environment software" >> $OSBDET_LOGFILE
+  pip3 uninstall -y jupyter numpy pandas seaborn >> $OSBDET_LOGFILE 2>&1
+  debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Data science environment software removed" >> $OSBDET_LOGFILE
+}
+
+initialsetup(){
+  debug "jupyter.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Jupyter" >> $OSBDET_LOGFILE
+  su osbdet -c "mkdir /home/osbdet/notebooks" >> $OSBDET_LOGFILE 2>&1
+  su osbdet -c "jupyter notebook --generate-config" >> $OSBDET_LOGFILE 2>&1
+  sed -i "s/^# c\.NotebookApp\.ip = 'localhost'/c\.NotebookApp\.ip = '\*'/" /home/osbdet/.jupyter/jupyter_notebook_config.py
+  sed -i "s/^# c\.NotebookApp\.password = ''/c\.NotebookApp\.password = 'sha1:51a108786a75:0798779c484abd8a6218db7d4e9d3370ffbcd9c8'/"\
+         /home/osbdet/.jupyter/jupyter_notebook_config.py
+  sed -i "s/^# c\.NotebookApp\.notebook\_dir = ''/c\.NotebookApp\.notebook\_dir = '\/home\/osbdet\/notebooks'/"\
+         /home/osbdet/.jupyter/jupyter_notebook_config.py
+  debug "jupyter.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Jupyter done" >> $OSBDET_LOGFILE
+}
+remove_initialsetup(){
+  debug "jupyter.remove_initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Removing initial setup of Jupyter" >> $OSBDET_LOGFILE
+  rm -rf /home/osbdet/.jupyter /home/osbdet/notebooks >> $OSBDET_LOGFILE 2>&1
+  debug "jupyter.remove_initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Removing initial setup of Jupyter" >> $OSBDET_LOGFILE
+}
+
+serviceinstall(){
+  debug "jupyter.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation" >> $OSBDET_LOGFILE
   cp $SCRIPT_PATH/jupyter.service /lib/systemd/system/jupyter.service
   chmod 644 /lib/systemd/system/jupyter.service
-  systemctl daemon-reload
-  systemctl enable jupyter.service
+  systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
+  systemctl enable jupyter.service >> $OSBDET_LOGFILE 2>&1
+  debug "jupyter.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation done" >> $OSBDET_LOGFILE
 }
-_jupyter_remove_serviceinstall(){
-  service jupyter stop
-  systemctl disable jupyter.service
+remove_serviceinstall(){
+  debug "jupyter.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation" >> $OSBDET_LOGFILE
+  service jupyter stop >> $OSBDET_LOGFILE 2>&1
+  systemctl disable jupyter.service >> $OSBDET_LOGFILE 2>&1
   rm /lib/systemd/system/jupyter.service 
-  systemctl daemon-reload
+  systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
+  debug "jupyter.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation done" >> $OSBDET_LOGFILE
 }
 
 # Primary functions
 #
-unit_install(){
-  echo Starting jupyter_install...
-
-  #_jupyter_install
-  #echo "    Jupyter and additional packages installed [Done]"
-  #_jupyter_initialsetup
-  #echo "    Folder for notebooks creation and initial setup [Done]"
-  #_jupyter_serviceinstall
-  #echo "    Init script creation and automatic start after booting [Done]"
+module_install(){
+  debug "jupyter.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
+  # The installation of this module consists on:
+  #   1. Data Science environment installation
+  #   2. Initial setup of Jupyter
+  #   3. Systemd script installation
+  printf "  Installing module 'jupyter' ... "
+  dsenv_install
+  initialsetup
+  serviceinstall
+  printf "[Done]\n"
+  debug "jupyter.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
 
-unit_status() {
+module_status() {
   if [ -d "/home/osbdet/.jupyter" ]
   then
     echo "Unit is installed [OK]"
@@ -64,15 +90,18 @@ unit_status() {
   fi
 }
 
-unit_uninstall(){
-  echo Starting jupyter_uninstall...
-
-  _jupyter_remove_serviceinstall
-  echo "    Init script removal [Done]"
-  _jupyter_remove_initialsetup
-  echo "    Folder for notebooks creation and initial setup [Done]"
-  _jupyter_remove
-  echo "    Jupyter and additional packages installed [Done]"
+module_uninstall(){
+  debug "jupyter.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
+  # The installation of this module consists on:
+  #   1. Systemd script removel
+  #   2. Undoing setup of Jupyter
+  #   3. Data Science environment removal
+  printf "  Uninstalling module 'jupyter' ... "
+  remove_serviceinstall
+  remove_initialsetup
+  remove_dsenv
+  printf "[Done]\n"
+  debug "jupyter.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }
 
 usage() {
@@ -80,23 +109,29 @@ usage() {
   echo Usage: script.sh [OPTION]
   echo 
   echo Available options for this unit:
-  echo "  install             unit installation"
-  echo "  status              unit installation status check"
-  echo "  uninstall           unit uninstallation"
+  echo "  install             module installation"
+  echo "  status              module installation status check"
+  echo "  uninstall           module uninstallation"
 }
 
 main(){
+  # 1. Set logfile to /dev/null if it doesn't exist
+  if [ -z "$OSBDET_LOGFILE" ] ; then
+    export OSBDET_LOGFILE=/dev/null
+  fi
+  # 2. Main function
+  debug "jupyter DEBUG [`date +"%Y-%m-%d %T"`] Starting activity with the jupyter module" >> $OSBDET_LOGFILE
   if [ $# -eq 1 ]
   then
     if [ "$1" == "install" ]
     then
-      unit_install
+      module_install
     elif [ "$1" == "status" ]
     then
-      unit_status
+      module_status
     elif [ "$1" == "uninstall" ]
     then
-      unit_uninstall
+      module_uninstall
     else
       usage
       exit -1
@@ -105,6 +140,7 @@ main(){
     usage
     exit -1
   fi
+  debug "jupyter DEBUG [`date +"%Y-%m-%d %T"`] Activity with the jupyter module is done" >> $OSBDET_LOGFILE
 }
 
 if ! [ -z "$*" ]

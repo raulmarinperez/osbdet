@@ -6,71 +6,101 @@
 SCRIPT_PATH=""
 
 # Aux functions
-_mongodb44_addrepoandinstall(){
-  # Procedure as it's documented at https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
-  apt-get install gnupg
-  wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
-  echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-  apt-get update
-  apt-get install -y mongodb-org
+
+# debug
+#   desc: Display a debug message if LOGLEVEL is DEBUG
+#   params:
+#     $1 - Debug message
+#   return (status code/stdout):
+debug() {
+  if [[ "$LOGLEVEL" == "DEBUG" ]]; then
+    echo $1
+  fi
 }
-_mongodb44_remove_addrepoandinstall(){
-  apt remove -y mongodb-org --purge
-  apt autoremove -y
-  apt-key del "`apt-key list | $SCRIPT_PATH/../../shared/givemekey.awk -v pattern=MongoDB`"
+
+addrepoandinstall(){
+  debug "mongodb44.addrepoandinstall DEBUG [`date +"%Y-%m-%d %T"`] Adding MongoDB 4.4 CE repo and install MongoDB" >> $OSBDET_LOGFILE
+  # Procedure as it's documented at https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
+  apt-get install gnupg >> $OSBDET_LOGFILE 2>&1
+  wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - >> $OSBDET_LOGFILE 2>&1
+  echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list >> $OSBDET_LOGFILE 2>&1
+  apt-get update >> $OSBDET_LOGFILE 2>&1
+  apt-get install -y mongodb-org >> $OSBDET_LOGFILE 2>&1
+  debug "mongodb44.addrepoandinstall DEBUG [`date +"%Y-%m-%d %T"`] MongoDB 4.4 CE repo and MongoDB added and installed" >> $OSBDET_LOGFILE
+}
+remove_addrepoandinstall(){
+  debug "mongodb44.remove_addrepoandinstall DEBUG [`date +"%Y-%m-%d %T"`] Removing MongoDB 4.4 CE repo and MongoDB" >> $OSBDET_LOGFILE
+  apt remove -y mongodb-org --purge >> $OSBDET_LOGFILE 2>&1
+  apt autoremove -y >> $OSBDET_LOGFILE 2>&1
+  apt-key del "`apt-key list | $SCRIPT_PATH/../../shared/givemekey.awk -v pattern=MongoDB`" >> $OSBDET_LOGFILE 2>&1
   rm /etc/apt/sources.list.d/mongodb-org-4.4.list
-  apt-get update
+  apt-get update >> $OSBDET_LOGFILE 2>&1
+  debug "mongodb44.remove_addrepoandinstall DEBUG [`date +"%Y-%m-%d %T"`] MongoDB 4.4 CE repo and MongoDB removed" >> $OSBDET_LOGFILE
 }
 
 # Primary functions
 #
-unit_install(){
-  echo Starting mongodb44_install...
+module_install(){
+  debug "mongodb44.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
+  # The installation of this module consists on:
+  #   1. Add MongoDB 4.4 CE repo and install MongoDB
+  printf "  Installing module 'mongodb44' ... "
+  addrepoandinstall
+  printf "[Done]\n"
+  debug "mongodb44.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 
-  #_mongodb44_addrepoandinstall
-  #echo "    MongoDB 4.4 CE repo addition and installation [Done]"
 }
 
-unit_status() {
+module_status() {
   if [ -f "/usr/bin/mongo" ]
   then
-    echo "Unit is installed [OK]"
+    echo "Module is installed [OK]"
     exit 0
   else
-    echo "Unit is not installed [KO]"
+    echo "Module is not installed [KO]"
     exit 1
   fi
 }
 
-unit_uninstall(){
-  echo Starting mongodb44_uninstall...
+module_uninstall(){
+  debug "mongodb44.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
+  # The uninstallation of this module consists on:
+  #   1. Removing MongoDB 4.4 CE repo and MongoDB
+  printf "  Uninstalling module 'mongodb44' ... "
+  remove_addrepoandinstall
+  printf "[Done]\n"
+  debug "mongodb44.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 
-  _mongodb44_remove_addrepoandinstall
-  echo "    MongoDB 4.4 CE repo and installation removal [Done]"
 }
 
 usage() {
-  echo Starting \'mongodb44\' unit
+  echo Starting \'mongodb44\' module
   echo Usage: script.sh [OPTION]
   echo 
-  echo Available options for this unit:
-  echo "  install             unit installation"
-  echo "  status              unit installation status check"
-  echo "  uninstall           unit uninstallation"
+  echo Available options for this module:
+  echo "  install             module installation"
+  echo "  status              module installation status check"
+  echo "  uninstall           module uninstallation"
 }
 
 main(){
+  # 1. Set logfile to /dev/null if it doesn't exist
+  if [ -z "$OSBDET_LOGFILE" ] ; then
+    export OSBDET_LOGFILE=/dev/null
+  fi
+  # 2. Main function
+  debug "mongodb44 DEBUG [`date +"%Y-%m-%d %T"`] Starting activity with the mongodb44 module" >> $OSBDET_LOGFILE
   if [ $# -eq 1 ]
   then
     if [ "$1" == "install" ]
     then
-      unit_install
+      module_install
     elif [ "$1" == "status" ]
     then
-      unit_status
+      module_status
     elif [ "$1" == "uninstall" ]
     then
-      unit_uninstall
+      module_uninstall
     else
       usage
       exit -1
@@ -79,6 +109,7 @@ main(){
     usage
     exit -1
   fi
+  debug "mongodb44 DEBUG [`date +"%Y-%m-%d %T"`] Activity with the mongodb44 module is done" >> $OSBDET_LOGFILE
 }
 
 if ! [ -z "$*" ]

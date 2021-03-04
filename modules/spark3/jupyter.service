@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 Restart=always
 User=osbdet
-Environment="SPARK_HOME=/opt/spark-3.0.0-bin-hadoop3.2"
+Environment="SPARK_HOME=/opt/spark3"
 WorkingDirectory=/home/osbdet/notebooks
 ExecStart=jupyter notebook
 [Install]
