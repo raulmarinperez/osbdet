@@ -1,0 +1,17 @@
+# Contents of /etc/systemd/system/zookeeper.service
+[Unit]
+Description=Zookeeper
+After=network.target
+PartOf=kafka.service
+
+[Service]
+Type=simple
+Restart=always
+User=osbdet
+Environment="KAFKA_HOME=/opt/kafka"
+ExecStart=/opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties
+StandardOutput=file:/dev/null
+StandardError=file:/dev/null
+
+[Install]
+WantedBy=multi-user.target
