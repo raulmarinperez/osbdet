@@ -20,12 +20,15 @@ debug() {
 
 dsenv_install(){
   debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the data science environment" >> $OSBDET_LOGFILE
-  pip3 install jupyter numpy pandas seaborn >> $OSBDET_LOGFILE 2>&1
+  apt-get install -y pandoc texlive-xetex texlive-fonts-recommended texlive-generic-recommended >> $OSBDET_LOGFILE 2>&1
+  pip3 install jupyter numpy pandas seaborn statsmodels >> $OSBDET_LOGFILE 2>&1
   debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the data science environment installed" >> $OSBDET_LOGFILE
 }
 remove_dsenv(){
   debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Removing data science environment software" >> $OSBDET_LOGFILE
-  pip3 uninstall -y jupyter numpy pandas seaborn >> $OSBDET_LOGFILE 2>&1
+  pip3 uninstall -y jupyter numpy pandas seaborn statsmodels >> $OSBDET_LOGFILE 2>&1
+  apt-get remove -y pandoc texlive-xetex texlive-fonts-recommended texlive-generic-recommended --purge >> $OSBDET_LOGFILE 2>&1
+  apt autoremove -y >>$OSBDET_LOGFILE 2>&1
   debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Data science environment software removed" >> $OSBDET_LOGFILE
 }
 
