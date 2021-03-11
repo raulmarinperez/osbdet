@@ -1,5 +1,5 @@
 # Open Source Big Data Educational Toolkit (OSBDET)
-OSBDET is a test environment creation tool which facilitates the creation of sandboxes containing a bunch of open source technologies all together. This test environments are targeting people who want to take their first steps with Big Data technologies easily.
+OSBDET is a test environment creation tool which facilitates the creation of sandboxes containing a bunch of open source technologies all together. These tests environments are targeting people who want to take their first steps with Big Data technologies easily.
 
 The following are some of the Big Data frameworks OSBDET is able to bring to a test environment:
 
