@@ -39,6 +39,7 @@ remove_install(){
 initialsetup(){
   debug "mariadb.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset" >> $OSBDET_LOGFILE
   systemctl disable mariadb >> $OSBDET_LOGFILE 2>&1
+  systemctl disable mysql >> $OSBDET_LOGFILE 2>&1
   service mariadb start >> $OSBDET_LOGFILE 2>&1
   mariadb < $SCRIPT_PATH/init.sql
   debug "mariadb.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset done" >> $OSBDET_LOGFILE
