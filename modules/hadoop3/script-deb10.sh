@@ -215,7 +215,7 @@ usage() {
   echo Starting \'hadoop3\' module
   echo Usage: script.sh [OPTION]
   echo 
-  echo Available options for this unit:
+  echo Available options for this module:
   echo "  install             module installation"
   echo "  status              module installation status check"
   echo "  uninstall           module uninstallation"

@@ -87,10 +87,10 @@ module_install(){
 module_status() {
   if [ -d "/opt/nifi" ]
   then
-    echo "Unit is installed [OK]"
+    echo "Module is installed [OK]"
     exit 0
   else
-    echo "Unit is not installed [KO]"
+    echo "Module is not installed [KO]"
     exit 1
   fi
 }

@@ -44,7 +44,7 @@ miscinstall(){
 }
 remove_miscinstall(){
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation" >> $OSBDET_LOGFILE
-  apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common tmux python3-pip sudo git --purge 2>&1
+  apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common tmux python3-pip sudo git --purge >>$OSBDET_LOGFILE 2>&1
   apt autoremove -y >>$OSBDET_LOGFILE 2>&1
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done" >> $OSBDET_LOGFILE
 }
@@ -113,10 +113,10 @@ module_install(){
 module_status() {
   if [ -d "/home/osbdet" ]
   then
-    echo "Unit is installed [OK]"
+    echo "Module is installed [OK]"
     exit 0
   else
-    echo "Unit is not installed [KO]"
+    echo "Module is not installed [KO]"
     exit 1
   fi
 }

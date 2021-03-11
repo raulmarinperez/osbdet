@@ -35,6 +35,18 @@ remove(){
   debug "kafka.remove DEBUG [`date +"%Y-%m-%d %T"`] Kafka binaries removed" >> $OSBDET_LOGFILE
 }
 
+libraries(){
+  debug "kafka.libraries DEBUG [`date +"%Y-%m-%d %T"`] Installing additional libraries" >> $OSBDET_LOGFILE
+  python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
+  python3 -m pip install confluent-kafka >> $OSBDET_LOGFILE 2>&1
+  debug "kafka.libraries DEBUG [`date +"%Y-%m-%d %T"`] Additional libraries installed" >> $OSBDET_LOGFILE
+}
+remove_libraries(){
+  debug "kafka.remove_libraries DEBUG [`date +"%Y-%m-%d %T"`] Removing additional libraries" >> $OSBDET_LOGFILE
+  python3 -m pip uninstall -y confluent-kafka >> $OSBDET_LOGFILE 2>&1
+  debug "kafka.libraries DEBUG [`date +"%Y-%m-%d %T"`] Additional libraries removed" >> $OSBDET_LOGFILE
+}
+
 userprofile(){
   debug "kafka.userprofile DEBUG [`date +"%Y-%m-%d %T"`] Setting up user profile to run Kafka" >> $OSBDET_LOGFILE
   echo >> /home/osbdet/.profile
@@ -84,10 +96,12 @@ module_install(){
   debug "kafka.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
   #   1. Get Kafka 2 and extract it
-  #   2. Setup osbdet user profile to find Kafka binaries
-  #   3. Install systemd init script
+  #   2. Install additional libraries
+  #   3. Setup osbdet user profile to find Kafka binaries
+  #   4. Install systemd init script
   printf "  Installing module 'kafka' ... "
   getandextract
+  libraries
   userprofile
   initscript
   printf "[Done]\n"
@@ -97,10 +111,10 @@ module_install(){
 module_status() {
   if [ -d "/opt/kafka" ]
   then
-    echo "Unit is installed [OK]"
+    echo "Module is installed [OK]"
     exit 0
   else
-    echo "Unit is not installed [KO]"
+    echo "Module is not installed [KO]"
     exit 1
   fi
 }
@@ -110,10 +124,12 @@ module_uninstall(){
   # The installation of this module consists on:
   #   1. Remove systemd init script
   #   2. Remove references to Kafka from user profile
-  #   3. Remove Kafka binaries from the system
+  #   3. Remove libraries
+  #   4. Remove Kafka binaries from the system
   printf "  Uninstalling module 'kafka' ... "
   remove_initscript
   remove_userprofile
+  remove_libraries
   remove
   printf "[Done]\n"
   debug "kafka.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE

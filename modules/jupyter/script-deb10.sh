@@ -21,12 +21,13 @@ debug() {
 dsenv_install(){
   debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the data science environment" >> $OSBDET_LOGFILE
   apt-get install -y pandoc texlive-xetex texlive-fonts-recommended texlive-generic-recommended >> $OSBDET_LOGFILE 2>&1
-  pip3 install jupyter numpy pandas seaborn statsmodels >> $OSBDET_LOGFILE 2>&1
+  python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
+  python3 -m pip install jupyter numpy pandas seaborn statsmodels >> $OSBDET_LOGFILE 2>&1
   debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the data science environment installed" >> $OSBDET_LOGFILE
 }
 remove_dsenv(){
   debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Removing data science environment software" >> $OSBDET_LOGFILE
-  pip3 uninstall -y jupyter numpy pandas seaborn statsmodels >> $OSBDET_LOGFILE 2>&1
+  python3 -m pip uninstall -y jupyter numpy pandas seaborn statsmodels >> $OSBDET_LOGFILE 2>&1
   apt-get remove -y pandoc texlive-xetex texlive-fonts-recommended texlive-generic-recommended --purge >> $OSBDET_LOGFILE 2>&1
   apt autoremove -y >>$OSBDET_LOGFILE 2>&1
   debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Data science environment software removed" >> $OSBDET_LOGFILE
@@ -85,10 +86,10 @@ module_install(){
 module_status() {
   if [ -d "/home/osbdet/.jupyter" ]
   then
-    echo "Unit is installed [OK]"
+    echo "Module is installed [OK]"
     exit 0
   else
-    echo "Unit is not installed [KO]"
+    echo "Module is not installed [KO]"
     exit 1
   fi
 }
@@ -108,10 +109,10 @@ module_uninstall(){
 }
 
 usage() {
-  echo Starting \'jupyter\' unit
+  echo Starting \'jupyter\' module
   echo Usage: script.sh [OPTION]
   echo 
-  echo Available options for this unit:
+  echo Available options for this module:
   echo "  install             module installation"
   echo "  status              module installation status check"
   echo "  uninstall           module uninstallation"
