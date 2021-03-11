@@ -23,7 +23,7 @@ Available options for mounter:
 ```
 The file `osbdet.log` tracks all the steps taken by the script; tail this file while building or removing modules to get all the information about the process.
 ### Listing available modules
-The `modules` option list all the available modules:
+The `modules` option lists all the available modules:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh modules
 These are the modules available in OSBDET vS21R1:
@@ -40,7 +40,7 @@ These are the modules available in OSBDET vS21R1:
   - spark3: Spark 3 installation, depends on: foundation
 ```
 ### Displaying the status of available modules
-The `status` option list all the available modules:
+The `status` option lists all the available modules:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh status
 The folowing list shows the status of all available modules:
