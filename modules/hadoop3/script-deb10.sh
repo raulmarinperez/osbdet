@@ -4,7 +4,7 @@
 
 # Variables
 SCRIPT_PATH=""
-HADOOP_BINARY_URL=https://apache.brunneis.com/hadoop/common/hadoop-3.2.2/hadoop-3.2.2.tar.gz
+HADOOP_BINARY_URL=https://ftp.cixug.es/apache/hadoop/common/hadoop-3.2.2/hadoop-3.2.2.tar.gz
 HADOOP_TGZ_FILE=hadoop-3.2.2.tar.gz
 HADOOP_DEFAULT_DIR=hadoop-3.2.2
 
@@ -24,6 +24,11 @@ debug() {
 getandextract(){
   debug "hadoop3.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting Hadoop 3" >> $OSBDET_LOGFILE
   wget $HADOOP_BINARY_URL -O /opt/$HADOOP_TGZ_FILE >> $OSBDET_LOGFILE 2>&1
+  if [[ $? -ne 0 ]]; then
+    echo "[Error]"
+    exit 1
+  fi
+      
   tar zxf /opt/$HADOOP_TGZ_FILE -C /opt >> $OSBDET_LOGFILE 2>&1
   rm /opt/$HADOOP_TGZ_FILE 
   mv /opt/$HADOOP_DEFAULT_DIR /opt/hadoop3
@@ -74,8 +79,8 @@ sshsetup(){
   debug "hadoop3.sshsetup DEBUG [`date +"%Y-%m-%d %T"`] Passwordless SSH access setup" >> $OSBDET_LOGFILE
   echo -e 'y\n' | ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key > /dev/null
   echo -e 'y\n' | ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key > /dev/null
-  su - osbdet -c 'echo -e "y\n" | ssh-keygen -q -N "" -t rsa -f /home/osbdet/.ssh/id_rsa'
-  su - osbdet -c 'cp /home/osbdet/.ssh/id_rsa.pub /home/osbdet/.ssh/authorized_keys'
+  su - osbdet -c 'echo -e "y\n" | ssh-keygen -q -N "" -t rsa -f /home/osbdet/.ssh/id_rsa' >> $OSBDET_LOGFILE
+  su - osbdet -c 'cp /home/osbdet/.ssh/id_rsa.pub /home/osbdet/.ssh/authorized_keys' >> $OSBDET_LOGFILE
   cp $SCRIPT_PATH/ssh_config /home/osbdet/.ssh/config
   chmod 600 /home/osbdet/.ssh/config
   chown osbdet:osbdet /home/osbdet/.ssh/config

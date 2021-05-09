@@ -23,6 +23,11 @@ debug() {
 getandextract(){
   debug "spark3.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting Spark 3" >> $OSBDET_LOGFILE
   wget $SPARK_BINARY_URL -O /opt/$SPARK_TGZ_FILE >> $OSBDET_LOGFILE 2>&1
+  if [[ $? -ne 0 ]]; then
+    echo "[Error]"
+    exit 1
+  fi
+  
   tar zxf /opt/$SPARK_TGZ_FILE -C /opt >> $OSBDET_LOGFILE 2>&1
   rm /opt/$SPARK_TGZ_FILE
   mv /opt/$SPARK_DEFAULT_DIR /opt/spark3
@@ -35,6 +40,22 @@ removal(){
   rm -rf /opt/spark3
   pip3 uninstall -y findspark >> $OSBDET_LOGFILE 2>&1
   debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 removed from the system" >> $OSBDET_LOGFILE
+}
+
+setenvvars(){
+  debug "spark3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Setting the environment variables for the installation process"\
+ >> $OSBDET_LOGFILE
+  export SPARK_HOME=/opt/spark3
+  debug "spark3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Environment variables already defined" >> $OSBDET_LOGFILE
+}
+
+configfilessetup(){
+  debug "spark3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Copying Spark 3 configuration files" >> $OSBDET_LOGFILE
+
+  cp $SCRIPT_PATH/log4j.properties $SPARK_HOME/conf
+  chown osbdet:osbdet $SPARK_HOME/conf/log4j.properties
+
+  debug "spark3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 configuration files copied" >> $OSBDET_LOGFILE
 }
 
 jupyterspark(){
@@ -94,10 +115,14 @@ module_install(){
   debug "spark3.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
   #   1. Get Spark 3 and extract it
-  #   2. Update jupyter systemd script if Jupyter is installed
-  #   3. Update userprofile to get access to Spark 3 binaries
+  #   2. Set up environment variables for the rest of the installation process                                           
+  #   3. Copy Spark 3 configuration files    
+  #   4. Update jupyter systemd script if Jupyter is installed
+  #   5. Update userprofile to get access to Spark 3 binaries
   printf "  Installing module 'spark3' ... "
   getandextract
+  setenvvars
+  configfilessetup
   jupyterspark
   userprofile
   printf "[Done]\n"

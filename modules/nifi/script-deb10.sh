@@ -23,6 +23,11 @@ debug() {
 getandextract(){
   debug "nifi.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting NiFi" >> $OSBDET_LOGFILE
   wget $NIFI_BINARY_URL -O /opt/$NIFI_TGZ_FILE >> $OSBDET_LOGFILE 2>&1
+  if [[ $? -ne 0 ]]; then
+    echo "[Error]"
+    exit 1
+  fi
+  
   tar zxf /opt/$NIFI_TGZ_FILE -C /opt >> $OSBDET_LOGFILE 2>&1
   rm /opt/$NIFI_TGZ_FILE
   mv /opt/$NIFI_DEFAULT_DIR /opt/nifi
