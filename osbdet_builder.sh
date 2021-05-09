@@ -394,7 +394,7 @@ cook_recipes() {
   read -a lrecipes <<< "$1"
 
   # 1. Update the repo with the recipes
-  cd $OSBDETRECIPES_HOME && git reset --hard HEAD && git pull
+  cd $OSBDETRECIPES_HOME && git reset --hard HEAD > /dev/null && git pull > /dev/null
   # 2. Iterate over recipes
   for recipe_name in "${lrecipes[@]}";
   do
