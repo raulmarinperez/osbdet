@@ -4,9 +4,9 @@
 
 # Variables
 SCRIPT_PATH=""
-NIFI_BINARY_URL=https://ftp.cixug.es/apache/nifi/1.13.0/nifi-1.13.0-bin.tar.gz
-NIFI_TGZ_FILE=nifi-1.13.0-bin.tar.gz
-NIFI_DEFAULT_DIR=nifi-1.13.0
+NIFI_BINARY_URL=https://ftp.cixug.es/apache/nifi/1.13.2/nifi-1.13.2-bin.tar.gz
+NIFI_TGZ_FILE=nifi-1.13.2-bin.tar.gz
+NIFI_DEFAULT_DIR=nifi-1.13.2
 
 # Aux functions
 # debug
