@@ -121,7 +121,6 @@ remove_hdfsinit(){
 
 scriptscopy(){
   debug "hadoop3.scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Copying scripts to operate the pseudo-cluster" >> $OSBDET_LOGFILE
-  mkdir -p /home/osbdet/bin
   cp $SCRIPT_PATH/hadoop-start.sh /home/osbdet/bin
   cp $SCRIPT_PATH/hadoop-stop.sh /home/osbdet/bin
   chown -R osbdet:osbdet /home/osbdet/bin

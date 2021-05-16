@@ -54,6 +54,11 @@ miscsetup() {
   usermod -aG sudo osbdet
   sed -i "s/^127.0.0.1\tlocalhost/127.0.0.1\tlocalhost\tosbdet/" /etc/hosts
   sed -i "s/^127.0.1.1\tosbdet/#127.0.1.1\tosbdet/" /etc/hosts
+  mkdir -p /home/osbdet/bin
+  cp $SCRIPT_PATH/osbdet-update.sh /home/osbdet/bin
+  cp $SCRIPT_PATH/osbdet-recipes.sh /home/osbdet/bin
+  cp $SCRIPT_PATH/osbdet-cook.sh /home/osbdet/bin
+  chown -R osbdet:osbdet /home/osbdet/bin
   debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup done" >> $OSBDET_LOGFILE
 }
 remove_miscsetup() {

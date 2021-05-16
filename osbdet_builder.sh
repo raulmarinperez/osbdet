@@ -417,7 +417,7 @@ cook_recipes() {
 usage() {
   echo "Usage: osbdet_builder.sh [OPTION] [comma separated list of modules/recipes]"
   echo 
-  echo "Available options for mounter:"
+  echo "Available options for osbdet_builder:"
   echo "  status              display the current status of OSBDET's modules"
   echo "  modules             list available modules"
   echo "  recipes             list available recipes"
