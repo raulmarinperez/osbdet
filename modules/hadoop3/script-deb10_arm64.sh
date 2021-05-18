@@ -56,14 +56,14 @@ setenvvars(){
   export YARN_RESOURCEMANAGER_USER=osbdet
   export YARN_NODEMANAGER_USER=osbdet
   export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
-  export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
+  export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-arm64
   export PATH=$PATH:$JAVA_HOME/bin
   debug "hadoop3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Environment variables already defined" >> $OSBDET_LOGFILE
 }
 
 configfilessetup(){
   debug "hadoop3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Copying Hadoop 3 configuration files" >> $OSBDET_LOGFILE
-  sed -i '/^# export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64/\nexport HADOOP_HOME=/opt/hadoop3\n:' \
+  sed -i '/^# export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-arm64/\nexport HADOOP_HOME=/opt/hadoop3\n:' \
          $HADOOP_HOME/etc/hadoop/hadoop-env.sh
   sed -i '/^# export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop:' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
   cp $SCRIPT_PATH/core-site.xml.template $HADOOP_HOME/etc/hadoop/core-site.xml.template
@@ -121,8 +121,8 @@ remove_hdfsinit(){
 
 scriptscopy(){
   debug "hadoop3.scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Copying scripts to operate the pseudo-cluster" >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/hadoop-start.sh /home/osbdet/bin
-  cp $SCRIPT_PATH/hadoop-stop.sh /home/osbdet/bin
+  cp $SCRIPT_PATH/hadoop-start_arm64.sh /home/osbdet/bin/hadoop-start.sh
+  cp $SCRIPT_PATH/hadoop-stop_arm64.sh /home/osbdet/bin/hadoop-stop.sh
   chown -R osbdet:osbdet /home/osbdet/bin
   debug "hadoop3.scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Scripts to operate the pseudo-cluster copied" >> $OSBDET_LOGFILE
 }
