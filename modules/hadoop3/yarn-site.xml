@@ -6,7 +6,7 @@
 
   <property>
     <name>yarn.application.classpath</name>
-    <value>/opt/hadoop/etc/hadoop, /opt/hadoop/share/hadoop/common/*, /opt/hadoop/share/hadoop/common/lib/*, /opt/hadoop/share/hadoop/hdfs/*, /opt/hadoop/share/hadoop/hdfs/lib/*, /opt/hadoop/share/hadoop/mapreduce/*, /opt/hadoop/share/hadoop/mapreduce/lib/*, /opt/hadoop/share/hadoop/yarn/*, /opt/hadoop/share/hadoop/yarn/lib/*</value>
+    <value>/opt/hadoop3/etc/hadoop, /opt/hadoop3/share/hadoop/common/*, /opt/hadoop3/share/hadoop/common/lib/*, /opt/hadoop3/share/hadoop/hdfs/*, /opt/hadoop3/share/hadoop/hdfs/lib/*, /opt/hadoop3/share/hadoop/mapreduce/*, /opt/hadoop3/share/hadoop/mapreduce/lib/*, /opt/hadoop3/share/hadoop/yarn/*, /opt/hadoop3/share/hadoop/yarn/lib/*</value>
   </property>
 
   <property>

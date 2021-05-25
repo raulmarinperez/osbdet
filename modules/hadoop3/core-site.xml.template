@@ -3,4 +3,8 @@
           <name>fs.defaultFS</name>
           <value>hdfs://HOSTNAME:9000</value>
       </property>
+      <property>
+        <name>hadoop.http.staticuser.user</name>
+        <value>osbdet</value>
+      </property>
   </configuration>

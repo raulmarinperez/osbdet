@@ -56,20 +56,20 @@ setenvvars(){
   export YARN_RESOURCEMANAGER_USER=osbdet
   export YARN_NODEMANAGER_USER=osbdet
   export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
-  export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-arm64
+  export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64/
   export PATH=$PATH:$JAVA_HOME/bin
   debug "hadoop3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Environment variables already defined" >> $OSBDET_LOGFILE
 }
 
 configfilessetup(){
   debug "hadoop3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Copying Hadoop 3 configuration files" >> $OSBDET_LOGFILE
-  sed -i '/^# export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-arm64/\nexport HADOOP_HOME=/opt/hadoop3\n:' \
+  sed -i '/^# export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64/\nexport HADOOP_HOME=/opt/hadoop3\n:' \
          $HADOOP_HOME/etc/hadoop/hadoop-env.sh
   sed -i '/^# export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop:' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
-  cp $SCRIPT_PATH/core-site.xml.template $HADOOP_HOME/etc/hadoop/core-site.xml.template
-  cp $SCRIPT_PATH/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
-  cp $SCRIPT_PATH/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
-  cp $SCRIPT_PATH/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
+  cp $SCRIPT_PATH/../../core-site.xml.template $HADOOP_HOME/etc/hadoop/core-site.xml.template
+  cp $SCRIPT_PATH/../../hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+  cp $SCRIPT_PATH/../../mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
+  cp $SCRIPT_PATH/../../yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
   chown osbdet:osbdet $HADOOP_HOME/etc/hadoop/core-site.xml.template $HADOOP_HOME/etc/hadoop/hdfs-site.xml \
                       $HADOOP_HOME/etc/hadoop/mapred-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
   debug "hadoop3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Hadoop 3 configuration files copied" >> $OSBDET_LOGFILE
@@ -81,7 +81,7 @@ sshsetup(){
   echo -e 'y\n' | ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key > /dev/null
   su - osbdet -c 'echo -e "y\n" | ssh-keygen -q -N "" -t rsa -f /home/osbdet/.ssh/id_rsa' >> $OSBDET_LOGFILE
   su - osbdet -c 'cp /home/osbdet/.ssh/id_rsa.pub /home/osbdet/.ssh/authorized_keys' >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/ssh_config /home/osbdet/.ssh/config
+  cp $SCRIPT_PATH/../../ssh_config /home/osbdet/.ssh/config
   chmod 600 /home/osbdet/.ssh/config
   chown osbdet:osbdet /home/osbdet/.ssh/config
   debug "hadoop3.sshsetup DEBUG [`date +"%Y-%m-%d %T"`] Passwordless SSH access setup done" >> $OSBDET_LOGFILE

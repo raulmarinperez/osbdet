@@ -52,7 +52,7 @@ setenvvars(){
 configfilessetup(){
   debug "spark3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Copying Spark 3 configuration files" >> $OSBDET_LOGFILE
 
-  cp $SCRIPT_PATH/log4j.properties $SPARK_HOME/conf
+  cp $SCRIPT_PATH/../../log4j.properties $SPARK_HOME/conf
   chown osbdet:osbdet $SPARK_HOME/conf/log4j.properties
 
   debug "spark3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 configuration files copied" >> $OSBDET_LOGFILE
@@ -63,7 +63,7 @@ jupyterspark(){
   if [ -f "/lib/systemd/system/jupyter.service" ]
   then
      service jupyter stop >> $OSBDET_LOGFILE 2>&1
-     cp $SCRIPT_PATH/jupyter.service /lib/systemd/system/jupyter.service
+     cp $SCRIPT_PATH/../../jupyter.service /lib/systemd/system/jupyter.service
      chmod 644 /lib/systemd/system/jupyter.service
      rm -f /etc/systemd/system/jupyter.service
      ln -s /lib/systemd/system/jupyter.service /etc/systemd/system/jupyter.service
@@ -81,7 +81,7 @@ remove_jupyterspark(){
   if [ -f "/lib/systemd/system/jupyter.service" ]
   then
      service jupyter stop >> $OSBDET_LOGFILE 2>&1
-     cp $SCRIPT_PATH/jupyter_nospark3.service /lib/systemd/system/jupyter.service
+     cp $SCRIPT_PATH/../../jupyter_nospark3.service /lib/systemd/system/jupyter.service
      chmod 644 /lib/systemd/system/jupyter.service
      rm -f /etc/systemd/system/jupyter.service
      ln -s /lib/systemd/system/jupyter.service /etc/systemd/system/jupyter.service

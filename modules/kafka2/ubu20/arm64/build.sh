@@ -37,13 +37,18 @@ remove(){
 
 libraries(){
   debug "kafka.libraries DEBUG [`date +"%Y-%m-%d %T"`] Installing additional libraries" >> $OSBDET_LOGFILE
-  python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
-  python3 -m pip install confluent-kafka >> $OSBDET_LOGFILE 2>&1
+  # pip installation not supported due to old librdkafka library version.
+  #python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
+  #python3 -m pip install confluent-kafka >> $OSBDET_LOGFILE 2>&1
+  apt update >> $OSBDET_LOGFILE 2>&1
+  apt install -y python3-confluent-kafka >> $OSBDET_LOGFILE 2>&1
   debug "kafka.libraries DEBUG [`date +"%Y-%m-%d %T"`] Additional libraries installed" >> $OSBDET_LOGFILE
 }
 remove_libraries(){
   debug "kafka.remove_libraries DEBUG [`date +"%Y-%m-%d %T"`] Removing additional libraries" >> $OSBDET_LOGFILE
-  python3 -m pip uninstall -y confluent-kafka >> $OSBDET_LOGFILE 2>&1
+  # pip installation not supported due to old librdkafka library version.
+  #python3 -m pip uninstall -y confluent-kafka >> $OSBDET_LOGFILE 2>&1
+  apt remove -y python3-confluent-kafka --purge >>$OSBDET_LOGFILE 2>&1
   debug "kafka.libraries DEBUG [`date +"%Y-%m-%d %T"`] Additional libraries removed" >> $OSBDET_LOGFILE
 }
 
@@ -74,8 +79,8 @@ remove_userprofile(){
 
 initscript() {
   debug "kafka.initscript DEBUG [`date +"%Y-%m-%d %T"`] Installing Kafka systemd script" >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/zookeeper.service /lib/systemd/system/zookeeper.service
-  cp $SCRIPT_PATH/kafka.service /lib/systemd/system/kafka.service
+  cp $SCRIPT_PATH/../../zookeeper.service /lib/systemd/system/zookeeper.service
+  cp $SCRIPT_PATH/../../kafka.service /lib/systemd/system/kafka.service
   chmod 644 /lib/systemd/system/zookeeper.service
   chmod 644 /lib/systemd/system/kafka.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1

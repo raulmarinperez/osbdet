@@ -1,5 +1,5 @@
-  <configuration>
-      <property>
+<configuration>
+<property>
           <name>fs.defaultFS</name>
           <!-- need to be bound to all interfaces due to how the data is loaded into Hive -->
           <value>hdfs://0.0.0.0:9000</value>
@@ -12,4 +12,8 @@
           <name>hadoop.proxyuser.osbdet.groups</name>
           <value>*</value>
       </property>
-  </configuration>
+      <property>
+          <name>hadoop.http.staticuser.user</name>
+          <value>osbdet</value>
+      </property>
+</configuration>

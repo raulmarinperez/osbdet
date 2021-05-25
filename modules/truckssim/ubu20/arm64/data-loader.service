@@ -1,0 +1,16 @@
+# Contents of /etc/systemd/system/data-loader.service
+[Unit]
+Description=Data Loader
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+User=osbdet
+Environment="DATA_LOADER_HOME=/opt/Data-Loader"
+ExecStart=/usr/lib/jvm/java-8-openjdk-arm64/bin/java -cp ${DATA_LOADER_HOME}/stream-simulator-jar-with-dependencies.jar hortonworks.hdp.refapp.trucking.simulator.SimulationRunnerApp 20000 hortonworks.hdp.refapp.trucking.simulator.impl.domain.transport.Truck hortonworks.hdp.refapp.trucking.simulator.impl.collectors.FileEventCollector 1 ${DATA_LOADER_HOME}/routes/midwest/ 10000 ${DATA_LOADER_HOME}/truck-sensor-data/all-streams.txt ALL_STREAMS
+StandardOutput=file:/dev/null
+StandardError=file:/dev/null
+
+[Install]
+WantedBy=multi-user.target
