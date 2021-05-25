@@ -2,18 +2,13 @@
 
 # Global variables definition
 #
-export OSBDET_VER=s21r2
-export OSBDET_TARGETOS=ubu20
-export OSBDET_ARCHITECTURE=arm64
-export OSBDET_USERPASS=osbdet123$
-export OSBDET_HOME=/root/osbdet
-export OSBDETRECIPES_HOME=/root/osbdet-recipes
+export OSBDET_VER=s21r3
+export LOGLEVEL=DEBUG
+export OSBDET_HOME=$(dirname $(realpath $0))
 export OSBDET_MODULESLIST=$OSBDET_HOME/shared/modules_list.conf
 export OSBDET_MODULESDIR=$OSBDET_HOME/modules
 export OSBDET_RECIPESLIST=$OSBDET_HOME/shared/recipes_list.conf
 export OSBDET_LOGFILE=$OSBDET_HOME/osbdet.log
-
-export LOGLEVEL=DEBUG
 
 declare -A MODULESMAP
 declare -A RECIPESMAP
@@ -247,7 +242,7 @@ get_recipe_dependencies() {
 show_status() {
   echo "The folowing list shows the status of all available modules:"
   for module_name in "${!MODULESMAP[@]}"; do 
-    module_status=`$OSBDET_MODULESDIR/$1/script-$OSBDET_TARGETOS.sh status`
+    module_status=`$OSBDET_MODULESDIR/$module_name/$OSBDET_TARGETOS/$OSBDET_ARCHITECTURE/build.sh status`
     echo "  - $module_name: $module_status"
   done
 }
@@ -264,6 +259,7 @@ list_modules() {
     echo "  - $module_name: $module_description, depends on: $module_dependencies"
   done
 }
+
 # list_recipes
 #   desc: 
 #   params:
@@ -277,6 +273,42 @@ list_recipes() {
     recipe_dependencies=$(get_recipe_dependencies $recipe_name_ext)
     echo "  - $recipe_name[$recipe_version]: $recipe_description, depends on: $recipe_dependencies"
   done
+}
+
+# current_conf
+#   desc: 
+#   params:
+#   return (status code/stdout):
+current_conf() {
+  echo "This is the current configuration of OSBDET $OSBDET_VER:"
+  echo "  OSBDET_HOME: $OSBDET_HOME"
+  echo "  LOGLEVEL: $LOGLEVEL"
+  echo "  OSBDET_TARGETOS: $OSBDET_TARGETOS"
+  echo "  OSBDET_ARCHITECTURE: $OSBDET_ARCHITECTURE"
+  echo "  OSBDETRECIPES_HOME: $OSBDETRECIPES_HOME"
+}
+
+# setup
+#   desc: 
+#   params:
+#   return (status code/stdout):
+setup() {
+  echo "Let's setup your OSBDET $OSBDET_VER builder:"
+  printf "  Log level (DEBUG): "
+  read LOGLEVEL
+  printf "  Target Operating System (deb10|ubu20): "
+  read OSBDET_TARGETOS
+  printf "  Target Architecture (amd64|arm64): "
+  read OSBDET_ARCHITECTURE
+  printf "  OSBDET recipes home (/root/osbdet-recipes): "
+  read OSBDETRECIPES_HOME
+
+  printf "Persisting changes in $OSBDET_HOME/shared/osbdet_builder.conf... "
+  echo "LOGLEVEL=$LOGLEVEL" > $OSBDET_HOME/shared/osbdet_builder.conf
+  echo "OSBDET_TARGETOS=$OSBDET_TARGETOS" >> $OSBDET_HOME/shared/osbdet_builder.conf.tmp
+  echo "OSBDET_ARCHITECTURE=$OSBDET_ARCHITECTURE" >> $OSBDET_HOME/shared/osbdet_builder.conf.tmp
+  echo "OSBDETRECIPES_HOME=$OSBDETRECIPES_HOME" >> $OSBDET_HOME/shared/osbdet_builder.conf.tmp
+  printf "[Done]\n"
 }
 
 # install_module
@@ -419,9 +451,14 @@ usage() {
   echo "Usage: osbdet_builder.sh [OPTION] [comma separated list of modules/recipes]"
   echo 
   echo "Available options for osbdet_builder:"
+  echo "  ## environment related options ##"
   echo "  status              display the current status of OSBDET's modules"
   echo "  modules             list available modules"
   echo "  recipes             list available recipes"
+  echo "  currentconf         display the current configuration of osbdet_builder"
+  echo "  setup               change the current configuration of osbdet_builder"
+  echo
+  echo "  ## operational options ##"
   echo "  build               build environment by installing available modules"
   echo "  remove              remove installed modules from current environment"
   echo "  cook                'cook' all the recipes passed as an argument"
@@ -446,6 +483,12 @@ eval_args(){
     elif [ "$1" == "recipes" ]
     then
       list_recipes
+    elif [ "$1" == "currentconf" ]
+    then
+      current_conf
+    elif [ "$1" == "setup" ]
+    then
+      setup
     else
       echo "Error: bad option or bad number of arguments"
       usage
@@ -481,6 +524,7 @@ eval_args(){
 #
 if ! [ -z "$*" ]
 then
+  source $OSBDET_HOME/shared/osbdet_builder.conf
   load_modules $OSBDET_MODULESLIST
   load_recipes $OSBDET_RECIPESLIST
   eval_args $*
