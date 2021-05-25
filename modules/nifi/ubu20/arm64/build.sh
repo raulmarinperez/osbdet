@@ -40,12 +40,14 @@ remove(){
   debug "nifi.remove DEBUG [`date +"%Y-%m-%d %T"`] NiFi binaries removed" >> $OSBDET_LOGFILE
 }
 
-setjavahome(){
-  debug "nifi.setjavahome DEBUG [`date +"%Y-%m-%d %T"`] Setting up JAVA_HOME for NiFi" >> $OSBDET_LOGFILE
+nifisetup(){
+  debug "nifi.nifisetup DEBUG [`date +"%Y-%m-%d %T"`] Setting up NiFi" >> $OSBDET_LOGFILE
   # From https://www.cyberciti.biz/faq/how-to-use-sed-to-find-and-replace-text-in-files-in-linux-unix-shell/
   sed -i 's+^#export JAVA_HOME.*+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64/+' \
          /opt/nifi/bin/nifi-env.sh
-  debug "nifi.setjavahome DEBUG [`date +"%Y-%m-%d %T"`] JAVA_HOME for NiFi setup" >> $OSBDET_LOGFILE
+  sed -i 's+^nifi\.web\.http\.host.*+nifi.web.http.host=0\.0\.0\.0+' \
+         /opt/nifi/conf/nifi.properties
+  debug "nifi.nifisetup DEBUG [`date +"%Y-%m-%d %T"`] NiFi properly setup" >> $OSBDET_LOGFILE
 }
 
 userprofile(){
@@ -85,12 +87,12 @@ module_install(){
   debug "nifi.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
   #   1. Get NiFi 3 and extract it
-  #   2. Set up JAVA_HOME for NiFi
+  #   2. Set up NiFi
   #   3. Set up userprofile to get binaries accessible
   #   4. Remove Hive related processors to avoid the error with the Snappy library.
   printf "  Installing module 'nifi' ... "
   getandextract
-  setjavahome
+  nifisetup
   userprofile
   removehiveprocs
   printf "[Done]\n"
