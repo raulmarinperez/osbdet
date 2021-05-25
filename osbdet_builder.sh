@@ -3,7 +3,8 @@
 # Global variables definition
 #
 export OSBDET_VER=s21r2
-export OSBDET_TARGETOS=deb10
+export OSBDET_TARGETOS=ubu20
+export OSBDET_ARCHITECTURE=arm64
 export OSBDET_USERPASS=osbdet123$
 export OSBDET_HOME=/root/osbdet
 export OSBDETRECIPES_HOME=/root/osbdet-recipes
@@ -246,7 +247,7 @@ get_recipe_dependencies() {
 show_status() {
   echo "The folowing list shows the status of all available modules:"
   for module_name in "${!MODULESMAP[@]}"; do 
-    module_status=`$OSBDET_MODULESDIR/$module_name/script-$OSBDET_TARGETOS.sh status`
+    module_status=`$OSBDET_MODULESDIR/$1/script-$OSBDET_TARGETOS.sh status`
     echo "  - $module_name: $module_status"
   done
 }
@@ -287,7 +288,7 @@ list_recipes() {
 #     1/ko message - module was not installed
 install_module() {
   # 1. Check if it's installed
-  $OSBDET_MODULESDIR/$1/script-$OSBDET_TARGETOS.sh status > /dev/null
+  $OSBDET_MODULESDIR/$1/$OSBDET_TARGETOS/$OSBDET_ARCHITECTURE/build.sh status > /dev/null
   module_status=$?
   if [[ $module_status -eq 0 ]]; then
     debug "[install_module] Skipping '$1', module is already installed"
@@ -304,7 +305,7 @@ install_module() {
       fi
     done
     # 3. Module installation
-    $OSBDET_MODULESDIR/$1/script-$OSBDET_TARGETOS.sh install
+    $OSBDET_MODULESDIR/$1/$OSBDET_TARGETOS/$OSBDET_ARCHITECTURE/build.sh install
     if [ $? -ne 0 ]
     then
       debug "Fatal error: module '$1' cannot be installed. See log messages for more information."
@@ -347,12 +348,12 @@ build_environment() {
 #     1/ko message - module was not uninstalled
 uninstall_module() {
   # 1. Check if the module is already installed
-  $OSBDET_MODULESDIR/$1/script-$OSBDET_TARGETOS.sh status > /dev/null
+  $OSBDET_MODULESDIR/$1/$OSBDET_TARGETOS/$OSBDET_ARCHITECTURE/build.sh status > /dev/null
   module_status=$?
   if [[ $module_status -eq 0 ]]; then
     # 2. Check if there is a dependency before removing (TBD)
     # 3. Remove the module
-    $OSBDET_MODULESDIR/$1/script-$OSBDET_TARGETOS.sh uninstall
+    $OSBDET_MODULESDIR/$1/$OSBDET_TARGETOS/$OSBDET_ARCHITECTURE/build.sh uninstall
   else
     echo "  Skipping '$module_name', module is NOT actually installed"
   fi

@@ -51,7 +51,7 @@ remove_initialsetup(){
 
 serviceinstall(){
   debug "superset.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation" >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/superset.service /lib/systemd/system/superset.service
+  cp $SCRIPT_PATH/../../superset.service /lib/systemd/system/superset.service
   chmod 644 /lib/systemd/system/superset.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
   debug "superset.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation done" >> $OSBDET_LOGFILE
