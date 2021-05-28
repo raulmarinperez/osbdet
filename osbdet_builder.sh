@@ -305,9 +305,9 @@ setup() {
 
   printf "Persisting changes in $OSBDET_HOME/shared/osbdet_builder.conf... "
   echo "LOGLEVEL=$LOGLEVEL" > $OSBDET_HOME/shared/osbdet_builder.conf
-  echo "OSBDET_TARGETOS=$OSBDET_TARGETOS" >> $OSBDET_HOME/shared/osbdet_builder.conf.tmp
-  echo "OSBDET_ARCHITECTURE=$OSBDET_ARCHITECTURE" >> $OSBDET_HOME/shared/osbdet_builder.conf.tmp
-  echo "OSBDETRECIPES_HOME=$OSBDETRECIPES_HOME" >> $OSBDET_HOME/shared/osbdet_builder.conf.tmp
+  echo "OSBDET_TARGETOS=$OSBDET_TARGETOS" >> $OSBDET_HOME/shared/osbdet_builder.conf
+  echo "OSBDET_ARCHITECTURE=$OSBDET_ARCHITECTURE" >> $OSBDET_HOME/shared/osbdet_builder.conf
+  echo "OSBDETRECIPES_HOME=$OSBDETRECIPES_HOME" >> $OSBDET_HOME/shared/osbdet_builder.conf
   printf "[Done]\n"
 }
 
