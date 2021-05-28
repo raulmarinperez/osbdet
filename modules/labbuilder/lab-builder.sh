@@ -46,6 +46,25 @@ load_labs() {
   done < "$1"
 }
 
+# get_lab_category
+#   desc:
+#   params:
+#     $1 - lab extended name
+#   return (status code/stdout):
+#     0/lab_category - input is properly formatted
+#     1/no_category  - input is not properly formatted and no category can be extracted
+get_lab_category() {
+  IFS=/
+  read -r field1 field2  <<< "$1"
+  if [[ $field1 != "" ]]; then
+    echo $field1
+    return 0
+  else
+    echo "no_category"
+    return 1
+  fi
+}
+
 # get_lab_name
 #   desc:
 #   params:
@@ -184,7 +203,7 @@ list_labs() {
 #   desc:
 #   params:
 #     $1 - category the labs belong to
-#     $2 - comma separated list of labs
+#     $2 - lab name to deploy
 #   return (status code/stdout):
 #     0/ok message - labs deployed correctly
 #     1/ko message - not all labs were deployed
@@ -200,10 +219,13 @@ deploy_lab_and_deps() {
     dependencies=$(get_lab_dependencies $1/$2)
     read -a llabs <<< "$dependencies"
     # 2. Go over dependencies and install them before installing this module
-    for lab_name in "${llabs[@]}";
+    for lab_name_ext in "${llabs[@]}";
     do
-      if [[ $lab_name != "no_dependencies" ]]; then
-        deploy_lab_and_deps $1 $lab_name
+      if [[ $lab_name_ext != "no_dependencies" ]]
+      then
+        lab_category=$(get_lab_category $lab_name_ext)
+        lab_name=$(get_lab_name $lab_name_ext)
+        deploy_lab_and_deps $lab_category $lab_name
       fi
     done
     # 3. Lab installation

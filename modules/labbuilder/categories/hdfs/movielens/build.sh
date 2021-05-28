@@ -28,6 +28,7 @@ download_dataset_locally() {
   debug "hdfs/movielens.download_dataset_locally DEBUG [`date +"%Y-%m-%d %T"`] Downloading Movielens small dataset"
   wget http://files.grouplens.org/datasets/movielens/ml-latest-small.zip -O /tmp/ml-latest-small.zip
   unzip -d /tmp -o /tmp/ml-latest-small.zip
+  rm /tmp/ml-latest-small.zip
   debug "hdfs/movielens.download_dataset_locally DEBUG [`date +"%Y-%m-%d %T"`] Movielens small dataset downloaded"
 }
 
