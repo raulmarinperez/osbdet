@@ -52,7 +52,7 @@ remove_initialsetup(){
 
 serviceinstall(){
   debug "jupyter.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation" >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/jupyter.service /lib/systemd/system/jupyter.service
+  cp $SCRIPT_PATH/../../jupyter.service /lib/systemd/system/jupyter.service
   chmod 644 /lib/systemd/system/jupyter.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
   systemctl enable jupyter.service >> $OSBDET_LOGFILE 2>&1
