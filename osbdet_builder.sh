@@ -561,16 +561,14 @@ cook_recipes() {
   IFS=','
   read -a lrecipes <<< "$1"
 
-  # 1. Update the repo with the recipes
-  cd $OSBDETRECIPES_HOME && git reset --hard HEAD > /dev/null && git pull > /dev/null
-  # 2. Iterate over recipes
+  # 1. Iterate over recipes
   for recipe_name in "${lrecipes[@]}";
   do
-    # 3. Check if it's a valid recipe
+    # 2. Check if it's a valid recipe
     recipe_name_ext="$recipe_name-$OSBDET_VER"  
     if [ ${RECIPESMAP[$recipe_name_ext]+_} ]
     then
-      cd recipes/$OSBDET_VER/$recipe_name
+      cd $OSBDETRECIPES_HOME/recipes/$OSBDET_VER/$recipe_name
       /bin/bash ./run.sh
     else
       echo "  Skipping '$recipe_name', recipe is NOT a valid recipe"
