@@ -2,8 +2,7 @@
 
 # Global variables definition
 #
-export OSBDET_VER=s21r3
-export LOGLEVEL=DEBUG
+OSBDET_VER=s21r3
 export OSBDET_HOME=$(dirname $(realpath $0))
 export OSBDET_MODULESLIST=$OSBDET_HOME/shared/modules_list.conf
 export OSBDET_MODULESDIR=$OSBDET_HOME/modules
@@ -27,6 +26,17 @@ debug() {
   fi
 }
 
+# load_configuration
+#   desc: Load the configuration file if exists
+#   params:
+#   return (status code/stdout):
+load_configuration() {
+  if [ -f $OSBDET_HOME/shared/osbdet_builder.conf ]
+  then
+    source $OSBDET_HOME/shared/osbdet_builder.conf
+  fi
+}
+
 # load_modules
 #   desc: load modules from a file into an associative array
 #   params:
@@ -46,6 +56,22 @@ load_modules() {
 #     $1 - file containing available recipes
 #   return (status code/stdout):
 load_recipes() {
+  # 1. Create the recipes folder if it didn't exist (first run)
+  if [ ! -d "$OSBDETRECIPES_HOME" ] && [ "$OSBDETRECIPES_HOME" != "" ]
+  then
+    debug "osbdet_builder.load_recipes DEBUG [`date +"%Y-%m-%d %T"`] $OSBDETRECIPES_HOME doesn't exit and it'll be created" >> $OSBDET_LOGFILE
+    mkdir -p $OSBDETRECIPES_HOME 
+    cd $OSBDETRECIPES_HOME/..
+    git clone https://github.com/raulmarinperez/osbdet-recipes.git >> $OSBDET_LOGFILE 2>&1
+  fi
+  # 2. Update the repo with the recipes
+  if [ "$OSBDETRECIPES_HOME" != "" ] && [ -d $OSBDETRECIPES_HOME ] && [ "$OSBDETRECIPES_REPO" != "" ]
+  then
+    cd $OSBDETRECIPES_HOME
+    git reset --hard HEAD >> $OSBDET_LOGFILE 2>&1 
+    git pull >> $OSBDET_LOGFILE 2>&1
+  fi
+  # 3. Load the list of recipes into memory
   while IFS=\| read -r field1 field2 field3 field4; do
     if [[ ! $field1 =~ ^# && ! $field1 =~ ^" "+ && $field1 != "" ]]; then
       RECIPESMAP["$field1-$field2"]="$field1|$field2|$field3|$field4"
@@ -271,7 +297,10 @@ list_recipes() {
     recipe_version=$(get_recipe_version $recipe_name_ext)
     recipe_description=$(get_recipe_description $recipe_name_ext)
     recipe_dependencies=$(get_recipe_dependencies $recipe_name_ext)
-    echo "  - $recipe_name[$recipe_version]: $recipe_description, depends on: $recipe_dependencies"
+    if [ "$OSBDET_VER" == "$recipe_version" ]
+    then
+      echo "  - $recipe_name[$recipe_version]: $recipe_description, depends on: $recipe_dependencies"
+    fi
   done
 }
 
@@ -286,29 +315,135 @@ current_conf() {
   echo "  OSBDET_TARGETOS: $OSBDET_TARGETOS"
   echo "  OSBDET_ARCHITECTURE: $OSBDET_ARCHITECTURE"
   echo "  OSBDETRECIPES_HOME: $OSBDETRECIPES_HOME"
+  echo "  OSBDETRECIPES_REPO: $OSBDETRECIPES_REPO"
+}
+
+# check_conf
+#   desc: check a configuration variable
+#   params:
+#     $1 - Configuration variable
+#     $2 - Value to check against
+#   return (conf value/VALUE global var):
+#     Value - Confirmed or default value if it's all good
+#     1     - The checking was not successful
+check_conf() {
+  # 1. Checking values of the LOGLEVEL configuration variable
+  if [ "$1" == "LOGLEVEL" ]
+  then
+    if [ "$2" == "" ] || [ "$2" == "DEBUG" ]
+    then
+      VALUE="DEBUG"
+    else
+      VALUE=1
+    fi
+  # 2. Checking values of the OSBDET_TARGETOS configuration variable
+  elif [ "$1" == "OSBDET_TARGETOS" ]
+  then
+    if [ "$2" == "" ] || [ "$2" == "deb10" ]
+    then
+      VALUE="deb10"
+    elif  [ "$2" == "ubu20" ]
+    then
+      VALUE=$2
+    else
+      VALUE=1
+    fi
+  # 3. Checking values of the OSBDET_ARCHITECTURE configuration variable
+  elif [ "$1" == "OSBDET_ARCHITECTURE" ]
+  then
+    if [ "$2" == "" ] || [ "$2" == "amd64" ]
+    then
+      VALUE="amd64"
+    elif  [ "$2" == "arm64" ]
+    then
+      VALUE=$2
+    else
+      VALUE=1
+    fi
+  # 4. Checking values of the OSBDETRECIPES_HOME configuration variable
+  elif [ "$1" == "OSBDETRECIPES_HOME" ]
+  then
+    if [ "$2" == "" ]
+    then
+      VALUE="/root/osbdet-recipes"
+    else
+      VALUE=$2
+    fi
+  # 5. Checking values of the OSBDETRECIPES_REPO configuration variable
+  elif [ "$1" == "OSBDETRECIPES_REPO" ]
+  then
+    if [ "$2" == "" ]
+    then
+      VALUE="https://github.com/raulmarinperez/osbdet-recipes.git"
+    else
+      VALUE=$2
+    fi
+  else
+    VALUE=1
+  fi
+}
+
+# persist_setup
+#   desc: 
+#   params:
+#   return:
+persist_setup() {
+  printf "Persisting changes in $OSBDET_HOME/shared/osbdet_builder.conf... "
+  echo "LOGLEVEL=$LOGLEVEL" > $OSBDET_HOME/shared/osbdet_builder.conf
+  echo "OSBDET_VER=$OSBDET_VER" >> $OSBDET_HOME/shared/osbdet_builder.conf
+  echo "OSBDET_TARGETOS=$OSBDET_TARGETOS" >> $OSBDET_HOME/shared/osbdet_builder.conf
+  echo "OSBDET_ARCHITECTURE=$OSBDET_ARCHITECTURE" >> $OSBDET_HOME/shared/osbdet_builder.conf
+  echo >> $OSBDET_HOME/shared/osbdet_builder.conf
+  echo "OSBDETRECIPES_HOME=$OSBDETRECIPES_HOME" >> $OSBDET_HOME/shared/osbdet_builder.conf
+  echo "OSBDETRECIPES_REPO=$OSBDETRECIPES_REPO" >> $OSBDET_HOME/shared/osbdet_builder.conf
+  printf "[Done]\n"
+}
+
+# read_valid_conf
+#   desc: read a valid configuration parameter from the keyboard
+#   params:
+#     $1 - Configuration variable
+#     $2 - Message with the valid options
+#   return (conf value/VALUE global var):
+#     Value - Confirmed or default value if it's all good
+read_valid_conf() {
+  VALUE=1
+  while [ "$VALUE" == "1" ]
+  do
+    # 1. Ask the user for a value
+    read VALUE
+    # 2. Check the value introduced
+    check_conf $1 $VALUE
+    if [ "$VALUE" == "1" ]
+    then
+      echo "WRONG VALUE! Please, provide a valid value: '$2'"
+    fi
+  done
 }
 
 # setup
-#   desc: 
+#   desc: ask some questions to the user to set the environment up
 #   params:
 #   return (status code/stdout):
 setup() {
   echo "Let's setup your OSBDET $OSBDET_VER builder:"
-  printf "  Log level (DEBUG): "
-  read LOGLEVEL
-  printf "  Target Operating System (deb10|ubu20): "
-  read OSBDET_TARGETOS
-  printf "  Target Architecture (amd64|arm64): "
-  read OSBDET_ARCHITECTURE
-  printf "  OSBDET recipes home (/root/osbdet-recipes): "
-  read OSBDETRECIPES_HOME
+  printf "  Log level (DEBUG*): "
+  read_valid_conf LOGLEVEL "DEBUG*"
+  LOGLEVEL=$VALUE
+  printf "  Target Operating System (deb10*|ubu20): "
+  read_valid_conf OSBDET_TARGETOS "deb10*|ubu20"
+  OSBDET_TARGETOS=$VALUE
+  printf "  Target Architecture (amd64*|arm64): "
+  read_valid_conf OSBDET_ARCHITECTURE "amd64*|arm64"
+  OSBDET_ARCHITECTURE=$VALUE
+  printf "  OSBDET recipes home (/root/osbdet-recipes*): "
+  read_valid_conf OSBDETRECIPES_HOME "/root/osbdet-recipes*"
+  OSBDETRECIPES_HOME=$VALUE
+  printf "  OSBDET repository (https://github.com/raulmarinperez/osbdet-recipes.git*): "
+  read_valid_conf OSBDETRECIPES_REPO "https://github.com/raulmarinperez/osbdet-recipes.git*"
+  OSBDETRECIPES_REPO=$VALUE
 
-  printf "Persisting changes in $OSBDET_HOME/shared/osbdet_builder.conf... "
-  echo "LOGLEVEL=$LOGLEVEL" > $OSBDET_HOME/shared/osbdet_builder.conf
-  echo "OSBDET_TARGETOS=$OSBDET_TARGETOS" >> $OSBDET_HOME/shared/osbdet_builder.conf
-  echo "OSBDET_ARCHITECTURE=$OSBDET_ARCHITECTURE" >> $OSBDET_HOME/shared/osbdet_builder.conf
-  echo "OSBDETRECIPES_HOME=$OSBDETRECIPES_HOME" >> $OSBDET_HOME/shared/osbdet_builder.conf
-  printf "[Done]\n"
+  persist_setup
 }
 
 # install_module
@@ -433,7 +568,8 @@ cook_recipes() {
   do
     # 3. Check if it's a valid recipe
     recipe_name_ext="$recipe_name-$OSBDET_VER"  
-    if [ ${RECIPESMAP[$recipe_name_ext]+_} ]; then	
+    if [ ${RECIPESMAP[$recipe_name_ext]+_} ]
+    then
       cd recipes/$OSBDET_VER/$recipe_name
       /bin/bash ./run.sh
     else
@@ -441,6 +577,20 @@ cook_recipes() {
       exit
     fi
   done
+}
+
+# is_setup
+#   desc: checking if OSBDET is properly configured
+#   params:
+#   return (status code/stdout):
+is_setup() {
+  if [ "$OSBDET_TARGETOS" == "" ] || [ "$OSBDET_ARCHITECTURE" == "" ]
+  then
+    echo "WATCH OUT: before you can work with your environment, you have to set it up:"
+    echo
+    echo "   osbdet_builder.sh setup" 
+    exit 1
+  fi
 }
 
 # usage
@@ -476,15 +626,19 @@ eval_args(){
   then
     if [ "$1" == "status" ]
     then
+      is_setup
       show_status
     elif [ "$1" == "modules" ]
     then
+      is_setup
       list_modules
     elif [ "$1" == "recipes" ]
     then
+      is_setup
       list_recipes
     elif [ "$1" == "currentconf" ]
     then
+      is_setup
       current_conf
     elif [ "$1" == "setup" ]
     then
@@ -498,14 +652,17 @@ eval_args(){
   then
     if [ "$1" == "build" ]
     then
+      is_setup
       echo  "Building some modules into OSBDET:"
       build_environment $2
     elif [ "$1" == "remove" ]
     then
+      is_setup
       echo  "Removing modules from OSBDET:"
       remove_modules $2
     elif [ "$1" == "cook" ]
     then
+      is_setup
       echo  "Cooking some recipes for OSBDET:"
       cook_recipes $2
     else
@@ -522,9 +679,10 @@ eval_args(){
 
 # OSBDET builder's entry point
 #
+load_configuration
+
 if ! [ -z "$*" ]
 then
-  source $OSBDET_HOME/shared/osbdet_builder.conf
   load_modules $OSBDET_MODULESLIST
   load_recipes $OSBDET_RECIPESLIST
   eval_args $*
@@ -532,4 +690,5 @@ then
 fi
 
 usage
+echo && is_setup
 exit 1
