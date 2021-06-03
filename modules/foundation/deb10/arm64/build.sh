@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 
 # Aux functions
 
@@ -55,9 +56,9 @@ miscsetup() {
   sed -i "s/^127.0.0.1\tlocalhost/127.0.0.1\tlocalhost\tosbdet/" /etc/hosts
   sed -i "s/^127.0.1.1\tosbdet/#127.0.1.1\tosbdet/" /etc/hosts
   su osbdet -c "mkdir -p /home/osbdet/bin" >> $OSBDET_LOGFILE 2>&1
-  cp $SCRIPT_PATH/../../osbdet-update.sh /home/osbdet/bin
-  cp $SCRIPT_PATH/../../osbdet-recipes.sh /home/osbdet/bin
-  cp $SCRIPT_PATH/../../osbdet-cook.sh /home/osbdet/bin
+  cp $SCRIPT_HOME/osbdet-update.sh /home/osbdet/bin
+  cp $SCRIPT_HOME/osbdet-recipes.sh /home/osbdet/bin
+  cp $SCRIPT_HOME/osbdet-cook.sh /home/osbdet/bin
   chown -R osbdet:osbdet /home/osbdet/bin
   debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup done" >> $OSBDET_LOGFILE
 }
@@ -78,7 +79,7 @@ add_adoptopenjdkrepo(){
 }
 remove_adoptopenjdkrepo(){
   debug "foundation.remove_adoptopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] Removing AdoptOpenJDK repo" >> $OSBDET_LOGFILE
-  apt-key del `apt-key list | $SCRIPT_PATH/../../../../shared/givemekey.awk -v pattern=AdoptOpenJDK` >> $OSBDET_LOGFILE 2>&1
+  apt-key del `apt-key list | $OSBDET_HOME/shared/givemekey.awk -v pattern=AdoptOpenJDK` >> $OSBDET_LOGFILE 2>&1
   add-apt-repository --yes -r https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ >> $OSBDET_LOGFILE 2>&1
   apt update >> $OSBDET_LOGFILE 2>&1
   debug "foundation.remove_adoptopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] AdoptOpenJDK repo removed" >> $OSBDET_LOGFILE
@@ -187,5 +188,7 @@ main(){
 if ! [ -z "$*" ]
 then
   SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi

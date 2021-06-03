@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 HIVE_BINARY_URL=http://apache.uvigo.es/hive/hive-3.1.2/apache-hive-3.1.2-bin.tar.gz
 HIVE_TGZ_FILE=apache-hive-3.1.2-bin.tar.gz
 HIVE_DEFAULT_DIR=apache-hive-3.1.2-bin
@@ -26,7 +27,7 @@ getandextract() {
   tar zxf /opt/$HIVE_TGZ_FILE -C /opt >> $OSBDET_LOGFILE 2>&1
   rm /opt/$HIVE_TGZ_FILE
   mv /opt/$HIVE_DEFAULT_DIR /opt/hive3
-  cp $SCRIPT_PATH/../../hive-env.sh /opt/hive3/conf
+  cp $SCRIPT_HOME/hive-env.sh /opt/hive3/conf
   chmod u+x /opt/hive3/conf/hive-env.sh
   chown -R osbdet:osbdet /opt/hive3
   debug "hive3.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Hive 3 downloading and extracting process done" >> $OSBDET_LOGFILE
@@ -83,14 +84,14 @@ metastoreinit() {
 
 hadoopsetup() {
   debug "hive3.hadoopsetup DEBUG [`date +"%Y-%m-%d %T"`] Updating Hadoop 3 configuration files to support Hive 3" >> $OSBDET_LOGFILE
-  cp $HADOOP_HOME/etc/hadoop/core-site.xml $SCRIPT_PATH/../../core-site.xml.orig 
-  cp $SCRIPT_PATH/../../core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
+  cp $HADOOP_HOME/etc/hadoop/core-site.xml $SCRIPT_HOME/core-site.xml.orig 
+  cp $SCRIPT_HOME/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
   chown osbdet:osbdet $HADOOP_HOME/etc/hadoop/core-site.xml
   debug "hive3.hadoopsetup DEBUG [`date +"%Y-%m-%d %T"`] Hadoop 3 configuration files to support Hive 3 updated" >> $OSBDET_LOGFILE
 }
 remove_hadoopsetup() {
   debug "hive3.remove_hadoopsetup DEBUG [`date +"%Y-%m-%d %T"`] Removing Hadoop 3 configuration files to support Hive 3" >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/../../core-site.xml.orig $HADOOP_HOME/etc/hadoop/core-site.xml
+  cp $SCRIPT_HOME/core-site.xml.orig $HADOOP_HOME/etc/hadoop/core-site.xml
   chown osbdet:osbdet $HADOOP_HOME/etc/hadoop/core-site.xml
   debug "hive3.remove_hadoopsetup DEBUG [`date +"%Y-%m-%d %T"`] Hadoop 3 configuration files to support Hive 3 removed" >> $OSBDET_LOGFILE
 }
@@ -99,8 +100,8 @@ tezinstall() {
   debug "hive3.tezinstall DEBUG [`date +"%Y-%m-%d %T"`] Deploying TEZ inside HIVE_HOME" >> $OSBDET_LOGFILE
   mkdir -p /opt/hive3/tez/conf
 
-  tar zxf $SCRIPT_PATH/../../tez-0.9.2-minimal.tar.gz -C /opt/hive3/tez
-  cp $SCRIPT_PATH/../../tez-site.xml /opt/hive3/tez/conf
+  tar zxf $SCRIPT_HOME/tez-0.9.2-minimal.tar.gz -C /opt/hive3/tez
+  cp $SCRIPT_HOME/tez-site.xml /opt/hive3/tez/conf
 
   chown -R osbdet:osbdet /opt/hive3/tez
   debug "hive3.tezinstall DEBUG [`date +"%Y-%m-%d %T"`] TEZ was deployed inside HIVE_HOME" >> $OSBDET_LOGFILE
@@ -117,7 +118,7 @@ tezhdfssetup() {
   export HADOOP_USER_NAME=osbdet
   $HADOOP_HOME/bin/hdfs dfsadmin -safemode leave >> $OSBDET_LOGFILE 2>&1
   $HADOOP_HOME/bin/hdfs dfs -mkdir -p /apps/tez-0.9.2 >> $OSBDET_LOGFILE 2>&1
-  $HADOOP_HOME/bin/hdfs dfs -put $SCRIPT_PATH/../../tez-0.9.2.tar.gz /apps/tez-0.9.2 >> $OSBDET_LOGFILE 2>&1
+  $HADOOP_HOME/bin/hdfs dfs -put $SCRIPT_HOME/tez-0.9.2.tar.gz /apps/tez-0.9.2 >> $OSBDET_LOGFILE 2>&1
   $HADOOP_HOME/bin/hdfs dfs -chown -R osbdet:hadoop /apps >> $OSBDET_LOGFILE 2>&1
   su - osbdet -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh; $HADOOP_HOME/sbin/stop-dfs.sh" >> $OSBDET_LOGFILE 2>&1
   debug "hive3.tezhdfssetup DEBUG [`date +"%Y-%m-%d %T"`] TEZ added into HDFS" >> $OSBDET_LOGFILE
@@ -134,8 +135,8 @@ remove_tezhdfssetup() {
 
 initscript() {
   debug "hive3.initscript DEBUG [`date +"%Y-%m-%d %T"`] Installing the Hive 3 systemd script" >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/../../hiveserver.service /lib/systemd/system/hiveserver.service
-  cp $SCRIPT_PATH/../../hiveserver2-start.sh $HIVE_HOME/bin
+  cp $SCRIPT_HOME/hiveserver.service /lib/systemd/system/hiveserver.service
+  cp $SCRIPT_HOME/hiveserver2-start.sh $HIVE_HOME/bin
   chmod 644 /lib/systemd/system/hiveserver.service
   chown osbdet:osbdet $HIVE_HOME/bin/hiveserver2-start.sh
   systemctl daemon-reload
@@ -277,6 +278,8 @@ main(){
 
 if ! [ -z "$*" ]
 then
-  export SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi

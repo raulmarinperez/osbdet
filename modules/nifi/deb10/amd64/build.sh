@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 NIFI_BINARY_URL=https://ftp.cixug.es/apache/nifi/1.13.2/nifi-1.13.2-bin.tar.gz
 NIFI_TGZ_FILE=nifi-1.13.2-bin.tar.gz
 NIFI_DEFAULT_DIR=nifi-1.13.2
@@ -45,6 +46,8 @@ nifisetup(){
   # From https://www.cyberciti.biz/faq/how-to-use-sed-to-find-and-replace-text-in-files-in-linux-unix-shell/
   sed -i 's+^#export JAVA_HOME.*+export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64+' \
          /opt/nifi/bin/nifi-env.sh
+  sed -i 's+^nifi\.web\.http\.host.*+nifi.web.http.host=0\.0\.0\.0+' \
+         /opt/nifi/conf/nifi.properties
   debug "nifi.nifisetup DEBUG [`date +"%Y-%m-%d %T"`] NiFi properly setup" >> $OSBDET_LOGFILE
 }
 
@@ -155,5 +158,7 @@ main(){
 if ! [ -z "$*" ]
 then
   SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi

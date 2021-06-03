@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 HADOOP_BINARY_URL=https://ftp.cixug.es/apache/hadoop/common/hadoop-3.3.0/hadoop-3.3.0-aarch64.tar.gz
 HADOOP_TGZ_FILE=hadoop-3.3.0-aarch64.tar.gz
 HADOOP_DEFAULT_DIR=hadoop-3.3.0
@@ -66,10 +67,10 @@ configfilessetup(){
   sed -i '/^# export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64/\nexport HADOOP_HOME=/opt/hadoop3\n:' \
          $HADOOP_HOME/etc/hadoop/hadoop-env.sh
   sed -i '/^# export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop:' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
-  cp $SCRIPT_PATH/../../core-site.xml.template $HADOOP_HOME/etc/hadoop/core-site.xml.template
-  cp $SCRIPT_PATH/../../hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
-  cp $SCRIPT_PATH/../../mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
-  cp $SCRIPT_PATH/../../yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
+  cp $SCRIPT_HOME/core-site.xml.template $HADOOP_HOME/etc/hadoop/core-site.xml.template
+  cp $SCRIPT_HOME/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+  cp $SCRIPT_HOME/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
+  cp $SCRIPT_HOME/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
   chown osbdet:osbdet $HADOOP_HOME/etc/hadoop/core-site.xml.template $HADOOP_HOME/etc/hadoop/hdfs-site.xml \
                       $HADOOP_HOME/etc/hadoop/mapred-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
   debug "hadoop3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Hadoop 3 configuration files copied" >> $OSBDET_LOGFILE
@@ -81,7 +82,7 @@ sshsetup(){
   echo -e 'y\n' | ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key > /dev/null
   su - osbdet -c 'echo -e "y\n" | ssh-keygen -q -N "" -t rsa -f /home/osbdet/.ssh/id_rsa' >> $OSBDET_LOGFILE
   su - osbdet -c 'cp /home/osbdet/.ssh/id_rsa.pub /home/osbdet/.ssh/authorized_keys' >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/../../ssh_config /home/osbdet/.ssh/config
+  cp $SCRIPT_HOME/ssh_config /home/osbdet/.ssh/config
   chmod 600 /home/osbdet/.ssh/config
   chown osbdet:osbdet /home/osbdet/.ssh/config
   debug "hadoop3.sshsetup DEBUG [`date +"%Y-%m-%d %T"`] Passwordless SSH access setup done" >> $OSBDET_LOGFILE
@@ -257,5 +258,7 @@ main(){
 if ! [ -z "$*" ]
 then
   SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi

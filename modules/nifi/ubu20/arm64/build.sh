@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 NIFI_BINARY_URL=https://ftp.cixug.es/apache/nifi/1.13.2/nifi-1.13.2-bin.tar.gz
 NIFI_TGZ_FILE=nifi-1.13.2-bin.tar.gz
 NIFI_DEFAULT_DIR=nifi-1.13.2
@@ -165,5 +166,7 @@ main(){
 if ! [ -z "$*" ]
 then
   SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi
