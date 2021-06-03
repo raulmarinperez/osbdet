@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 KAFKA_BINARY_URL=https://ftp.cixug.es/apache/kafka/2.7.0/kafka_2.13-2.7.0.tgz
 KAFKA_TGZ_FILE=kafka_2.13-2.7.0.tgz
 KAFKA_DEFAULT_DIR=kafka_2.13-2.7.0
@@ -74,8 +75,8 @@ remove_userprofile(){
 
 initscript() {
   debug "kafka.initscript DEBUG [`date +"%Y-%m-%d %T"`] Installing Kafka systemd script" >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/../../zookeeper.service /lib/systemd/system/zookeeper.service
-  cp $SCRIPT_PATH/../../kafka.service /lib/systemd/system/kafka.service
+  cp $SCRIPT_HOME/zookeeper.service /lib/systemd/system/zookeeper.service
+  cp $SCRIPT_HOME/kafka.service /lib/systemd/system/kafka.service
   chmod 644 /lib/systemd/system/zookeeper.service
   chmod 644 /lib/systemd/system/kafka.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
@@ -177,5 +178,7 @@ main(){
 if ! [ -z "$*" ]
 then
   SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi

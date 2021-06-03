@@ -389,7 +389,7 @@ check_conf() {
 #   return:
 persist_setup() {
   printf "Persisting changes in $OSBDET_HOME/shared/osbdet_builder.conf... "
-  echo "LOGLEVEL=$LOGLEVEL" > $OSBDET_HOME/shared/osbdet_builder.conf
+  echo "export LOGLEVEL=$LOGLEVEL" > $OSBDET_HOME/shared/osbdet_builder.conf
   echo "OSBDET_VER=$OSBDET_VER" >> $OSBDET_HOME/shared/osbdet_builder.conf
   echo "OSBDET_TARGETOS=$OSBDET_TARGETOS" >> $OSBDET_HOME/shared/osbdet_builder.conf
   echo "OSBDET_ARCHITECTURE=$OSBDET_ARCHITECTURE" >> $OSBDET_HOME/shared/osbdet_builder.conf

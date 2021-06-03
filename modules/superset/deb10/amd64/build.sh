@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 
 # Aux functions
 
@@ -23,7 +24,7 @@ bienv_install(){
   apt-get update >> $OSBDET_LOGFILE 2>&1
   apt-get install -y libffi-dev libsasl2-dev libldap2-dev python3-venv >> $OSBDET_LOGFILE 2>&1
   python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
-  python3 -m pip install --ignore-installed apache-superset PyJWT==1.7.1 pyhive[hive] >> $OSBDET_LOGFILE 2>&1
+  python3 -m pip install --ignore-installed apache-superset==1.0.0 Jinja2==2.11.3 PyJWT==1.7.1 pyhive[hive] >> $OSBDET_LOGFILE 2>&1
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed" >> $OSBDET_LOGFILE
 }
 remove_bienv(){
@@ -51,7 +52,7 @@ remove_initialsetup(){
 
 serviceinstall(){
   debug "superset.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation" >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/../../superset.service /lib/systemd/system/superset.service
+  cp $SCRIPT_HOME/superset.service /lib/systemd/system/superset.service
   chmod 644 /lib/systemd/system/superset.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
   debug "superset.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation done" >> $OSBDET_LOGFILE
@@ -148,5 +149,7 @@ main(){
 if ! [ -z "$*" ]
 then
   SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi

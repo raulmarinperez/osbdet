@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 SPARK_BINARY_URL=https://ftp.cixug.es/apache/spark/spark-3.1.1/spark-3.1.1-bin-hadoop3.2.tgz
 SPARK_TGZ_FILE=spark-3.1.1-bin-hadoop3.2.tgz
 SPARK_DEFAULT_DIR=spark-3.1.1-bin-hadoop3.2
@@ -52,7 +53,7 @@ setenvvars(){
 configfilessetup(){
   debug "spark3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Copying Spark 3 configuration files" >> $OSBDET_LOGFILE
 
-  cp $SCRIPT_PATH/../../log4j.properties $SPARK_HOME/conf
+  cp $SCRIPT_HOME/log4j.properties $SPARK_HOME/conf
   chown osbdet:osbdet $SPARK_HOME/conf/log4j.properties
 
   debug "spark3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 configuration files copied" >> $OSBDET_LOGFILE
@@ -63,7 +64,7 @@ jupyterspark(){
   if [ -f "/lib/systemd/system/jupyter.service" ]
   then
      service jupyter stop >> $OSBDET_LOGFILE 2>&1
-     cp $SCRIPT_PATH/../../jupyter.service /lib/systemd/system/jupyter.service
+     cp $SCRIPT_HOME/jupyter.service /lib/systemd/system/jupyter.service
      chmod 644 /lib/systemd/system/jupyter.service
      rm -f /etc/systemd/system/jupyter.service
      ln -s /lib/systemd/system/jupyter.service /etc/systemd/system/jupyter.service
@@ -81,7 +82,7 @@ remove_jupyterspark(){
   if [ -f "/lib/systemd/system/jupyter.service" ]
   then
      service jupyter stop >> $OSBDET_LOGFILE 2>&1
-     cp $SCRIPT_PATH/../../jupyter_nospark3.service /lib/systemd/system/jupyter.service
+     cp $SCRIPT_HOME/jupyter_nospark3.service /lib/systemd/system/jupyter.service
      chmod 644 /lib/systemd/system/jupyter.service
      rm -f /etc/systemd/system/jupyter.service
      ln -s /lib/systemd/system/jupyter.service /etc/systemd/system/jupyter.service
@@ -197,5 +198,7 @@ main(){
 if ! [ -z "$*" ]
 then
   SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi

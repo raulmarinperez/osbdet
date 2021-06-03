@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 
 # Aux functions
 
@@ -25,9 +26,9 @@ deployment(){
   mkdir -p /home/osbdet/bin /home/osbdet/etc/labbuilder /home/osbdet/log/ /home/osbdet/lib/labbuilder/categories/
 
   debug "Copying files..."
-  cp $SCRIPT_PATH/../../lab-builder.sh /home/osbdet/bin
-  cp $SCRIPT_PATH/../../*.conf /home/osbdet/etc/labbuilder
-  cp -r $SCRIPT_PATH/../../categories /home/osbdet/lib/labbuilder
+  cp $SCRIPT_HOME/lab-builder.sh /home/osbdet/bin
+  cp $SCRIPT_HOME/*.conf /home/osbdet/etc/labbuilder
+  cp -r $SCRIPT_HOME/categories /home/osbdet/lib/labbuilder
 
   debug "Changing ownership to osbdet:osbdet and execution permissions where needed..."
   chown -R osbdet:osbdet /home/osbdet/bin /home/osbdet/etc /home/osbdet/log /home/osbdet/lib
@@ -122,5 +123,7 @@ main(){
 if ! [ -z "$*" ]
 then
   SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi

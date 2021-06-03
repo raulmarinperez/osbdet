@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 
 # Aux functions
 
@@ -41,9 +42,9 @@ initialsetup(){
   debug "mariadb.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset" >> $OSBDET_LOGFILE
   systemctl disable mariadb >> $OSBDET_LOGFILE 2>&1
   systemctl disable mysql >> $OSBDET_LOGFILE 2>&1
-  cp $SCRIPT_PATH/../../50-sqlmode.cnf /etc/mysql/mariadb.conf.d
+  cp $SCRIPT_HOME/50-sqlmode.cnf /etc/mysql/mariadb.conf.d
   service mariadb start >> $OSBDET_LOGFILE 2>&1
-  mariadb < $SCRIPT_PATH/../../init.sql
+  mariadb < $SCRIPT_HOME/init.sql
   debug "mariadb.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset done" >> $OSBDET_LOGFILE
 }
 
@@ -125,5 +126,7 @@ main(){
 if ! [ -z "$*" ]
 then
   SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi

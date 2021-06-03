@@ -3,7 +3,8 @@
 # Imports
 
 # Variables
-SCRIPT_PATH=""
+SCRIPT_PATH=""  # OS and Architecture dependant
+SCRIPT_HOME=""  # OS and Architecture agnostic
 
 # Aux functions
 
@@ -32,7 +33,7 @@ remove_addrepoandinstall(){
   debug "mongodb44.remove_addrepoandinstall DEBUG [`date +"%Y-%m-%d %T"`] Removing MongoDB 4.4 CE repo and MongoDB" >> $OSBDET_LOGFILE
   apt remove -y mongodb-org --purge >> $OSBDET_LOGFILE 2>&1
   apt autoremove -y >> $OSBDET_LOGFILE 2>&1
-  apt-key del "`apt-key list | $SCRIPT_PATH/../../shared/givemekey.awk -v pattern=MongoDB`" >> $OSBDET_LOGFILE 2>&1
+  apt-key del "`apt-key list | $OSBDET_HOME/shared/givemekey.awk -v pattern=MongoDB`" >> $OSBDET_LOGFILE 2>&1
   rm /etc/apt/sources.list.d/mongodb-org-4.4.list
   apt-get update >> $OSBDET_LOGFILE 2>&1
   debug "mongodb44.remove_addrepoandinstall DEBUG [`date +"%Y-%m-%d %T"`] MongoDB 4.4 CE repo and MongoDB removed" >> $OSBDET_LOGFILE
@@ -115,5 +116,7 @@ main(){
 if ! [ -z "$*" ]
 then
   SCRIPT_PATH=$(dirname $(realpath $0))
+  SCRIPT_HOME=$SCRIPT_PATH/../..
+  OSBDET_HOME=$SCRIPT_HOME/../..
   main $*
 fi
