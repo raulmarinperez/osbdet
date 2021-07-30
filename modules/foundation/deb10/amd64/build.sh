@@ -86,14 +86,38 @@ remove_adoptopenjdkrepo(){
 }
 
 install_jdk8_11(){
-  debug "foundation.install_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] Removing AdoptOpenJDK repo" >> $OSBDET_LOGFILE
+  debug "foundation.install_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 8 and 11" >> $OSBDET_LOGFILE
   apt install -y adoptopenjdk-8-hotspot adoptopenjdk-11-hotspot >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.install_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] AdoptOpenJDK repo removed" >> $OSBDET_LOGFILE
+  debug "foundation.install_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 8 and 11 installation done" >> $OSBDET_LOGFILE
 }
 remove_jdk8_11(){
-  debug "foundation.remove_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 8 and 11" >> $OSBDET_LOGFILE
+  debug "foundation.remove_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 8 and 11" >> $OSBDET_LOGFILE
   apt remove -y adoptopenjdk-8-hotspot adoptopenjdk-11-hotspot >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.remove_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 8 and 11 installation done" >> $OSBDET_LOGFILE
+  debug "foundation.remove_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 8 and 11 removed" >> $OSBDET_LOGFILE
+}
+
+install_docker(){
+  debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] Removing AdoptOpenJDK repo" >> $OSBDET_LOGFILE
+  apt-get remove -y docker docker-engine docker.io containerd runc >> $OSBDET_LOGFILE 2>&1
+  apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release >> $OSBDET_LOGFILE 2>&1
+  apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release >> $OSBDET_LOGFILE 2>&1
+  curl -fsSL https://download.docker.com/linux/debian/gpg \
+    | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg >> $OSBDET_LOGFILE 2>&1
+  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
+    https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
+    | tee /etc/apt/sources.list.d/docker.list >> $OSBDET_LOGFILE 2>&1
+  apt-get update >> $OSBDET_LOGFILE 2>&1
+  apt-get install -y docker-ce docker-ce-cli containerd.io >> $OSBDET_LOGFILE 2>&1
+  debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] AdoptOpenJDK repo removed" >> $OSBDET_LOGFILE
+}
+remove_docker(){
+  debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Removing Docker" >> $OSBDET_LOGFILE
+  apt-get update >> $OSBDET_LOGFILE 2>&1
+  apt-get remove -y docker-ce docker-ce-cli containerd.io --purge >> $OSBDET_LOGFILE 2>&1
+  rm /etc/apt/sources.list.d/docker.list >> $OSBDET_LOGFILE 2>&1
+  rm /usr/share/keyrings/docker-archive-keyring.gpg >> $OSBDET_LOGFILE 2>&1
+  apt-get remove -y apt-transport-https ca-certificates curl gnupg lsb-release --purge >> $OSBDET_LOGFILE 2>&1
+  debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker removed" >> $OSBDET_LOGFILE
 }
 
 # Primary functions
@@ -106,12 +130,14 @@ module_install(){
   #   3. Miscellaneous setup
   #   4. Adding AdoptOpenJDK repo
   #   5. Installing JDK 8 and 11
+  #   6. Docker installation
   printf "  Installing module 'foundation' ... "
   create_osbdetuser
   miscinstall
   miscsetup
   add_adoptopenjdkrepo
   install_jdk8_11
+  install_docker
   printf "[Done]\n"
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -130,13 +156,15 @@ module_status() {
 module_uninstall(){
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
-  #   1. Uninstalling JDK 8 and 11
-  #   2. Removing AdoptOpenJDK repo
-  #   3. Miscellaneous setup
-  #   4. Uninstallation miscellaneous software
-  #   5. Removing the osbdet system user
+  #   1. Remove Docker
+  #   2. Uninstall JDK 8 and 11
+  #   3. Remove AdoptOpenJDK repo
+  #   4. Miscellaneous setup
+  #   5. Uninstallation miscellaneous software
+  #   6. Remove the osbdet system user
   #   
   printf "  Uninstalling module 'foundation' ... "
+  remove_docker
   remove_jdk8_11
   remove_adoptopenjdkrepo
   remove_miscsetup
