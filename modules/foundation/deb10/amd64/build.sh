@@ -40,12 +40,14 @@ remove_osbdetuser(){
 miscinstall(){
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation" >> $OSBDET_LOGFILE
   apt update >> $OSBDET_LOGFILE 2>&1
-  apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common tmux python3-pip sudo git emacs >> $OSBDET_LOGFILE 2>&1
+  apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
+                 tmux python3-pip sudo git emacs unzip >> $OSBDET_LOGFILE 2>&1
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done" >> $OSBDET_LOGFILE
 }
 remove_miscinstall(){
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation" >> $OSBDET_LOGFILE
-  apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common tmux python3-pip sudo git --purge >>$OSBDET_LOGFILE 2>&1
+  apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
+                tmux python3-pip sudo git unzip --purge >>$OSBDET_LOGFILE 2>&1
   apt autoremove -y >>$OSBDET_LOGFILE 2>&1
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done" >> $OSBDET_LOGFILE
 }
@@ -97,7 +99,7 @@ remove_jdk8_11(){
 }
 
 install_docker(){
-  debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] Removing AdoptOpenJDK repo" >> $OSBDET_LOGFILE
+  debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] Installing Docker" >> $OSBDET_LOGFILE
   apt-get remove -y docker docker-engine docker.io containerd runc >> $OSBDET_LOGFILE 2>&1
   apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release >> $OSBDET_LOGFILE 2>&1
   apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release >> $OSBDET_LOGFILE 2>&1
@@ -108,7 +110,7 @@ install_docker(){
     | tee /etc/apt/sources.list.d/docker.list >> $OSBDET_LOGFILE 2>&1
   apt-get update >> $OSBDET_LOGFILE 2>&1
   apt-get install -y docker-ce docker-ce-cli containerd.io >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] AdoptOpenJDK repo removed" >> $OSBDET_LOGFILE
+  debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker installed" >> $OSBDET_LOGFILE
 }
 remove_docker(){
   debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Removing Docker" >> $OSBDET_LOGFILE
@@ -118,6 +120,22 @@ remove_docker(){
   rm /usr/share/keyrings/docker-archive-keyring.gpg >> $OSBDET_LOGFILE 2>&1
   apt-get remove -y apt-transport-https ca-certificates curl gnupg lsb-release --purge >> $OSBDET_LOGFILE 2>&1
   debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker removed" >> $OSBDET_LOGFILE
+}
+
+install_cloudproviders_clis(){
+  debug "foundation.install_cloudproviders_clis DEBUG [`date +"%Y-%m-%d %T"`] Installing cloud providers clis" >> $OSBDET_LOGFILE
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip" >> $OSBDET_LOGFILE 2>&1
+  unzip /tmp/awscliv2.zip -d /tmp >> $OSBDET_LOGFILE 2>&1
+  /tmp/aws/install >> $OSBDET_LOGFILE 2>&1
+  rm -rf /tmp/aws /tmp/awscliv2.zip >> $OSBDET_LOGFILE 2>&1
+  debug "foundation.install_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] Cloud providers clis installation done" >> $OSBDET_LOGFILE
+}
+remove_cloudproviders_clis(){
+  debug "foundation.remove_cloudproviders_cli DEBUG [`date +"%Y-%m-%d %T"`] Removing cloud providers clis" >> $OSBDET_LOGFILE
+  rm /usr/local/bin/aws >> $OSBDET_LOGFILE 2>&1
+  rm /usr/local/bin/aws_completer >> $OSBDET_LOGFILE 2>&1
+  rm -rf /usr/local/aws-cli >> $OSBDET_LOGFILE 2>&1
+  debug "foundation.remove_cloudproviders_cli DEBUG [`date +"%Y-%m-%d %T"`] Cloud providers clis removed" >> $OSBDET_LOGFILE
 }
 
 # Primary functions
@@ -131,6 +149,7 @@ module_install(){
   #   4. Adding AdoptOpenJDK repo
   #   5. Installing JDK 8 and 11
   #   6. Docker installation
+  #   7. Install cloud providers CLIs
   printf "  Installing module 'foundation' ... "
   create_osbdetuser
   miscinstall
@@ -138,6 +157,7 @@ module_install(){
   add_adoptopenjdkrepo
   install_jdk8_11
   install_docker
+  install_cloudproviders_clis
   printf "[Done]\n"
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -156,14 +176,16 @@ module_status() {
 module_uninstall(){
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
-  #   1. Remove Docker
-  #   2. Uninstall JDK 8 and 11
-  #   3. Remove AdoptOpenJDK repo
-  #   4. Miscellaneous setup
-  #   5. Uninstallation miscellaneous software
-  #   6. Remove the osbdet system user
+  #   1. Remove cloud providers CLIs
+  #   2. Remove Docker
+  #   3. Uninstall JDK 8 and 11
+  #   4. Remove AdoptOpenJDK repo
+  #   5. Miscellaneous setup
+  #   6. Uninstallation miscellaneous software
+  #   7. Remove the osbdet system user
   #   
   printf "  Uninstalling module 'foundation' ... "
+  remove_cloudproviders_clis
   remove_docker
   remove_jdk8_11
   remove_adoptopenjdkrepo
