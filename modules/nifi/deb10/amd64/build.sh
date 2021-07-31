@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-NIFI_BINARY_URL=https://ftp.cixug.es/apache/nifi/1.13.2/nifi-1.13.2-bin.tar.gz
-NIFI_TGZ_FILE=nifi-1.13.2-bin.tar.gz
-NIFI_DEFAULT_DIR=nifi-1.13.2
+NIFI_BINARY_URL=https://downloads.apache.org/nifi/1.14.0/nifi-1.14.0-bin.tar.gz
+NIFI_TGZ_FILE=nifi-1.14.0-bin.tar.gz
+NIFI_DEFAULT_DIR=nifi-1.14.0
 
 # Aux functions
 # debug
@@ -46,7 +46,23 @@ nifisetup(){
   # From https://www.cyberciti.biz/faq/how-to-use-sed-to-find-and-replace-text-in-files-in-linux-unix-shell/
   sed -i 's+^#export JAVA_HOME.*+export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64+' \
          /opt/nifi/bin/nifi-env.sh
+  sed -i 's+^nifi\.remote\.input\.secure.*+nifi.remote.input.secure=false+' \
+         /opt/nifi/conf/nifi.properties
   sed -i 's+^nifi\.web\.http\.host.*+nifi.web.http.host=0\.0\.0\.0+' \
+         /opt/nifi/conf/nifi.properties
+  sed -i 's+^nifi\.web\.http\.port.*+nifi.web.http.port=9090+' \
+         /opt/nifi/conf/nifi.properties
+  sed -i 's+^nifi\.web\.https\.host.*+#nifi.web.https.host=+' \
+         /opt/nifi/conf/nifi.properties
+  sed -i 's+^nifi\.web\.https\.port.*+#nifi.web.https.port=+' \
+         /opt/nifi/conf/nifi.properties
+  sed -ri 's+^nifi\.security\.auto(.*)+#nifi.security.auto\1+' \
+         /opt/nifi/conf/nifi.properties
+  sed -ri 's+^nifi\.security\.key(.*)+#nifi.security.key\1+' \
+         /opt/nifi/conf/nifi.properties
+  sed -ri 's+^nifi\.security\.trust(.*)+#nifi.security.trust\1+' \
+         /opt/nifi/conf/nifi.properties
+  sed -i 's+^nifi\.security\.allow\.anonymous.*+nifi.security.allow.anonymous.authentication=true+' \
          /opt/nifi/conf/nifi.properties
   debug "nifi.nifisetup DEBUG [`date +"%Y-%m-%d %T"`] NiFi properly setup" >> $OSBDET_LOGFILE
 }
@@ -81,7 +97,7 @@ remove_userprofile(){
 module_install(){
   debug "nifi.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
-  #   1. Get NiFi 3 and extract it
+  #   1. Get NiFi and extract it
   #   2. Setup NiFi
   #   3. Set up userprofile to get binaries accessible
   printf "  Installing module 'nifi' ... "
