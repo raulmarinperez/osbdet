@@ -2,7 +2,7 @@
 
 # Global variables definition
 #
-OSBDET_VER=s21r3
+OSBDET_VER=f21r1
 export OSBDET_HOME=$(dirname $(realpath $0))
 export OSBDET_MODULESLIST=$OSBDET_HOME/shared/modules_list.conf
 export OSBDET_MODULESDIR=$OSBDET_HOME/modules
