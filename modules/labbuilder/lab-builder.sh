@@ -209,7 +209,7 @@ list_labs() {
 #     1/ko message - not all labs were deployed
 deploy_lab_and_deps() {
   # 1. Check if it's installed
-  $LABBUILDER_LABS/categories/$1/$2/build.sh status > /dev/null
+  $LABBUILDER_LABS/categories/$1/$2/$OSBDET_TARGETOS/$OSBDET_ARCHITECTURE/build.sh status > /dev/null
   lab_status=$?
   if [[ $lab_status -eq 0 ]]; then
     debug "[deploy_lab_and_dep] Skipping '$1', lab is already installed"
@@ -229,7 +229,7 @@ deploy_lab_and_deps() {
       fi
     done
     # 3. Lab installation
-    $LABBUILDER_LABS/categories/$1/$2/build.sh deploy
+    $LABBUILDER_LABS/categories/$1/$2/$OSBDET_TARGETOS/$OSBDET_ARCHITECTURE/build.sh deploy
     if [ $? -ne 0 ]
     then
       debug "Fatal error: lab '$1' cannot be installed. See log messages for more information."
