@@ -102,7 +102,6 @@ install_docker(){
   debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] Installing Docker" >> $OSBDET_LOGFILE
   apt-get remove -y docker docker-engine docker.io containerd runc >> $OSBDET_LOGFILE 2>&1
   apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release >> $OSBDET_LOGFILE 2>&1
-  apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release >> $OSBDET_LOGFILE 2>&1
   curl -fsSL https://download.docker.com/linux/debian/gpg \
     | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg >> $OSBDET_LOGFILE 2>&1
   echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
@@ -128,7 +127,7 @@ install_cloudproviders_clis(){
   unzip /tmp/awscliv2.zip -d /tmp >> $OSBDET_LOGFILE 2>&1
   /tmp/aws/install >> $OSBDET_LOGFILE 2>&1
   rm -rf /tmp/aws /tmp/awscliv2.zip >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.install_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] Cloud providers clis installation done" >> $OSBDET_LOGFILE
+  debug "foundation.install_cloudproviders_clis DEBUG [`date +"%Y-%m-%d %T"`] Cloud providers clis installation done" >> $OSBDET_LOGFILE
 }
 remove_cloudproviders_clis(){
   debug "foundation.remove_cloudproviders_cli DEBUG [`date +"%Y-%m-%d %T"`] Removing cloud providers clis" >> $OSBDET_LOGFILE
