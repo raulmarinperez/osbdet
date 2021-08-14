@@ -62,7 +62,7 @@ userprofile(){
 }
 remove_userprofile(){
   debug "kafka.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] Removing references to Kafka from user profile" >> $OSBDET_LOGFILE
-  # remove the break line before the user profile setup for NiFi
+  # remove the break line before the user profile setup for Kafka
   #   - https://stackoverflow.com/questions/4396974/sed-or-awk-delete-n-lines-following-a-pattern                                     
   #   - https://unix.stackexchange.com/questions/29906/delete-range-of-lines-above-pattern-with-sed-or-awk                            
   tac /home/osbdet/.profile > /home/osbdet/.eliforp
@@ -92,7 +92,7 @@ remove_initscript() {
   rm /lib/systemd/system/zookeeper.service
   rm /lib/systemd/system/kafka.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
-  debug "hive3.remove_initscript DEBUG [`date +"%Y-%m-%d %T"`] Hive 3 systemd script removed" >> $OSBDET_LOGFILE
+  debug "kafka.remove_initscript DEBUG [`date +"%Y-%m-%d %T"`] Kafka systemd script removed" >> $OSBDET_LOGFILE
 }
 
 

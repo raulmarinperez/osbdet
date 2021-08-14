@@ -5,8 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-TRUCKSSIM_URL=https://github.com/raulmarinperez/collaterals/raw/master/knowledge/data_generation/trucking_data_sim/Data-Loader.zip
-TRUCKSSIM_ZIP_FILE=Data-Loader.zip
+TRUCKFLEETSIM_URL=https://github.com/raulmarinperez/collaterals/raw/master/knowledge/data_generation/trucking_data_sim/Data-Loader.zip
+TRUCKFLEETSIM_ZIPFILE=/opt/Data-Loader.zip
+TRUCKFLEETSIM_HOME=/opt/truckfleet-sim
 
 # Aux functions
 # debug
@@ -23,34 +24,35 @@ debug() {
 getandextract(){
   debug "truckssim.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting the trucks simulator" >> $OSBDET_LOGFILE
   apt-get install unzip >> $OSBDET_LOGFILE 2>&1
-  wget $TRUCKSSIM_URL -O /opt/$TRUCKSSIM_ZIP_FILE >> $OSBDET_LOGFILE 2>&1
+  wget $TRUCKFLEETSIM_URL -O $TRUCKFLEETSIM_ZIPFILE >> $OSBDET_LOGFILE 2>&1
   cd /opt
-  unzip $TRUCKSSIM_ZIP_FILE >> $OSBDET_LOGFILE 2>&1
-  cd Data-Loader
-  mkdir /opt/Data-Loader/truck-sensor-data
+  unzip $TRUCKFLEETSIM_ZIPFILE >> $OSBDET_LOGFILE 2>&1
+  mv /opt/Data-Loader $TRUCKFLEETSIM_HOME
+  cd $TRUCKFLEETSIM_HOME
+  mkdir $TRUCKFLEETSIM_HOME/truck-sensor-data
   tar zxf routes.tar.gz >> $OSBDET_LOGFILE 2>&1
   rm routes.tar.gz
-  rm ../$TRUCKSSIM_ZIP_FILE
-  chown -R osbdet:osbdet /opt/Data-Loader
+  rm $TRUCKFLEETSIM_ZIPFILE
+  chown -R osbdet:osbdet $TRUCKFLEETSIM_HOME
   debug "truckssim.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator downloaded and extracted" >> $OSBDET_LOGFILE
 }
 remove(){
   debug "truckssim.remove DEBUG [`date +"%Y-%m-%d %T"`] Removing the trucks simulator" >> $OSBDET_LOGFILE
-  rm -rf /opt/Data-Loader
+  rm -rf $TRUCKFLEETSIM_HOME
   debug "truckssim.remove DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator removed" >> $OSBDET_LOGFILE
 }
 
 initscript(){
   debug "truckssim.initscript DEBUG [`date +"%Y-%m-%d %T"`] Installing the trucks simulator systemd script" >> $OSBDET_LOGFILE
-  cp $SCRIPT_PATH/data-loader.service /lib/systemd/system/data-loader.service
-  chmod 644 /lib/systemd/system/data-loader.service
+  cp $SCRIPT_PATH/truckfleet-sim.service /lib/systemd/system/truckfleet-sim.service
+  chmod 644 /lib/systemd/system/truckfleet-sim.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
   debug "truckssim.initscript DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator systemd script installed" >> $OSBDET_LOGFILE
 }
 remove_initscript(){
   debug "truckssim.remove_initscript DEBUG [`date +"%Y-%m-%d %T"`] Removing the trucks simulator systemd script" >> $OSBDET_LOGFILE
-  service data-loader stop >> $OSBDET_LOGFILE 2>&1
-  rm /lib/systemd/system/data-loader.service
+  service truckfleet-sim stop >> $OSBDET_LOGFILE 2>&1
+  rm /lib/systemd/system/truckfleet-sim.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
   debug "truckssim.remove_initscript DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator systemd script removed" >> $OSBDET_LOGFILE
 }
@@ -70,7 +72,7 @@ module_install(){
 }
 
 module_status() {
-  if [ -d "/opt/Data-Loader/truck-sensor-data" ]
+  if [ -d "$TRUCKFLEETSIM_HOME" ]
   then
     echo "Module is installed [OK]"
     exit 0
