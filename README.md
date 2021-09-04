@@ -1,5 +1,5 @@
 # Open Source Big Data Educational Toolkit (OSBDET)
-OSBDET is a test environment creation tool which facilitates the creation of sandboxes containing a bunch of open source technologies all together. These tests environments are targeting people who want to take their first steps with Big Data technologies easily.
+OSBDET is a test environment creation tool which facilitates the build of sandboxes containing a bunch of open source technologies altogether. These tests environments are targeting people who want to take their first steps with Big Data technologies easily.
 
 The following are some of the Big Data frameworks that OSBDET is able to bring into a test environment:
 
@@ -9,26 +9,56 @@ The following are some of the Big Data frameworks that OSBDET is able to bring i
 - Kafka 2
 - ...
 
-OSBDET's architecture encourages the extension of this toolkit to introduce new frameworks with very little effort.
+OSBDET's architecture encourages the extension of the toolkit by introducing new frameworks with very little effort.
 ## How to use OSBDET
 OSBDET can be controlled with one single script, `osbdet-builder.sh`, which brings the following options:
 ```root@osbdet:~/osbdet# ./osbdet_builder.sh
 Usage: osbdet_builder.sh [OPTION] [comma separated list of modules/recipes]
 
-Available options for mounter:
+Available options for osbdet_builder:
+  ## environment related options ##
   status              display the current status of OSBDET's modules
   modules             list available modules
   recipes             list available recipes
+  currentconf         display the current configuration of osbdet_builder
+  setup               change the current configuration of osbdet_builder
+
+  ## operational options ##
   build               build environment by installing available modules
   remove              remove installed modules from current environment
   cook                'cook' all the recipes passed as an argument
+```
+Before being able to use the script, it has to be configured to pull the right versions
+of the frameworks. This is accomplished by using the `setup` option as follows:
+```
+root@osbdet:~/osbdet# ./osbdet_builder.sh setup
+Let's setup your OSBDET f21r1 builder:
+  Log level (DEBUG*): DEBUG
+  Target Operating System (deb10*|ubu20): deb10
+  Target Architecture (amd64*|arm64): amd64
+  OSBDET recipes home (/root/osbdet-recipes*): 
+  OSBDET repository (https://github.com/raulmarinperez/osbdet-recipes.git*): 
+Persisting changes in /root/osbdet/shared/osbdet_builder.conf... [Done]
+```
+As you can see, OSBDET it's compatible with amd64 and arm64 architectures and Debian 10 (amd64 at the moment)
+and Ubuntu 20 (arm64 at the moment).
+The current configuration can be always checked by invoking the `currentconf` option:
+```
+root@osbdet:~/osbdet# ./osbdet_builder.sh currentconf
+This is the current configuration of OSBDET f21r1:
+  OSBDET_HOME: /root/osbdet
+  LOGLEVEL: DEBUG
+  OSBDET_TARGETOS: deb10
+  OSBDET_ARCHITECTURE: amd64
+  OSBDETRECIPES_HOME: /root/osbdet-recipes
+  OSBDETRECIPES_REPO: https://github.com/raulmarinperez/osbdet-recipes.git
 ```
 The file `osbdet.log` tracks all the steps taken by the script; tail this file while building or removing modules to get all the information about the process.
 ### Listing available modules
 The `modules` option lists all the available modules:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh modules
-These are the modules available in OSBDET vs21r2:
+These are the modules available in OSBDET vf21r1:
   - mongodb44: MongoDB 4.4 installation, depends on: foundation
   - hadoop3: Hadoop 3 installation, depends on: foundation
   - mariadb: MariaDB installation, depends on: foundation
@@ -39,31 +69,31 @@ These are the modules available in OSBDET vs21r2:
   - jupyter: Jupyter Notebook installation, depends on: foundation
   - superset: Superset installation, depends on: foundation
   - foundation: Configurations and dependencies to satisfy the installation of other modules, depends on: no_dependencies
+  - labbuilder: Lab builder installation, depends on: foundation,hadoop3,hive3
   - spark3: Spark 3 installation, depends on: foundation
 ```
 ### Listing available recipes
 The `recipes` option lists all the available recipes:
 ```
-These are the recipes available for OSBDET vs21r2:
-  - helloworld[s21r2]: Hello world recipe, depends on: no_dependencies
+These are the recipes available for OSBDET vf21r1:
+  - helloworld[f21r1]: Hello world recipe, depends on: no_dependencies
 ```
-root@osbdet:~/osbdet# ./osbdet_builder.sh modules
-These are the modules available in OSBDET vs21r2:
 ### Displaying the status of available modules
 The `status` option lists all the available modules:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh status
 The folowing list shows the status of all available modules:
-  - mongodb44: Module is not installed [KO]
-  - hadoop3: Module is not installed [KO]
+  - mongodb44: Module is installed [OK]
+  - hadoop3: Module is installed [OK]
   - mariadb: Module is installed [OK]
-  - truckssim: Module is not installed [KO]
+  - truckssim: Module is installed [OK]
   - kafka2: Module is installed [OK]
-  - hive3: Module is not installed [KO]
-  - nifi: Module is not installed [KO]
+  - hive3: Module is installed [OK]
+  - nifi: Module is installed [OK]
   - jupyter: Module is installed [OK]
   - superset: Module is installed [OK]
   - foundation: Module is installed [OK]
+  - labbuilder: Module is installed [OK]
   - spark3: Module is installed [OK]
 ```
 ### Building modules
