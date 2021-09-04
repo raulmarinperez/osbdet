@@ -40,8 +40,8 @@ Let's setup your OSBDET f21r1 builder:
   OSBDET repository (https://github.com/raulmarinperez/osbdet-recipes.git*): 
 Persisting changes in /root/osbdet/shared/osbdet_builder.conf... [Done]
 ```
-As you can see, OSBDET it's compatible with amd64 and arm64 architectures and Debian 10 (amd64 at the moment)
-and Ubuntu 20 (arm64 at the moment).
+As you can see, OSBDET is compatible with amd64 and arm64 architectures, and the Debian 10 (amd64 at the moment)
+and Ubuntu 20 (arm64 at the moment) GNU/Linux operating systems.
 The current configuration can be always checked by invoking the `currentconf` option:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh currentconf
@@ -79,7 +79,7 @@ These are the recipes available for OSBDET vf21r1:
   - helloworld[f21r1]: Hello world recipe, depends on: no_dependencies
 ```
 ### Displaying the status of available modules
-The `status` option lists all the available modules:
+The `status` option lists the status of all the available modules:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh status
 The folowing list shows the status of all available modules:
