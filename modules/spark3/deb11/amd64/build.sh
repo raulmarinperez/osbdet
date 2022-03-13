@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-SPARK_BINARY_URL=https://downloads.apache.org/spark/spark-3.0.3/spark-3.0.3-bin-hadoop3.2.tgz
-SPARK_TGZ_FILE=spark-3.0.3-bin-hadoop3.2.tgz
-SPARK_DEFAULT_DIR=spark-3.0.3-bin-hadoop3.2
+SPARK_BINARY_URL=https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop3.2.tgz
+SPARK_TGZ_FILE=spark-3.2.1-bin-hadoop3.2.tgz
+SPARK_DEFAULT_DIR=spark-3.2.1-bin-hadoop3.2
 
 # Aux functions
 # debug
