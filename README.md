@@ -4,7 +4,6 @@ OSBDET is a test environment creation tool which facilitates the build of sandbo
 The following are some of the Big Data frameworks that OSBDET is able to bring into a test environment:
 
 - Hadoop 3
-- Hive 3
 - Spark 3
 - Kafka 2
 - ...
@@ -45,10 +44,10 @@ and Ubuntu 20 (arm64 at the moment) GNU/Linux operating systems.
 The current configuration can be always checked by invoking the `currentconf` option:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh currentconf
-This is the current configuration of OSBDET f21r1:
+This is the current configuration of OSBDET s22r1:
   OSBDET_HOME: /root/osbdet
   LOGLEVEL: DEBUG
-  OSBDET_TARGETOS: deb10
+  OSBDET_TARGETOS: deb11
   OSBDET_ARCHITECTURE: amd64
   OSBDETRECIPES_HOME: /root/osbdet-recipes
   OSBDETRECIPES_REPO: https://github.com/raulmarinperez/osbdet-recipes.git
@@ -64,13 +63,13 @@ These are the modules available in OSBDET vf21r1:
   - mariadb: MariaDB installation, depends on: foundation
   - truckssim: Truck fleet simulator, depends on: foundation
   - kafka2: Kafka 2 installation, depends on: foundation
-  - hive3: Hive 3 installation, depends on: foundation,hadoop3
   - nifi: NiFi installation, depends on: foundation
   - jupyter: Jupyter Notebook installation, depends on: foundation
   - superset: Superset installation, depends on: foundation
   - foundation: Configurations and dependencies to satisfy the installation of other modules, depends on: no_dependencies
   - labbuilder: Lab builder installation, depends on: foundation,hadoop3,hive3
   - spark3: Spark 3 installation, depends on: foundation
+  - minio: MinIO (object store) installation, depends on: foundation
 ```
 ### Listing available recipes
 The `recipes` option lists all the available recipes:
@@ -88,13 +87,13 @@ The folowing list shows the status of all available modules:
   - mariadb: Module is installed [OK]
   - truckssim: Module is installed [OK]
   - kafka2: Module is installed [OK]
-  - hive3: Module is installed [OK]
   - nifi: Module is installed [OK]
   - jupyter: Module is installed [OK]
   - superset: Module is installed [OK]
   - foundation: Module is installed [OK]
   - labbuilder: Module is installed [OK]
   - spark3: Module is installed [OK]
+  - minio: Module is installed [OK]
 ```
 ### Building modules
 The `build` option tells OSBDET to install the modules provided as arguments:
