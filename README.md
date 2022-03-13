@@ -31,15 +31,15 @@ Before being able to use the script, it has to be configured to pull the right v
 of the frameworks. This is accomplished by using the `setup` option as follows:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh setup
-Let's setup your OSBDET f21r1 builder:
+Let's setup your OSBDET s22r1 builder:
   Log level (DEBUG*): DEBUG
-  Target Operating System (deb10*|ubu20): deb10
+  Target Operating System (deb11*|ubu20): deb11
   Target Architecture (amd64*|arm64): amd64
   OSBDET recipes home (/root/osbdet-recipes*): 
   OSBDET repository (https://github.com/raulmarinperez/osbdet-recipes.git*): 
 Persisting changes in /root/osbdet/shared/osbdet_builder.conf... [Done]
 ```
-As you can see, OSBDET is compatible with amd64 and arm64 architectures, and the Debian 10 (amd64 at the moment)
+As you can see, OSBDET is compatible with amd64 and arm64 architectures, and the Debian 11 (amd64 at the moment)
 and Ubuntu 20 (arm64 at the moment) GNU/Linux operating systems.
 The current configuration can be always checked by invoking the `currentconf` option:
 ```
@@ -57,7 +57,7 @@ The file `osbdet.log` tracks all the steps taken by the script; tail this file w
 The `modules` option lists all the available modules:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh modules
-These are the modules available in OSBDET vf21r1:
+These are the modules available in OSBDET vs22r1:
   - mongodb44: MongoDB 4.4 installation, depends on: foundation
   - hadoop3: Hadoop 3 installation, depends on: foundation
   - mariadb: MariaDB installation, depends on: foundation
@@ -74,8 +74,8 @@ These are the modules available in OSBDET vf21r1:
 ### Listing available recipes
 The `recipes` option lists all the available recipes:
 ```
-These are the recipes available for OSBDET vf21r1:
-  - helloworld[f21r1]: Hello world recipe, depends on: no_dependencies
+These are the recipes available for OSBDET vs22r1:
+  - helloworld[s22r1]: Hello world recipe, depends on: no_dependencies
 ```
 ### Displaying the status of available modules
 The `status` option lists the status of all the available modules:
