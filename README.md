@@ -61,6 +61,7 @@ These are the modules available in OSBDET vs22r1:
   - mongodb44: MongoDB 4.4 installation, depends on: foundation
   - hadoop3: Hadoop 3 installation, depends on: foundation
   - mariadb: MariaDB installation, depends on: foundation
+  - airflow: Airflow installation, depends on: foundation
   - truckssim: Truck fleet simulator, depends on: foundation
   - kafka2: Kafka 2 installation, depends on: foundation
   - nifi: NiFi installation, depends on: foundation
