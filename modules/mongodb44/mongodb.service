@@ -1,0 +1,11 @@
+# Contents of /etc/systemd/system/jupyter.service
+[Unit]
+Description=MongoDB Service
+After=network.target
+[Service]
+Type=simple
+Restart=always
+User=root
+ExecStart=docker run --rm --name mongo -p 27017:27017/tcp --mount source=mongodb-vol,target=/data/db arm64v8/mongo:4.4
+[Install]
+WantedBy=multi-user.target
