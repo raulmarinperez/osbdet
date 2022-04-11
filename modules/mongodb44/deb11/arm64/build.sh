@@ -22,7 +22,7 @@ debug() {
 addrepoandinstall(){
   debug "mongodb44.addrepoandinstall DEBUG [`date +"%Y-%m-%d %T"`] Adding MongoDB 4.4 CE repo and install MongoDB" >> $OSBDET_LOGFILE
   # Procedure as it's documented at https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
-  apt-get install gnupg >> $OSBDET_LOGFILE 2>&1
+  apt-get install -y gnupg >> $OSBDET_LOGFILE 2>&1
   wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - >> $OSBDET_LOGFILE 2>&1
   echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list >> $OSBDET_LOGFILE 2>&1
   apt-get update >> $OSBDET_LOGFILE 2>&1
@@ -62,7 +62,7 @@ remove_containerdeploy(){
 
 serviceinstall(){
   debug "mongodb44.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation" >> $OSBDET_LOGFILE
-  cp $SCRIPT_HOME/mongodb.service /lib/systemd/system/mongodb.service
+  cp $SCRIPT_PATH/mongodb.service /lib/systemd/system/mongodb.service
   chmod 644 /lib/systemd/system/mongodb.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
   systemctl disable mongodb.service >> $OSBDET_LOGFILE 2>&1

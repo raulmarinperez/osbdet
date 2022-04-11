@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-NIFI_BINARY_URL=https://downloads.apache.org/nifi/1.14.0/nifi-1.14.0-bin.tar.gz
-NIFI_TGZ_FILE=nifi-1.14.0-bin.tar.gz
-NIFI_DEFAULT_DIR=nifi-1.14.0
+NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/1.16.0/nifi-1.16.0-bin.tar.gz
+NIFI_TGZ_FILE=nifi-1.16.0-bin.tar.gz
+NIFI_DEFAULT_DIR=nifi-1.16.0
 
 # Aux functions
 # debug

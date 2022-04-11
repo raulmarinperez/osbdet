@@ -24,8 +24,7 @@ bienv_install(){
   apt-get update >> $OSBDET_LOGFILE 2>&1
   apt-get install -y libffi-dev libsasl2-dev libldap2-dev python3-venv >> $OSBDET_LOGFILE 2>&1
   python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
-  python3 -m pip install apache-superset==1.2.0 Jinja2==2.11.3 PyJWT==1.7.1 pandas==1.2.5 pyhive[hive] >> $OSBDET_LOGFILE 2>&1
-  #python3 -m pip install --ignore-installed apache-superset==1.0.0 Jinja2==2.11.3 PyJWT==1.7.1 pyhive[hive] >> $OSBDET_LOGFILE 2>&1
+  python3 -m pip install apache-superset==1.4.2 >> $OSBDET_LOGFILE 2>&1
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed" >> $OSBDET_LOGFILE
 }
 remove_bienv(){
