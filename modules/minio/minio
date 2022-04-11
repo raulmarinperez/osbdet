@@ -1,0 +1,7 @@
+# minIO local/remote volumes.
+MINIO_VOLUMES="/data/s3"
+# minIO cli options.
+MINIO_OPTS="--address :9000 --console-address :9001"
+
+MINIO_ROOT_USER="osbdet"
+MINIO_ROOT_PASSWORD="osbdet123$"

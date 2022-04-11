@@ -65,7 +65,7 @@ serviceinstall(){
   cp $SCRIPT_HOME/mongodb.service /lib/systemd/system/mongodb.service
   chmod 644 /lib/systemd/system/mongodb.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
-  systemctl enable mongodb.service >> $OSBDET_LOGFILE 2>&1
+  systemctl disable mongodb.service >> $OSBDET_LOGFILE 2>&1
   debug "mongodb44.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation done" >> $OSBDET_LOGFILE
 }
 remove_serviceinstall(){
