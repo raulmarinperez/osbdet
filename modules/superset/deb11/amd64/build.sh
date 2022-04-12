@@ -25,6 +25,9 @@ bienv_install(){
   apt-get install -y libffi-dev libsasl2-dev libldap2-dev python3-venv >> $OSBDET_LOGFILE 2>&1
   python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
   python3 -m pip install apache-superset==1.4.2 >> $OSBDET_LOGFILE 2>&1
+  # workaround to make it work: https://github.com/apache/superset/issues/18723#issuecomment-1049107830
+  python3 -m pip uninstall -y markupsafe
+  python3 -m pip install markupsafe==2.0.1
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed" >> $OSBDET_LOGFILE
 }
 remove_bienv(){
