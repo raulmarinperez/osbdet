@@ -1,0 +1,17 @@
+# Contents of /etc/systemd/system/af_webserver.service
+[Unit]
+Description=Airflow Webserver
+After=network.target
+PartOf=airflow.service
+
+[Service]
+Type=simple
+Restart=always
+User=osbdet
+Environment="AIRFLOW_HOME=/opt/airflow"
+ExecStart=airflow webserver --port 8080
+#StandardOutput=file:/dev/null
+#StandardError=file:/dev/null
+
+[Install]
+WantedBy=multi-user.target
