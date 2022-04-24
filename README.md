@@ -33,14 +33,13 @@ of the frameworks. This is accomplished by using the `setup` option as follows:
 root@osbdet:~/osbdet# ./osbdet_builder.sh setup
 Let's setup your OSBDET s22r1 builder:
   Log level (DEBUG*): DEBUG
-  Target Operating System (deb11*|ubu20): deb11
+  Target Operating System (deb11*): deb11
   Target Architecture (amd64*|arm64): amd64
   OSBDET recipes home (/root/osbdet-recipes*): 
   OSBDET repository (https://github.com/raulmarinperez/osbdet-recipes.git*): 
 Persisting changes in /root/osbdet/shared/osbdet_builder.conf... [Done]
 ```
-As you can see, OSBDET is compatible with amd64 and arm64 architectures, and the Debian 11 (amd64 at the moment)
-and Ubuntu 20 (arm64 at the moment) GNU/Linux operating systems.
+As you can see, OSBDET is compatible with amd64 and arm64 architectures and the Debian 11 GNU/Linux operating system.
 The current configuration can be always checked by invoking the `currentconf` option:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh currentconf
