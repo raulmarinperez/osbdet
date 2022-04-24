@@ -430,7 +430,7 @@ setup() {
   printf "  Log level (DEBUG*): "
   read_valid_conf LOGLEVEL "DEBUG*"
   LOGLEVEL=$VALUE
-  printf "  Target Operating System (deb11*|ubu20): "
+  printf "  Target Operating System (deb11*): "
   read_valid_conf OSBDET_TARGETOS "deb11*|ubu20"
   OSBDET_TARGETOS=$VALUE
   printf "  Target Architecture (amd64*|arm64): "
