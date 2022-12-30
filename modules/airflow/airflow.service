@@ -9,7 +9,7 @@ Type=simple
 Restart=always
 User=osbdet
 Environment="AIRFLOW_HOME=/opt/airflow"
-ExecStart=airflow scheduler
+ExecStart=/usr/bin/bash -c "cd /opt/airflow && source /opt/airflow/bin/activate && airflow scheduler"
 #StandardOutput=file:/dev/null
 #StandardError=file:/dev/null
 

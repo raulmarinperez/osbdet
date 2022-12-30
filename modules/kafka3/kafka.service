@@ -1,15 +1,14 @@
-# Contents of /etc/systemd/system/zookeeper.service
+# Contents of /etc/systemd/system/kafka.service
 [Unit]
-Description=Zookeeper
+Description=Kafka
 After=network.target
-PartOf=kafka.service
 
 [Service]
 Type=simple
 Restart=always
 User=osbdet
 Environment="KAFKA_HOME=/opt/kafka"
-ExecStart=/opt/kafka/bin/zookeeper-server-start.sh /opt/kafka/config/zookeeper.properties
+ExecStart=/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/kraft/server.properties
 StandardOutput=file:/dev/null
 StandardError=file:/dev/null
 

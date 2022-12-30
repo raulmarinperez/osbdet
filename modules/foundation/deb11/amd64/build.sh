@@ -41,13 +41,13 @@ miscinstall(){
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation" >> $OSBDET_LOGFILE
   apt update >> $OSBDET_LOGFILE 2>&1
   apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                 tmux python3-pip sudo git emacs unzip >> $OSBDET_LOGFILE 2>&1
+                 tmux python3-pip sudo git emacs unzip nginx >> $OSBDET_LOGFILE 2>&1
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done" >> $OSBDET_LOGFILE
 }
 remove_miscinstall(){
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation" >> $OSBDET_LOGFILE
   apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                tmux python3-pip sudo git unzip --purge >>$OSBDET_LOGFILE 2>&1
+                tmux python3-pip sudo git unzip nginx --purge >>$OSBDET_LOGFILE 2>&1
   apt autoremove -y >>$OSBDET_LOGFILE 2>&1
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done" >> $OSBDET_LOGFILE
 }

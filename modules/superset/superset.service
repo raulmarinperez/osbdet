@@ -5,8 +5,9 @@ After=network.target
 [Service]
 Type=simple
 Restart=always
-User=osbdet
-WorkingDirectory=/home/osbdet
-ExecStart=superset run -h 0.0.0.0 -p 8880 --with-threads --reload --debugger
+User=root
+WorkingDirectory=/opt/superset
+Environment="FLASK_APP=superset"
+ExecStart=/usr/bin/bash -c "cd /opt/superset && source /opt/superset/bin/activate && superset run -h 0.0.0.0 -p 8880 --with-threads --reload"
 [Install]
 WantedBy=multi-user.target

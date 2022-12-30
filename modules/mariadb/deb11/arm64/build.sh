@@ -23,7 +23,6 @@ install(){
   debug "mariadb.install DEBUG [`date +"%Y-%m-%d %T"`] Install MariaDB" >> $OSBDET_LOGFILE
   apt-get update >> $OSBDET_LOGFILE 2>&1
   apt-get install -y mariadb-server default-libmysqlclient-dev libmariadb-java >> $OSBDET_LOGFILE 2>&1
-  #apt-get install -y mariadb-server libmariadbclient-dev libmariadb-java >> $OSBDET_LOGFILE 2>&1
   python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
   python3 -m pip install mysqlclient >> $OSBDET_LOGFILE 2>&1
   debug "mariadb.install DEBUG [`date +"%Y-%m-%d %T"`] MariaDB installed" >> $OSBDET_LOGFILE
