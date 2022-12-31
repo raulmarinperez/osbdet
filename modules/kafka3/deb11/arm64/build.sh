@@ -107,10 +107,11 @@ remove_initscript() {
 module_install(){
   debug "kafka.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
-  #   1. Get Kafka 2 and extract it
+  #   1. Get Kafka 3 and extract it
   #   2. Install additional libraries
   #   3. Setup osbdet user profile to find Kafka binaries
-  #   4. Install systemd init script
+  #   4. Initialize Kafka with KRaft to remove Zookeeper dependency  
+  #   5. Install systemd init script
   printf "  Installing module 'kafka' ... "
   getandextract
   libraries
@@ -136,9 +137,10 @@ module_uninstall(){
   debug "kafka.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
   #   1. Remove systemd init script
-  #   2. Remove references to Kafka from user profile
-  #   3. Remove libraries
-  #   4. Remove Kafka binaries from the system
+  #   2. Remove KRaft logs
+  #   3. Remove references to Kafka from user profile
+  #   4. Remove libraries
+  #   5. Remove Kafka binaries from the system
   printf "  Uninstalling module 'kafka' ... "
   remove_initscript
   remove_kraftlogs

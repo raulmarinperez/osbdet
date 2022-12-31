@@ -70,7 +70,6 @@ airflow_initialization(){
   # 3. Set user and group to osbdet
   chown -R osbdet:osbdet $AIRFLOW_HOME
   deactivate
-  
   debug "airflow.airflow_initialization DEBUG [`date +"%Y-%m-%d %T"`] Airflow initialized"
 }
 

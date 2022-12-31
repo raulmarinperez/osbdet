@@ -35,13 +35,13 @@ remove_data_folder(){
 install_minio(){
   debug "minio.install_minio DEBUG [`date +"%Y-%m-%d %T"`] Installing minio server and client"
   # 1. Download the server and client to /tmp
-  wget -P /tmp/ https://dl.min.io/server/minio/release/linux-amd64/minio_20220412065535.0.0_amd64.deb
-  wget -P /tmp/ https://dl.min.io/client/mc/release/linux-amd64/mcli_20220407214327.0.0_amd64.deb
+  wget -P /tmp/ https://dl.min.io/server/minio/release/linux-amd64/minio_20221212192727.0.0_amd64.deb
+  wget -P /tmp/ https://dl.min.io/client/mc/release/linux-amd64/mcli_20221213002328.0.0_amd64.deb 
   # 2. Install both packages
-  dpkg -i /tmp/minio_20220412065535.0.0_amd64.deb
-  dpkg -i /tmp/mcli_20220407214327.0.0_amd64.deb
+  dpkg -i /tmp/minio_20221212192727.0.0_amd64.deb
+  dpkg -i /tmp/mcli_20221213002328.0.0_amd64.deb
   # 3. Remove the packages
-  rm /tmp/minio_20220412065535.0.0_amd64.deb /tmp/mcli_20220407214327.0.0_amd64.deb
+  rm /tmp/minio_20221212192727.0.0_amd64.deb /tmp/mcli_20221213002328.0.0_amd64.deb
   # 4. Copy the default configuration
   cp $SCRIPT_HOME/minio /etc/default/minio
   debug "minio.install_minio DEBUG [`date +"%Y-%m-%d %T"`] Minio server and client installed"

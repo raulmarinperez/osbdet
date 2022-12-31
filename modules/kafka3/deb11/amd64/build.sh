@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-KAFKA_BINARY_URL=https://archive.apache.org/dist/kafka/2.8.1/kafka_2.13-2.8.1.tgz
-KAFKA_TGZ_FILE=kafka_2.13-2.8.1.tgz
-KAFKA_DEFAULT_DIR=kafka_2.13-2.8.1
+KAFKA_BINARY_URL=https://downloads.apache.org/kafka/3.3.1/kafka_2.13-3.3.1.tgz
+KAFKA_TGZ_FILE=kafka_2.13-3.3.1.tgz
+KAFKA_DEFAULT_DIR=kafka_2.13-3.3.1
 
 # Aux functions
 # debug
@@ -38,8 +38,10 @@ remove(){
 
 libraries(){
   debug "kafka.libraries DEBUG [`date +"%Y-%m-%d %T"`] Installing additional libraries" >> $OSBDET_LOGFILE
+  apt update >> $OSBDET_LOGFILE 2>&1
+  apt install -y librdkafka-dev >> $OSBDET_LOGFILE 2>&1
   python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
-  python3 -m pip install confluent-kafka >> $OSBDET_LOGFILE 2>&1
+  python3 -m pip install confluent-kafka==1.8.2 >> $OSBDET_LOGFILE 2>&1
   debug "kafka.libraries DEBUG [`date +"%Y-%m-%d %T"`] Additional libraries installed" >> $OSBDET_LOGFILE
 }
 remove_libraries(){
@@ -73,37 +75,48 @@ remove_userprofile(){
   debug "kafka.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] References to Kafka removed from user profile" >> $OSBDET_LOGFILE
 }
 
+initwithkraft() {
+  debug "kafka.initwithkraft DEBUG [`date +"%Y-%m-%d %T"`] Initializing server properties with KRaft" >> $OSBDET_LOGFILE
+  KAFKA_CLUSTER_ID="$(/opt/kafka/bin/kafka-storage.sh random-uuid)" >> $OSBDET_LOGFILE
+  su - osbdet -c 'sed -i s/"tmp\/kraft-combined-logs"/"data\/kraft-combined-logs"/ /opt/kafka/config/kraft/server.properties' >> $OSBDET_LOGFILE
+  su - osbdet -c "/opt/kafka/bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c /opt/kafka/config/kraft/server.properties" >> $OSBDET_LOGFILE
+  debug "kafka.initwithkraft DEBUG [`date +"%Y-%m-%d %T"`] Server properties with KRaft initialized" >> $OSBDET_LOGFILE
+}
+remove_kraftlogs() {
+  debug "kafka.kraftlogs DEBUG [`date +"%Y-%m-%d %T"`] Removing KRaft logs" >> $OSBDET_LOGFILE
+  rm -rf /data/kraft-combined-logs
+  debug "kafka.kraftlogs DEBUG [`date +"%Y-%m-%d %T"`] KRaft logs removed" >> $OSBDET_LOGFILE
+}
+
 initscript() {
   debug "kafka.initscript DEBUG [`date +"%Y-%m-%d %T"`] Installing Kafka systemd script" >> $OSBDET_LOGFILE
-  cp $SCRIPT_HOME/zookeeper.service /lib/systemd/system/zookeeper.service
   cp $SCRIPT_HOME/kafka.service /lib/systemd/system/kafka.service
-  chmod 644 /lib/systemd/system/zookeeper.service
   chmod 644 /lib/systemd/system/kafka.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
   debug "kafka.initscript DEBUG [`date +"%Y-%m-%d %T"`] Kafka systemd script installed" >> $OSBDET_LOGFILE
 }
 remove_initscript() {
   debug "kafka.remove_initscript DEBUG [`date +"%Y-%m-%d %T"`] Removing the Kafka systemd script" >> $OSBDET_LOGFILE
-  rm /lib/systemd/system/zookeeper.service
   rm /lib/systemd/system/kafka.service
   systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
   debug "kafka.remove_initscript DEBUG [`date +"%Y-%m-%d %T"`] Kafka systemd script removed" >> $OSBDET_LOGFILE
 }
-
 
 # Primary functions
 #
 module_install(){
   debug "kafka.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
-  #   1. Get Kafka 2 and extract it
+  #   1. Get Kafka 3 and extract it
   #   2. Install additional libraries
   #   3. Setup osbdet user profile to find Kafka binaries
-  #   4. Install systemd init script
+  #   4. Initialize Kafka with KRaft to remove Zookeeper dependency
+  #   5. Install systemd init script
   printf "  Installing module 'kafka' ... "
   getandextract
   libraries
   userprofile
+  initwithkraft
   initscript
   printf "[Done]\n"
   debug "kafka.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
@@ -124,11 +137,13 @@ module_uninstall(){
   debug "kafka.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
   #   1. Remove systemd init script
-  #   2. Remove references to Kafka from user profile
-  #   3. Remove libraries
-  #   4. Remove Kafka binaries from the system
-  printf "  Uninstalling module 'kafka' ... "
+  #   2. Remove KRaft logs
+  #   3. Remove references to Kafka from user profile  
+  #   4. Remove libraries
+  #   5. Remove Kafka binaries from the system
+  printf "  Uninstalling module 'kafka' ... "  
   remove_initscript
+  remove_kraftlogs  
   remove_userprofile
   remove_libraries
   remove

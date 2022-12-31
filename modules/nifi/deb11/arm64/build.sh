@@ -29,7 +29,6 @@ getandextract(){
     exit 1
   fi
   
-  tar zxf /opt/$NIFI_TGZ_FILE -C /opt >> $OSBDET_LOGFILE 2>&1
   unzip /opt/$NIFI_ZIP_FILE -d /opt >> $OSBDET_LOGFILE 2>&1
   rm /opt/$NIFI_ZIP_FILE
   mv /opt/$NIFI_DEFAULT_DIR /opt/nifi
