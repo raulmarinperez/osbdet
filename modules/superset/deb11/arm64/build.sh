@@ -27,7 +27,7 @@ bienv_install(){
   python3 -m venv /opt/superset/ >> $OSBDET_LOGFILE 2>&1
   . /opt/superset/bin/activate >> $OSBDET_LOGFILE 2>&1
   python -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
-  python -m pip install apache-superset==2.0.1 >> $OSBDET_LOGFILE 2>&1
+  python -m pip install mysqlclient apache-superset==2.0.1 >> $OSBDET_LOGFILE 2>&1
   python -m pip install WTForms==2.3.3 >> $OSBDET_LOGFILE 2>&1
   deactivate
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed" >> $OSBDET_LOGFILE

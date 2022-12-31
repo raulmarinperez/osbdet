@@ -78,12 +78,13 @@ remove_userprofile(){
 initwithkraft() {
   debug "kafka.initwithkraft DEBUG [`date +"%Y-%m-%d %T"`] Initializing server properties with KRaft" >> $OSBDET_LOGFILE
   KAFKA_CLUSTER_ID="$(/opt/kafka/bin/kafka-storage.sh random-uuid)" >> $OSBDET_LOGFILE
+  su - osbdet -c 'sed -i s/"tmp\/kraft-combined-logs"/"data\/kraft-combined-logs"/ /opt/kafka/config/kraft/server.properties' >> $OSBDET_LOGFILE
   su - osbdet -c "/opt/kafka/bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c /opt/kafka/config/kraft/server.properties" >> $OSBDET_LOGFILE
   debug "kafka.initwithkraft DEBUG [`date +"%Y-%m-%d %T"`] Server properties with KRaft initialized" >> $OSBDET_LOGFILE
 }
 remove_kraftlogs() {
   debug "kafka.kraftlogs DEBUG [`date +"%Y-%m-%d %T"`] Removing KRaft logs" >> $OSBDET_LOGFILE
-  rm -rf /tmp/kraft-combined-logs
+  rm -rf /data/kraft-combined-logs
   debug "kafka.kraftlogs DEBUG [`date +"%Y-%m-%d %T"`] KRaft logs removed" >> $OSBDET_LOGFILE
 }
 

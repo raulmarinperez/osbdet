@@ -90,10 +90,13 @@ remove_adoptopenjdkrepo(){
 install_jdk8_11(){
   debug "foundation.install_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 8 and 11" >> $OSBDET_LOGFILE
   apt install -y adoptopenjdk-8-hotspot adoptopenjdk-11-hotspot >> $OSBDET_LOGFILE 2>&1
+  # Removes platform dependency while using JDK 11 CACERTS (NiFi's Binance Lab)
+  sudo ln -s /usr/lib/jvm/adoptopenjdk-11-hotspot-arm64/lib/security/cacerts /opt/jdk-11-cacerts
   debug "foundation.install_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 8 and 11 installation done" >> $OSBDET_LOGFILE
 }
 remove_jdk8_11(){
   debug "foundation.remove_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 8 and 11" >> $OSBDET_LOGFILE
+  rm /opt/jdk-11-cacerts
   apt remove -y adoptopenjdk-8-hotspot adoptopenjdk-11-hotspot >> $OSBDET_LOGFILE 2>&1
   debug "foundation.remove_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 8 and 11 removed" >> $OSBDET_LOGFILE
 }
