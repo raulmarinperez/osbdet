@@ -31,7 +31,7 @@ Before being able to use the script, it has to be configured to pull the right v
 of the frameworks. This is accomplished by using the `setup` option as follows:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh setup
-Let's setup your OSBDET s23r1 builder:
+Let's setup your OSBDET 23r1 builder:
   Log level (DEBUG*): DEBUG
   Target Operating System (deb11*): deb11
   Target Architecture (amd64*|arm64): amd64
@@ -125,19 +125,19 @@ Bear in mind that **you're dealing with an undersized Big Data environment**, an
 - *2 modern CPUs/vCPUS* are recommended to have decent performance.
 - *4GB is the minimun amount of RAM* to make some frameworks work together (ex. NiFi + Hadoop, Hadoop + Spark, ...)
 - If you're going to install all the frameworks (default setup I shared with my students), *you should have at least 50GB of free space* to comfortably work with the environment. Even though you can make it work with less disk space, you'll run out of disk space very quickly as soon as you start adding jobs and datasets to play around with.
-The following table outlines the different frameworks TCP ports, and the TCP port mapping I usually configure setup in virtual environments:
+The following table outlines the different frameworks TCP ports, and the TCP port mapping I usually configure in virtual environments:
 
-|Framework/Tool     |Original TCP port   |Mapped TCP port   |
-|-------------------|--------------------|------------------|
-|NGINX Web Server   |80                  |2023              |
-|Jupyter Notebook   |8888                |28888             |
-|HDFS UI            |50070               |50070             |
-|HDFS Data Node     |50075               |50075             |
-|YARN UI            |8088                |28088             |
-|NiFi UI            |9090                |29090             |
-|Spark UI           |4040                |24040             |
-|Superset UI        |8880                |28880             |
-|MinIO Console      |9001                |29001             |
-|Airflow UI         |8080                |28080             |
-|Grafana UI         |3000                |23000             |
+   |Framework/Tool     |Original TCP port   |Mapped TCP port   |
+   |-------------------|--------------------|------------------|
+   |NGINX Web Server   |80                  |2023              |
+   |Jupyter Notebook   |8888                |28888             |
+   |HDFS UI            |50070               |50070             |
+   |HDFS Data Node     |50075               |50075             |
+   |YARN UI            |8088                |28088             |
+   |NiFi UI            |9090                |29090             |
+   |Spark UI           |4040                |24040             |
+   |Superset UI        |8880                |28880             |
+   |MinIO Console      |9001                |29001             |
+   |Airflow UI         |8080                |28080             |
+   |Grafana UI         |3000                |23000             |
 
