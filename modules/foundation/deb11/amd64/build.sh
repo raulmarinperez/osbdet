@@ -61,6 +61,8 @@ miscsetup() {
   cp $SCRIPT_HOME/osbdet-update.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-recipes.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-cook.sh /home/osbdet/bin
+  mv /var/www/html /var/www/html.old
+  cp -rf $SCRIPT_HOME/osbdet-web /var/www/html
   chown -R osbdet:osbdet /home/osbdet/bin
   debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup done" >> $OSBDET_LOGFILE
 }
