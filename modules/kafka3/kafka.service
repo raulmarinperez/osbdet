@@ -1,0 +1,16 @@
+# Contents of /etc/systemd/system/kafka.service
+[Unit]
+Description=Kafka
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+User=osbdet
+Environment="KAFKA_HOME=/opt/kafka"
+ExecStart=/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/kraft/server.properties
+StandardOutput=file:/dev/null
+StandardError=file:/dev/null
+
+[Install]
+WantedBy=multi-user.target

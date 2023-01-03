@@ -22,7 +22,7 @@ debug() {
 install(){
   debug "mariadb.install DEBUG [`date +"%Y-%m-%d %T"`] Install MariaDB" >> $OSBDET_LOGFILE
   apt-get update >> $OSBDET_LOGFILE 2>&1
-  apt-get install -y mariadb-server libmariadb-dev libmariadb-java >> $OSBDET_LOGFILE 2>&1
+  apt-get install -y mariadb-server default-libmysqlclient-dev libmariadb-java >> $OSBDET_LOGFILE 2>&1
   python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
   python3 -m pip install mysqlclient >> $OSBDET_LOGFILE 2>&1
   debug "mariadb.install DEBUG [`date +"%Y-%m-%d %T"`] MariaDB installed" >> $OSBDET_LOGFILE
@@ -30,7 +30,7 @@ install(){
 remove_install(){
   debug "mariadb.remove_install DEBUG [`date +"%Y-%m-%d %T"`] Removing MariaDB" >> $OSBDET_LOGFILE
   python3 -m pip uninstall -y mysqlclient >> $OSBDET_LOGFILE 2>&1
-  apt remove -y mariadb-server libmariadbc-dev --purge >> $OSBDET_LOGFILE 2>&1
+  apt remove -y mariadb-server libmariadbclient-dev --purge >> $OSBDET_LOGFILE 2>&1
   rm -rf /var/lib/mysql /var/log/mysql
   rm /etc/mysql/mariadb.conf.d/50-sqlmode.cnf
   apt autoremove -y >> $OSBDET_LOGFILE 2>&1
@@ -45,6 +45,7 @@ initialsetup(){
   cp $SCRIPT_HOME/50-sqlmode.cnf /etc/mysql/mariadb.conf.d
   service mariadb start >> $OSBDET_LOGFILE 2>&1
   mariadb < $SCRIPT_HOME/init.sql
+  service mariadb stop >> $OSBDET_LOGFILE 2>&1
   debug "mariadb.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset done" >> $OSBDET_LOGFILE
 }
 

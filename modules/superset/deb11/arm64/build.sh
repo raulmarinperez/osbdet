@@ -23,13 +23,18 @@ bienv_install(){
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the BI environment" >> $OSBDET_LOGFILE
   apt-get update >> $OSBDET_LOGFILE 2>&1
   apt-get install -y libffi-dev libsasl2-dev libldap2-dev python3-venv >> $OSBDET_LOGFILE 2>&1
-  python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
-  python3 -m pip install apache-superset==1.4.2 >> $OSBDET_LOGFILE 2>&1
+  mkdir /opt/superset >> $OSBDET_LOGFILE 2>&1
+  python3 -m venv /opt/superset/ >> $OSBDET_LOGFILE 2>&1
+  . /opt/superset/bin/activate >> $OSBDET_LOGFILE 2>&1
+  python -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
+  python -m pip install mysqlclient apache-superset==2.0.1 >> $OSBDET_LOGFILE 2>&1
+  python -m pip install WTForms==2.3.3 >> $OSBDET_LOGFILE 2>&1
+  deactivate
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed" >> $OSBDET_LOGFILE
 }
 remove_bienv(){
   debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] Removing BI environment software" >> $OSBDET_LOGFILE
-  python3 -m pip uninstall -y apache-superset PyJWT >> $OSBDET_LOGFILE 2>&1
+  rm -rf /opt/superset
   apt-get remove -y libffi-dev libsasl2-dev libldap2-dev python3-venv --purge >> $OSBDET_LOGFILE 2>&1
   apt autoremove -y >>$OSBDET_LOGFILE 2>&1
   debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] BI environment software removed" >> $OSBDET_LOGFILE
@@ -37,17 +42,14 @@ remove_bienv(){
 
 initialsetup(){
   debug "superset.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset" >> $OSBDET_LOGFILE
-  su osbdet -c "cd /home/osbdet; superset db upgrade" >> $OSBDET_LOGFILE 2>&1
-  su osbdet -c "cd /home/osbdet; export FLASK_APP=superset; \
-                superset fab create-admin --username osbdet --firstname osb --lastname bdet \
-                                          --email osbdet@osbdet.com --password osbdet123\$" >> $OSBDET_LOGFILE 2>&1
-  su osbdet -c "cd /home/osbdet; superset init" >> $OSBDET_LOGFILE 2>&1
+  . /opt/superset/bin/activate >> $OSBDET_LOGFILE 2>&1
+  export FLASK_APP=superset; 
+  superset db upgrade >> $OSBDET_LOGFILE 2>&1
+  superset fab create-admin --username osbdet --firstname osb --lastname bdet \
+                            --email osbdet@osbdet.com --password osbdet123\$ >> $OSBDET_LOGFILE 2>&1
+  superset init >> $OSBDET_LOGFILE 2>&1
+  deactivate
   debug "superset.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset done" >> $OSBDET_LOGFILE
-}
-remove_initialsetup(){
-  debug "superset.remove_initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Removing initial setup of Superset" >> $OSBDET_LOGFILE
-  rm -rf /home/osbdet/.superset >> $OSBDET_LOGFILE 2>&1
-  debug "superset.remove_initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Removing initial setup of Superset" >> $OSBDET_LOGFILE
 }
 
 serviceinstall(){
@@ -83,7 +85,7 @@ module_install(){
 }
 
 module_status() {
-  if [ -d "/home/osbdet/.superset" ]
+  if [ -d "/opt/superset" ]
   then
     echo "Module is installed [OK]"
     exit 0
@@ -101,7 +103,6 @@ module_uninstall(){
   #   3. BI environment removal
   printf "  Uninstalling module 'superset' ... "
   remove_serviceinstall
-  remove_initialsetup
   remove_bienv
   printf "[Done]\n"
   debug "jupyter.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE

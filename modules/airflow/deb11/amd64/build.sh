@@ -7,7 +7,7 @@ SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
 
 AIRFLOW_HOME=/opt/airflow
-AIRFLOW_VERSION=2.2.4
+AIRFLOW_VERSION=2.5.0
 PYTHON_VERSION="$(python3 --version | cut -d " " -f 2 | cut -d "." -f 1-2)"
 CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
 
@@ -27,7 +27,6 @@ debug() {
 create_folder(){
   debug "airflow.create_folder DEBUG [`date +"%Y-%m-%d %T"`] Creating the folder where the files will live"
   mkdir -p $AIRFLOW_HOME
-  chmod -R 755 /data/s3
   chown osbdet:osbdet $AIRFLOW_HOME
   debug "airflow.create_folder DEBUG [`date +"%Y-%m-%d %T"`] Folder where files will create created"
 }
@@ -40,19 +39,23 @@ remove_folder(){
 install_airflow(){
   debug "airflow.install_airflow DEBUG [`date +"%Y-%m-%d %T"`] Installing airflow"
   # 1. Installation as detailed at https://airflow.apache.org/docs/apache-airflow/stable/start/local.html
-  python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
-  python3 -m pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"  
+  python3 -m venv $AIRFLOW_HOME
+  . $AIRFLOW_HOME/bin/activate
+  python -m pip install --upgrade pip
+  python -m pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT_URL}"
+  deactivate
   debug "airflow.install_airflow DEBUG [`date +"%Y-%m-%d %T"`] Airflow installed"
 }
 uninstall_airflow(){
   debug "airflow.uninstall_airflow DEBUG [`date +"%Y-%m-%d %T"`] Uninstalling airflow"
   # 1. Remove packages
-  python3 -m pip uninstall -y "apache-airflow==${AIRFLOW_VERSION}"
+  rm -rf $AIRFLOW_HOME
   debug "airflow.uninstall_airflow DEBUG [`date +"%Y-%m-%d %T"`] Airflow uninstalled"
 }
 
 airflow_initialization(){
   debug "airflow.airflow_initialization DEBUG [`date +"%Y-%m-%d %T"`] Initializing airflow"
+  . $AIRFLOW_HOME/bin/activate
   export AIRFLOW_HOME
   # 1. Airflow's db initialization
   airflow db init
@@ -66,7 +69,7 @@ airflow_initialization(){
             --email osbdet@osbdet.com
   # 3. Set user and group to osbdet
   chown -R osbdet:osbdet $AIRFLOW_HOME
-  
+  deactivate
   debug "airflow.airflow_initialization DEBUG [`date +"%Y-%m-%d %T"`] Airflow initialized"
 }
 

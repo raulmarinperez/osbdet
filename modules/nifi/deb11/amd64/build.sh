@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/1.16.0/nifi-1.16.0-bin.tar.gz
-NIFI_TGZ_FILE=nifi-1.16.0-bin.tar.gz
-NIFI_DEFAULT_DIR=nifi-1.16.0
+NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/1.19.1/nifi-1.19.1-bin.zip
+NIFI_ZIP_FILE=nifi-1.19.1-bin.zip
+NIFI_DEFAULT_DIR=nifi-1.19.1
 
 # Aux functions
 # debug
@@ -23,14 +23,14 @@ debug() {
 
 getandextract(){
   debug "nifi.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting NiFi" >> $OSBDET_LOGFILE
-  wget $NIFI_BINARY_URL -O /opt/$NIFI_TGZ_FILE >> $OSBDET_LOGFILE 2>&1
+  wget $NIFI_BINARY_URL -O /opt/$NIFI_ZIP_FILE >> $OSBDET_LOGFILE 2>&1
   if [[ $? -ne 0 ]]; then
     echo "[Error]"
     exit 1
   fi
   
-  tar zxf /opt/$NIFI_TGZ_FILE -C /opt >> $OSBDET_LOGFILE 2>&1
-  rm /opt/$NIFI_TGZ_FILE
+  unzip /opt/$NIFI_ZIP_FILE -d /opt >> $OSBDET_LOGFILE 2>&1
+  rm /opt/$NIFI_ZIP_FILE
   mv /opt/$NIFI_DEFAULT_DIR /opt/nifi
   chown -R osbdet:osbdet /opt/nifi
   debug "nifi.getandextract DEBUG [`date +"%Y-%m-%d %T"`] NiFi downloading and extracting process done" >> $OSBDET_LOGFILE
