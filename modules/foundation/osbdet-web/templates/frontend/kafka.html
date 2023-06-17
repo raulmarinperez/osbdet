@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<!--
+	Phantom by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+  <head>
+    <title>OSBDET - Kafka 3.3.1</title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+      <link rel="stylesheet" href="static/assets/css/main.css" />
+      <noscript><link rel="stylesheet" href="static/assets/css/noscript.css" /></noscript>
+  </head>
+  <body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Header -->
+      <header id="header">
+        <div class="inner">
+          <!-- Logo -->
+          <a href="index.html" class="logo">
+            <span class="symbol"><img src="static/images/logo.png" alt="" /></span>
+            <span class="title">OSBDET</span>
+          </a>
+          <!-- Nav -->
+          <nav>
+            <ul>
+              <li><a href="#menu">Menu</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <!-- Menu -->
+      <nav id="menu">
+        <h2>Menu</h2>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="jupyter.html">Jupyter 1.0</a></li>
+          <li><a href="nifi.html">NiFi 1.19.1</a></li>
+          <li><a href="hadoop.html">Hadoop 3.3.1</a></li>
+          <li><a href="spark.html">Spark 3.2.3</a></li>
+          <li><a href="kafka.html">Kafka 3.3.1</a></li>
+          <li><a href="truckfleet-sim.html">Truck Fleet Simulator</a></li>
+          <li><a href="mariadb.html">MariaDB 10.5.18</a></li>
+          <li><a href="superset.html">Superset 2.0.1</a></li>
+          <li><a href="mongodb.html">MongoDB 4.4 CE</a></li>
+          <li><a href="minio.html">MinIO Dec'22</a></li>
+          <li><a href="airflow.html">Airflow 2.5.0</a></li>
+          <li><a href="grafana.html">Grafana 9.3.2</a></li>
+        </ul>
+      </nav>
+      <!-- Main -->
+      <div id="main">
+        <div class="inner">
+          <h1>Apache Kafka 3.3.1</h1>
+          <span class="image main"><img src="static/images/kafka_banner.png" alt="" /></span>
+          <p><strong>How to start it up: </strong>Type the <code>sudo service kafka start</code> command in a Jupyter Terminal window:</p>
+          <span class="image main"><img src="static/images/kafka_start.png" style="width:50%" alt="" />
+	  <em>* Type <strong>osbdet123$</strong> when prompted for the password; bear in mind no text will show up while typing the password.</em></span>
+	  <p><strong>How to shut it down: </strong>Type the <code>sudo service kafka stop</code> command in a Jupyter Terminal window:</p>
+          <span class="image main"><img src="static/images/kafka_stop.png" style="width:50%" alt="" />
+	  <em>* Type <strong>osbdet123$</strong> when prompted for the password; bear in mind no text will show up while typing the password.</em></span>
+    <p>
+      <input type="submit" value="START" id="start" onClick="reply_click(this.id)">
+      <input type="submit" value="STATUS" id="status" onClick="reply_click(this.id)">
+      <input type="submit" value="STOP" id="stop" onClick="reply_click(this.id)">
+    </p>
+    <p><strong>How to access: </strong>There is no user interface for Kafka.</p>
+	  <p><strong>Description: </strong>Apache Kafka is an open-source distributed event streaming platform used by thousands of companies for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications.</p>
+          <p><strong>Project website: </strong> <a href="https://kafka.apache.org/" target="_blank">https://kafka.apache.org/</a></p>
+          <p><strong>Additional notes:</strong><br/>
+            The Kafka deployment in this environment doesn't rely on Zookeeper but on a variation of the Raft consensus procol called <a href="https://developer.confluent.io/learn/kraft/" target="_blank">KRaft</a>.</p>
+        </div>
+      </div>
+      <!-- Footer -->
+      <footer id="footer">
+        <div class="inner">
+          <section>
+            <h2>About OSBDET</h2>
+	    <p><a href="https://github.com/raulmarinperez/osbdet" target="_blank">OSBDET</a> is a test environment creation tool which facilitates the build of sandboxes containing a bunch of open source technologies altogether. These tests environments are targeting people who want to take their first steps with Big Data technologies easily.</p>
+	    <p>OSBDET's architecture encourages the extension of the toolkit by introducing new frameworks with very little effort.</p>
+          </section>
+          <section>
+            <h2>Follow</h2>
+            <ul class="icons">
+              <li><a href="https://github.com/raulmarinperez/osbdet" target="_blank"
+		     class="icon brands style2 fa-github"><span class="label">Github</span></a></li>
+              <li><a href="https://www.linkedin.com/in/raulmarinperez/" target="_blank"
+		     class="icon brands style2 fa-linkedin"><span class="label">LinkedIn</span></a></li>
+              <li><a href="https://mastodon.social/@thebsdprof" target="_blank"
+		     class="icon brands style2 fa-mastodon"><span class="label">Mastodon</span></a></li>
+            </ul>
+          </section>
+          <ul class="copyright">
+            <li>&copy; OSBDET. All rights reserved</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+          </ul>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="static/assets/js/jquery.min.js"></script>
+    <script src="static/assets/js/browser.min.js"></script>
+    <script src="static/assets/js/breakpoints.min.js"></script>
+    <script src="static/assets/js/util.js"></script>
+    <script src="static/assets/js/main.js"></script>
+
+    <script>
+
+      var path = window.location.pathname;
+      var service = path.split("/").pop().split(".")[0]
+
+      function reply_click(operation)
+      {
+        fetch('api/v1/command/', {
+              method: 'POST',
+              headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                "service": service, 
+                "operation": operation})
+          })
+            .then(response => response.json())
+            .then(response => window.alert([JSON.stringify(response)]))
+            .then(response => console.log(JSON.stringify(response)))
+      }
+    </script>
+
+  </body>
+</html>
