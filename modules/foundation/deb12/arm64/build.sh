@@ -41,7 +41,7 @@ miscinstall(){
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation"
   apt update
   apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                 tmux python3-pip sudo git emacs unzip nginx
+                 tmux python3-pip sudo git emacs unzip nginx ca-certificates-java default-jdk
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done"
 }
 remove_miscinstall(){
@@ -145,17 +145,17 @@ remove_cloudproviders_clis(){
 install_otel_collector(){
   debug "foundation.install_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] Installing OpenTelemetry collector"
   # Download from the official repo
-  wget -O /tmp/otelcol_0.81.0_linux_arm64.deb https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.81.0/otelcol_0.81.0_linux_arm64.deb
-  dpkg -i /tmp/otelcol_0.81.0_linux_arm64.deb
-  rm /tmp/otelcol_0.81.0_linux_arm64.deb
+  wget -O /tmp/otelcol-contrib_0.81.0_linux_arm64.deb https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.81.0/otelcol-contrib_0.81.0_linux_arm64.deb
+  dpkg -i /tmp/otelcol-contrib_0.81.0_linux_arm64.deb
+  rm /tmp/otelcol-contrib_0.81.0_linux_arm64.deb
   # Disable service autostart
-  systemctl stop otelcol
-  systemctl disable otelcol
+  systemctl stop otelcol-contrib
+  systemctl disable otelcol-contrib
   debug "foundation.install_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] OpenTelemetry collector installation done"
 }
 remove_otel_collector(){
   debug "foundation.remove_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] Removing OpenTelemetry collector"
-  dpkg --purge otelcol 
+  dpkg --purge otelcol-contrib 
   debug "foundation.remove_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] OpenTelemetry collector removed"
 }
 
@@ -173,20 +173,20 @@ module_install(){
   #   7. Install cloud providers CLIs
   #   8. Install the OpenTelemetry collector
   printf "  Installing module 'foundation' ... "
-  #create_osbdetuser >> $OSBDET_LOGFILE 2>&1
-  #miscinstall >> $OSBDET_LOGFILE 2>&1
-  #miscsetup >> $OSBDET_LOGFILE 2>&1
-  #add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
-  #install_jdk11 >> $OSBDET_LOGFILE 2>&1
-  #install_docker >> $OSBDET_LOGFILE 2>&1
-  #install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
+  create_osbdetuser >> $OSBDET_LOGFILE 2>&1
+  miscinstall >> $OSBDET_LOGFILE 2>&1
+  miscsetup >> $OSBDET_LOGFILE 2>&1
+  add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
+  install_jdk11 >> $OSBDET_LOGFILE 2>&1
+  install_docker >> $OSBDET_LOGFILE 2>&1
+  install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   install_otel_collector >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
 
 module_status() {
-  if [ -d "/home/osbdet_" ]
+  if [ -d "/home/osbdet" ]
   then
     echo "Module is installed [OK]"
     exit 0
@@ -210,13 +210,13 @@ module_uninstall(){
   #   
   printf "  Uninstalling module 'foundation' ... "
   remove_otel_collector >> $OSBDET_LOGFILE 2>&1
-  #remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
-  #remove_docker >> $OSBDET_LOGFILE 2>&1
-  #remove_jdk11 >> $OSBDET_LOGFILE 2>&1
-  #remove_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
-  #remove_miscsetup >> $OSBDET_LOGFILE 2>&1
-  #remove_miscinstall >> $OSBDET_LOGFILE 2>&1
-  #remove_osbdetuser >> $OSBDET_LOGFILE 2>&1
+  remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
+  remove_docker >> $OSBDET_LOGFILE 2>&1
+  remove_jdk11 >> $OSBDET_LOGFILE 2>&1
+  remove_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
+  remove_miscsetup >> $OSBDET_LOGFILE 2>&1
+  remove_miscinstall >> $OSBDET_LOGFILE 2>&1
+  remove_osbdetuser >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }

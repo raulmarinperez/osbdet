@@ -7,6 +7,6 @@ Type=simple
 Restart=always
 User=osbdet
 WorkingDirectory=/home/osbdet/notebooks
-ExecStart=jupyter notebook
+ExecStart=/home/osbdet/.jupyter_venv/bin/jupyter notebook
 [Install]
 WantedBy=multi-user.target
