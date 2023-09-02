@@ -47,7 +47,7 @@ miscinstall(){
 remove_miscinstall(){
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation"
   apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                tmux python3-pip sudo git unzip nginx ca-certificates-java default.jdk --purge
+                tmux python3-pip sudo git unzip nginx ca-certificates-java default-jdk --purge
   apt autoremove -y
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done" 
 }
@@ -173,13 +173,13 @@ module_install(){
   #   7. Install cloud providers CLIs
   #   8. Install the OpenTelemetry collector
   printf "  Installing module 'foundation' ... "
-  #create_osbdetuser >> $OSBDET_LOGFILE 2>&1
-  #miscinstall >> $OSBDET_LOGFILE 2>&1
-  #miscsetup >> $OSBDET_LOGFILE 2>&1
-  #add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
-  #install_jdk11 >> $OSBDET_LOGFILE 2>&1
-  #install_docker >> $OSBDET_LOGFILE 2>&1
-  #install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
+  create_osbdetuser >> $OSBDET_LOGFILE 2>&1
+  miscinstall >> $OSBDET_LOGFILE 2>&1
+  miscsetup >> $OSBDET_LOGFILE 2>&1
+  add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
+  install_jdk11 >> $OSBDET_LOGFILE 2>&1
+  install_docker >> $OSBDET_LOGFILE 2>&1
+  install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   install_otel_collector >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
@@ -209,6 +209,7 @@ module_uninstall(){
   #   8. Remove the osbdet system user
   #   
   printf "  Uninstalling module 'foundation' ... "
+  remove_otel_collector >> $OSBDET_LOGFILE 2>&1
   remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   remove_docker >> $OSBDET_LOGFILE 2>&1
   remove_jdk8_11 >> $OSBDET_LOGFILE 2>&1
