@@ -159,6 +159,44 @@ remove_otel_collector(){
   debug "foundation.remove_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] OpenTelemetry collector removed"
 }
 
+install_vscode(){
+  debug "foundation.install_vscode DEBUG [`date +"%Y-%m-%d %T"`] Installing Visual Studio Code"
+  # Installation instructions documented at https://code.visualstudio.com/docs/setup/linux
+  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+  install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+  echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list
+  rm -f packages.microsoft.gpg
+  apt-get update
+  apt-get install -y code
+  debug "foundation.install_vscode DEBUG [`date +"%Y-%m-%d %T"`] Visual Studio Code installation done"
+}
+remove_vscode(){
+  debug "foundation.remove_vscode DEBUG [`date +"%Y-%m-%d %T"`] Removing Visual Studio Code"
+  rm -f /etc/apt/sources.list.d/vscode.list /etc/apt/keyrings/packages.microsoft.gpg
+  apt-get remove -y code --purge
+  apt-get update
+  debug "foundation.remove_vscode DEBUG [`date +"%Y-%m-%d %T"`] Visual Studio Code removed"
+}
+
+install_nodejs_20(){
+  debug "foundation.install_nodejs_20 DEBUG [`date +"%Y-%m-%d %T"`] Installing NodeJS 20"
+  # Installation instructions documented at https://github.com/nodesource/distributions#debinstall
+  curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+  apt-get update
+  apt-get install -y nodejs
+  debug "foundation.install_nodejs_20 DEBUG [`date +"%Y-%m-%d %T"`] NodeJS 20 installation done"
+}
+remove_nodejs_20(){
+  debug "foundation.remove_nodejs_20 DEBUG [`date +"%Y-%m-%d %T"`] Removing NodeJS 20"
+  # Removal instructions documented at https://github.com/nodesource/distributions#debinstall
+  apt-get remove -y nodejs --purge
+  rm -r /etc/apt/sources.list.d/nodesource.list
+  rm -r /etc/apt/keyrings/nodesource.gpg
+  apt-get update
+  debug "foundation.remove_nodejs_20 DEBUG [`date +"%Y-%m-%d %T"`] NodeJS 20 removed"
+}
+
 # Primary functions
 #
 module_install(){
@@ -172,6 +210,8 @@ module_install(){
   #   6. Docker installation
   #   7. Install cloud providers CLIs
   #   8. Install the OpenTelemetry collector
+  #   9. Install Visual Studio Code
+  #   10. Install NodeJS 20
   printf "  Installing module 'foundation' ... "
   create_osbdetuser >> $OSBDET_LOGFILE 2>&1
   miscinstall >> $OSBDET_LOGFILE 2>&1
@@ -181,6 +221,8 @@ module_install(){
   install_docker >> $OSBDET_LOGFILE 2>&1
   install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   install_otel_collector >> $OSBDET_LOGFILE 2>&1
+  install_vscode >> $OSBDET_LOGFILE 2>&1
+  install_nodejs_20 >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -199,16 +241,20 @@ module_status() {
 module_uninstall(){
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
-  #   1. Remove the OpenTelemetry collector
-  #   2. Remove cloud providers CLIs
-  #   3. Remove Docker
-  #   4. Uninstall JDK 8 and 11
-  #   5. Remove AdoptOpenJDK repo
-  #   6. Miscellaneous setup
-  #   7. Uninstallation miscellaneous software
-  #   8. Remove the osbdet system user
+  #   1. Install NodeJS 20
+  #   2. Remove Visual Studio Code
+  #   3. Remove the OpenTelemetry collector
+  #   4. Remove cloud providers CLIs
+  #   5. Remove Docker
+  #   6. Uninstall JDK 8 and 11
+  #   7. Remove AdoptOpenJDK repo
+  #   8. Miscellaneous setup
+  #   9. Uninstallation miscellaneous software
+  #   10. Remove the osbdet system user
   #   
   printf "  Uninstalling module 'foundation' ... "
+  remove_nodejs_20 >> $OSBDET_LOGFILE 2>&1
+  remove_vscode >> $OSBDET_LOGFILE 2>&1
   remove_otel_collector >> $OSBDET_LOGFILE 2>&1
   remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   remove_docker >> $OSBDET_LOGFILE 2>&1
