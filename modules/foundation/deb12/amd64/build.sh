@@ -20,126 +20,143 @@ debug() {
 }
 
 create_osbdetuser(){
-  debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] Starting osbdet user creation" >> $OSBDET_LOGFILE
+  debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] Starting osbdet user creation"
   if [ ! -d "/home/osbdet" ]
   then
     useradd -m -s /bin/bash osbdet
     echo osbdet:osbdet123$ | chpasswd 2> /dev/null
-    debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user created" >> $OSBDET_LOGFILE
+    debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user created"
   else
-    debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet already existed and wasn't created" >> $OSBDET_LOGFILE
+    debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet already existed and wasn't created"
   fi
-  debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user creation process done" >> $OSBDET_LOGFILE
+  debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user creation process done"
 }
 remove_osbdetuser(){
-  debug "foundation.remove_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] Starting osbdet user deletion" >> $OSBDET_LOGFILE
+  debug "foundation.remove_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] Starting osbdet user deletion"
   deluser --remove-home osbdet >> $OSBDET_LOGFILE
-  debug "foundation.remove_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user deletion done" >> $OSBDET_LOGFILE
+  debug "foundation.remove_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user deletion done"
 }
 
 miscinstall(){
-  debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation" >> $OSBDET_LOGFILE
-  apt update >> $OSBDET_LOGFILE 2>&1
+  debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation"
+  apt update
   apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                 tmux python3-pip sudo git emacs unzip nginx >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done" >> $OSBDET_LOGFILE
+                 tmux python3-pip sudo git emacs unzip nginx ca-certificates-java default-jdk
+  debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done"
 }
 remove_miscinstall(){
-  debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation" >> $OSBDET_LOGFILE
+  debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation"
   apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                tmux python3-pip sudo git unzip nginx --purge >>$OSBDET_LOGFILE 2>&1
-  apt autoremove -y >>$OSBDET_LOGFILE 2>&1
-  debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done" >> $OSBDET_LOGFILE
+                tmux python3-pip sudo git unzip nginx ca-certificates-java default.jdk --purge
+  apt autoremove -y
+  debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done" 
 }
 
 miscsetup() {
-  debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous setup" >> $OSBDET_LOGFILE
+  debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous setup"
   usermod -aG sudo osbdet
   sed -i "s/^127.0.0.1\tlocalhost/127.0.0.1\tlocalhost\tosbdet/" /etc/hosts
   sed -i "s/^127.0.1.1\tosbdet/#127.0.1.1\tosbdet/" /etc/hosts
-  su osbdet -c "mkdir -p /home/osbdet/bin" >> $OSBDET_LOGFILE 2>&1
+  su osbdet -c "mkdir -p /home/osbdet/bin"
   cp $SCRIPT_HOME/osbdet-update.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-recipes.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-cook.sh /home/osbdet/bin
   mv /var/www/html /var/www/html.old
   cp -rf $SCRIPT_HOME/osbdet-web /var/www/html
   chown -R osbdet:osbdet /home/osbdet/bin
-  debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup done" >> $OSBDET_LOGFILE
+  debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup done"
 }
 remove_miscsetup() {
-  debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous setup removal" >> $OSBDET_LOGFILE
-  deluser osbdet sudo >> $OSBDET_LOGFILE
+  debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous setup removal"
+  deluser osbdet sudo
   sed -i "s/^127.0.0.1\tlocalhost\tosbdet/127.0.0.1\tlocalhost/" /etc/hosts
   sed -i "s/^#127.0.1.1\tosbdet/127.0.1.1\tosbdet/" /etc/hosts
-  debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup removal done" >> $OSBDET_LOGFILE
+  debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup removal done"
 }
 
-add_adoptopenjdkrepo(){
-  debug "foundation.add_adoptopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] Adding AdoptOpenJDK repo" >> $OSBDET_LOGFILE
-  wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - >> $OSBDET_LOGFILE 2>&1
-  add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ >> $OSBDET_LOGFILE 2>&1
-  apt update >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.add_adoptopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] AdoptOpenJDK repo added" >> $OSBDET_LOGFILE
+add_adoptiumopenjdkrepo(){
+  debug "foundation.add_adoptiumopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] Adding AdoptiumOpenJDK repo"
+  wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | tee /etc/apt/keyrings/adoptium.asc
+  echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
+  apt update
+  debug "foundation.add_adoptiumopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] AdoptiumOpenJDK repo added"
 }
-remove_adoptopenjdkrepo(){
-  debug "foundation.remove_adoptopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] Removing AdoptOpenJDK repo" >> $OSBDET_LOGFILE
-  apt-key del `apt-key list | $OSBDET_HOME/shared/givemekey.awk -v pattern=AdoptOpenJDK` >> $OSBDET_LOGFILE 2>&1
-  add-apt-repository --yes -r https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ >> $OSBDET_LOGFILE 2>&1
-  apt update >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.remove_adoptopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] AdoptOpenJDK repo removed" >> $OSBDET_LOGFILE
+remove_adoptiumopenjdkrepo(){
+  debug "foundation.remove_adoptiumopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] Removing AdoptiumOpenJDK repo"
+  rm /etc/apt/keyrings/adoptium.asc
+  rm /etc/apt/sources.list.d/adoptium.list
+  apt update
+  debug "foundation.remove_adoptiumopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] AdoptiumOpenJDK repo removed"
 }
 
-install_jdk8_11(){
-  debug "foundation.install_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 8 and 11" >> $OSBDET_LOGFILE
-  apt install -y adoptopenjdk-8-hotspot adoptopenjdk-11-hotspot >> $OSBDET_LOGFILE 2>&1
+install_jdk11(){
+  debug "foundation.install_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 11"
+  apt install -y temurin-11-jdk
   # Removes platform dependency while using JDK 11 CACERTS (NiFi's Binance Lab)
-  sudo ln -s /usr/lib/jvm/adoptopenjdk-11-hotspot-amd64/lib/security/cacerts /opt/jdk-11-cacerts
-  debug "foundation.install_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 8 and 11 installation done" >> $OSBDET_LOGFILE
+  sudo ln -s /usr/lib/jvm/temurin-11-jdk-amd64/lib/security/cacerts /opt/jdk-11-cacerts
+  debug "foundation.install_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 installation done"
 }
-remove_jdk8_11(){
-  debug "foundation.remove_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 8 and 11" >> $OSBDET_LOGFILE
+remove_jdk11(){
+  debug "foundation.remove_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 11"
   rm /opt/jdk-11-cacerts
-  apt remove -y adoptopenjdk-8-hotspot adoptopenjdk-11-hotspot >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.remove_jdk8_11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 8 and 11 removed" >> $OSBDET_LOGFILE
+  apt remove -y temurin-11-jdk
+  debug "foundation.remove_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 removed"
 }
 
 install_docker(){
-  debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] Installing Docker" >> $OSBDET_LOGFILE
-  apt-get remove -y docker docker-engine docker.io containerd runc >> $OSBDET_LOGFILE 2>&1
-  apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release >> $OSBDET_LOGFILE 2>&1
+  debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] Installing Docker"
+  apt-get remove -y docker docker-engine docker.io containerd runc
+  apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
   curl -fsSL https://download.docker.com/linux/debian/gpg \
-    | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg >> $OSBDET_LOGFILE 2>&1
+    | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
   echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
     https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
-    | tee /etc/apt/sources.list.d/docker.list >> $OSBDET_LOGFILE 2>&1
-  apt-get update >> $OSBDET_LOGFILE 2>&1
-  apt-get install -y docker-ce docker-ce-cli containerd.io >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker installed" >> $OSBDET_LOGFILE
+    | tee /etc/apt/sources.list.d/docker.list
+  apt-get update
+  apt-get install -y docker-ce docker-ce-cli containerd.io
+  debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker installed"
 }
 remove_docker(){
-  debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Removing Docker" >> $OSBDET_LOGFILE
-  apt-get update >> $OSBDET_LOGFILE 2>&1
-  apt-get remove -y docker-ce docker-ce-cli containerd.io --purge >> $OSBDET_LOGFILE 2>&1
-  rm /etc/apt/sources.list.d/docker.list >> $OSBDET_LOGFILE 2>&1
-  rm /usr/share/keyrings/docker-archive-keyring.gpg >> $OSBDET_LOGFILE 2>&1
-  apt-get remove -y apt-transport-https ca-certificates curl gnupg lsb-release --purge >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker removed" >> $OSBDET_LOGFILE
+  debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Removing Docker"
+  apt-get update
+  apt-get remove -y docker-ce docker-ce-cli containerd.io --purge
+  rm /etc/apt/sources.list.d/docker.list
+  rm /usr/share/keyrings/docker-archive-keyring.gpg
+  apt-get remove -y apt-transport-https ca-certificates curl gnupg lsb-release --purge
+  debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker removed"
 }
 
 install_cloudproviders_clis(){
-  debug "foundation.install_cloudproviders_clis DEBUG [`date +"%Y-%m-%d %T"`] Installing cloud providers clis" >> $OSBDET_LOGFILE
-  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip" >> $OSBDET_LOGFILE 2>&1
-  unzip /tmp/awscliv2.zip -d /tmp >> $OSBDET_LOGFILE 2>&1
-  /tmp/aws/install >> $OSBDET_LOGFILE 2>&1
-  rm -rf /tmp/aws /tmp/awscliv2.zip >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.install_cloudproviders_clis DEBUG [`date +"%Y-%m-%d %T"`] Cloud providers clis installation done" >> $OSBDET_LOGFILE
+  debug "foundation.install_cloudproviders_clis DEBUG [`date +"%Y-%m-%d %T"`] Installing cloud providers clis"
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+  unzip /tmp/awscliv2.zip -d /tmp
+  /tmp/aws/install
+  rm -rf /tmp/aws /tmp/awscliv2.zip
+  debug "foundation.install_cloudproviders_clis DEBUG [`date +"%Y-%m-%d %T"`] Cloud providers clis installation done"
 }
 remove_cloudproviders_clis(){
-  debug "foundation.remove_cloudproviders_cli DEBUG [`date +"%Y-%m-%d %T"`] Removing cloud providers clis" >> $OSBDET_LOGFILE
-  rm /usr/local/bin/aws >> $OSBDET_LOGFILE 2>&1
-  rm /usr/local/bin/aws_completer >> $OSBDET_LOGFILE 2>&1
-  rm -rf /usr/local/aws-cli >> $OSBDET_LOGFILE 2>&1
-  debug "foundation.remove_cloudproviders_cli DEBUG [`date +"%Y-%m-%d %T"`] Cloud providers clis removed" >> $OSBDET_LOGFILE
+  debug "foundation.remove_cloudproviders_cli DEBUG [`date +"%Y-%m-%d %T"`] Removing cloud providers clis"
+  rm /usr/local/bin/aws
+  rm /usr/local/bin/aws_completer
+  rm -rf /usr/local/aws-cli
+  debug "foundation.remove_cloudproviders_cli DEBUG [`date +"%Y-%m-%d %T"`] Cloud providers clis removed"
+}
+
+install_otel_collector(){
+  debug "foundation.install_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] Installing OpenTelemetry collector"
+  # Download from the official repo
+  wget -O /tmp/otelcol-contrib_0.81.0_linux_amd64.deb https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.81.0/otelcol-contrib_0.81.0_linux_amd64.deb
+  dpkg -i /tmp/otelcol-contrib_0.81.0_linux_amd64.deb
+  rm /tmp/otelcol-contrib_0.81.0_linux_amd64.deb
+  # Disable service autostart
+  systemctl stop otelcol-contrib
+  systemctl disable otelcol-contrib
+  debug "foundation.install_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] OpenTelemetry collector installation done"
+}
+remove_otel_collector(){
+  debug "foundation.remove_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] Removing OpenTelemetry collector"
+  dpkg --purge otelcol-contrib
+  debug "foundation.remove_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] OpenTelemetry collector removed"
 }
 
 # Primary functions
@@ -150,18 +167,20 @@ module_install(){
   #   1. Creating the osbdet system user
   #   2. Installation miscellaneous software
   #   3. Miscellaneous setup
-  #   4. Adding AdoptOpenJDK repo
-  #   5. Installing JDK 8 and 11
+  #   4. Adding AdoptiumOpenJDK repo
+  #   5. Installing JDK 11
   #   6. Docker installation
   #   7. Install cloud providers CLIs
+  #   8. Install the OpenTelemetry collector
   printf "  Installing module 'foundation' ... "
-  create_osbdetuser
-  miscinstall
-  miscsetup
-  add_adoptopenjdkrepo
-  install_jdk8_11
-  install_docker
-  install_cloudproviders_clis
+  #create_osbdetuser >> $OSBDET_LOGFILE 2>&1
+  #miscinstall >> $OSBDET_LOGFILE 2>&1
+  #miscsetup >> $OSBDET_LOGFILE 2>&1
+  #add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
+  #install_jdk11 >> $OSBDET_LOGFILE 2>&1
+  #install_docker >> $OSBDET_LOGFILE 2>&1
+  #install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
+  install_otel_collector >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -180,22 +199,23 @@ module_status() {
 module_uninstall(){
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
-  #   1. Remove cloud providers CLIs
-  #   2. Remove Docker
-  #   3. Uninstall JDK 8 and 11
-  #   4. Remove AdoptOpenJDK repo
-  #   5. Miscellaneous setup
-  #   6. Uninstallation miscellaneous software
-  #   7. Remove the osbdet system user
+  #   1. Remove the OpenTelemetry collector
+  #   2. Remove cloud providers CLIs
+  #   3. Remove Docker
+  #   4. Uninstall JDK 8 and 11
+  #   5. Remove AdoptOpenJDK repo
+  #   6. Miscellaneous setup
+  #   7. Uninstallation miscellaneous software
+  #   8. Remove the osbdet system user
   #   
   printf "  Uninstalling module 'foundation' ... "
-  remove_cloudproviders_clis
-  remove_docker
-  remove_jdk8_11
-  remove_adoptopenjdkrepo
-  remove_miscsetup
-  remove_miscinstall
-  remove_osbdetuser
+  remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
+  remove_docker >> $OSBDET_LOGFILE 2>&1
+  remove_jdk8_11 >> $OSBDET_LOGFILE 2>&1
+  remove_adoptopenjdkrepo >> $OSBDET_LOGFILE 2>&1
+  remove_miscsetup >> $OSBDET_LOGFILE 2>&1
+  remove_miscinstall >> $OSBDET_LOGFILE 2>&1
+  remove_osbdetuser >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }
