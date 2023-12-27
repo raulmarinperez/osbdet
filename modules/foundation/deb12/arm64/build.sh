@@ -19,39 +19,17 @@ debug() {
   fi
 }
 
-create_osbdetuser(){
-  debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] Starting osbdet user creation"
-  if [ ! -d "/home/osbdet" ]
-  then
-    useradd -m -s /bin/bash osbdet
-    echo osbdet:osbdet123$ | chpasswd 2> /dev/null
-    debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user created"
-  else
-    debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet already existed and wasn't created"
-  fi
-  debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user creation process done"
-}
-remove_osbdetuser(){
-  debug "foundation.remove_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] Starting osbdet user deletion"
-  deluser --remove-home osbdet
-  debug "foundation.remove_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user deletion done"
-}
-
 miscinstall(){
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation"
   apt update
   apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                 tmux python3-pip sudo git emacs unzip ca-certificates-java default-jdk
+                 tmux python3-pip sudo emacs unzip ca-certificates-java default-jdk
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done"
 }
 remove_miscinstall(){
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation"
   apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-<<<<<<< HEAD
-                tmux python3-pip sudo git unzip --purge
-=======
-                tmux python3-pip sudo git unzip nginx ca-certificates-java default-jdk --purge
->>>>>>> 226f7752b8f109eb5bf872c76dba8fe80d8f1fe5
+                tmux python3-pip sudo unzip --purge
   apt autoremove -y
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done"
 }
@@ -191,17 +169,15 @@ remove_nodejs_and_website(){
 module_install(){
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
-  #   1. Creating the osbdet system user
-  #   2. Installation miscellaneous software
-  #   3. Miscellaneous setup
-  #   4. Adding AdoptiumOpenJDK repo
-  #   5. Installing JDK 11
-  #   6. Docker installation
-  #   7. Install cloud providers CLIs
-  #   8. Install the OpenTelemetry collector
-  #   9. Adding NodeJs and the course environment web site
+  #   1. Installation miscellaneous software
+  #   2. Miscellaneous setup
+  #   3. Adding AdoptiumOpenJDK repo
+  #   4. Installing JDK 11
+  #   5. Docker installation
+  #   6. Install cloud providers CLIs
+  #   7. Install the OpenTelemetry collector
+  #   8. Adding NodeJs and the course environment web site
   printf "  Installing module 'foundation' ... "
-  create_osbdetuser >> $OSBDET_LOGFILE 2>&1
   miscinstall >> $OSBDET_LOGFILE 2>&1
   miscsetup >> $OSBDET_LOGFILE 2>&1
   add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
@@ -236,7 +212,6 @@ module_uninstall(){
   #   6. Remove AdoptiumOpenJDK repo
   #   7. Miscellaneous setup
   #   8. Uninstallation miscellaneous software
-  #   9. Remove the osbdet system user
   #   
   printf "  Uninstalling module 'foundation' ... "
   remove_nodejs_and_website >> $OSBDET_LOGFILE 2>&1
@@ -247,7 +222,6 @@ module_uninstall(){
   remove_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
   remove_miscsetup >> $OSBDET_LOGFILE 2>&1
   remove_miscinstall >> $OSBDET_LOGFILE 2>&1
-  remove_osbdetuser >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }
