@@ -41,28 +41,29 @@ miscinstall(){
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation"
   apt update
   apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                 tmux python3-pip sudo git emacs unzip nginx ca-certificates-java default-jdk
+                 tmux python3-pip sudo git emacs unzip ca-certificates-java default-jdk
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done"
 }
 remove_miscinstall(){
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation"
   apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                tmux python3-pip sudo git unzip nginx --purge
+                tmux python3-pip sudo git unzip --purge
   apt autoremove -y
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done"
 }
 
 miscsetup() {
   debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous setup"
+  # Making the osbdet user a sudoer
   usermod -aG sudo osbdet
+  # Adapting /etc/hosts
   sed -i "s/^127.0.0.1\tlocalhost/127.0.0.1\tlocalhost\tosbdet/" /etc/hosts
   sed -i "s/^127.0.1.1\tosbdet/#127.0.1.1\tosbdet/" /etc/hosts
+  # Adding some tools to the osbdet user
   su osbdet -c "mkdir -p /home/osbdet/bin"
   cp $SCRIPT_HOME/osbdet-update.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-recipes.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-cook.sh /home/osbdet/bin
-  mv /var/www/html /var/www/html.old
-  cp -rf $SCRIPT_HOME/osbdet-web /var/www/html
   chown -R osbdet:osbdet /home/osbdet/bin
   debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup done"
 }
@@ -159,6 +160,28 @@ remove_otel_collector(){
   debug "foundation.remove_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] OpenTelemetry collector removed"
 }
 
+add_nodejs_and_website(){
+  debug "foundation.add_nodejs_and_website DEBUG [`date +"%Y-%m-%d %T"`] Adding NodeJs and the course environment website"
+  # Adding NodeJS
+  curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&\
+  apt-get install -y nodejs
+  #su osbdet -c "cd /home/osbdet; npm install next react react-dom"
+  # Adding the osbdet website
+  #mv /var/www/html /var/www/html.old
+  #cp -rf $SCRIPT_HOME/osbdet-web /var/www/html
+  debug "foundation.add_nodejs_and_website DEBUG [`date +"%Y-%m-%d %T"`] NodeJs and course environment added"
+}
+remove_nodejs_and_website(){
+  debug "foundation.remove_nodejs_and_website DEBUG [`date +"%Y-%m-%d %T"`] Removing NodeJs and the course environment website"
+  # Removing NodeJS
+  #su osbdet -c "cd /home/osbdet; npm uninstall next react react-dom"
+  apt-get remove -y nodejs --purge
+  rm /etc/apt/sources.list.d/nodesource.list
+  apt-get update
+  # Removing the osbdet website
+  debug "foundation.remove_nodejs_and_website DEBUG [`date +"%Y-%m-%d %T"`] NodeJs and the course environment website removed"
+}
+
 # Primary functions
 #
 module_install(){
@@ -172,6 +195,7 @@ module_install(){
   #   6. Docker installation
   #   7. Install cloud providers CLIs
   #   8. Install the OpenTelemetry collector
+  #   9. Adding NodeJs and the course environment web site
   printf "  Installing module 'foundation' ... "
   create_osbdetuser >> $OSBDET_LOGFILE 2>&1
   miscinstall >> $OSBDET_LOGFILE 2>&1
@@ -181,6 +205,7 @@ module_install(){
   install_docker >> $OSBDET_LOGFILE 2>&1
   install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   install_otel_collector >> $OSBDET_LOGFILE 2>&1
+  add_nodejs_and_website >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -199,16 +224,18 @@ module_status() {
 module_uninstall(){
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
-  #   1. Remove the OpenTelemetry collector
-  #   2. Remove cloud providers CLIs
-  #   3. Remove Docker
-  #   4. Uninstall JDK 11
-  #   5. Remove AdoptiumOpenJDK repo
-  #   6. Miscellaneous setup
-  #   7. Uninstallation miscellaneous software
-  #   8. Remove the osbdet system user
+  #   1. Remove NodeJs and the course environment web site
+  #   2. Remove the OpenTelemetry collector
+  #   3. Remove cloud providers CLIs
+  #   4. Remove Docker
+  #   5. Uninstall JDK 11
+  #   6. Remove AdoptiumOpenJDK repo
+  #   7. Miscellaneous setup
+  #   8. Uninstallation miscellaneous software
+  #   9. Remove the osbdet system user
   #   
   printf "  Uninstalling module 'foundation' ... "
+  remove_nodejs_and_website >> $OSBDET_LOGFILE 2>&1
   remove_otel_collector >> $OSBDET_LOGFILE 2>&1
   remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   remove_docker >> $OSBDET_LOGFILE 2>&1
