@@ -33,13 +33,13 @@ getandextract(){
   rm /opt/$SPARK_TGZ_FILE
   mv /opt/$SPARK_DEFAULT_DIR /opt/spark3
   chown -R osbdet:osbdet /opt/spark3
-  pip3 install findspark
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install findspark"  
   debug "spark3.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 downloading and extracting process done"
 }
 removal(){
   debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Removing Spark 3 from the system"
   rm -rf /opt/spark3
-  pip3 uninstall -y findspark
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall findspark"  
   debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 removed from the system"
 }
 
