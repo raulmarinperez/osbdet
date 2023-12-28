@@ -11,7 +11,7 @@ export HDFS_NAMENODE_USER=osbdet
 export HDFS_SECONDARYNAMENODE_USER=osbdet
 export YARN_RESOURCEMANAGER_USER=osbdet
 export YARN_NODEMANAGER_USER=osbdet
-export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-arm64/
+export JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/
 
 . $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 $HADOOP_HOME/sbin/start-dfs.sh
