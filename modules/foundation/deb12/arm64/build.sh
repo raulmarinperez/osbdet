@@ -103,11 +103,10 @@ install_docker(){
 }
 remove_docker(){
   debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Removing Docker"
-  apt-get update
   apt-get remove -y docker-ce docker-ce-cli containerd.io --purge
   rm /etc/apt/sources.list.d/docker.list
   rm /usr/share/keyrings/docker-archive-keyring.gpg
-  apt-get remove -y apt-transport-https ca-certificates curl gnupg lsb-release --purge
+  apt-get update
   debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker removed"
 }
 
