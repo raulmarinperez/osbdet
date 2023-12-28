@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/1.19.1/nifi-1.19.1-bin.zip
-NIFI_ZIP_FILE=nifi-1.19.1-bin.zip
-NIFI_DEFAULT_DIR=nifi-1.19.1
+NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/1.24.0/nifi-1.24.0-bin.zip
+NIFI_ZIP_FILE=nifi-1.24.0-bin.zip
+NIFI_DEFAULT_DIR=nifi-1.24.0
 
 # Aux functions
 # debug
@@ -23,13 +23,13 @@ debug() {
 
 getandextract(){
   debug "nifi.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting NiFi" >> $OSBDET_LOGFILE
-  wget $NIFI_BINARY_URL -O /opt/$NIFI_ZIP_FILE >> $OSBDET_LOGFILE 2>&1
+  wget $NIFI_BINARY_URL -O /opt/$NIFI_ZIP_FILE
   if [[ $? -ne 0 ]]; then
     echo "[Error]"
     exit 1
   fi
   
-  unzip /opt/$NIFI_ZIP_FILE -d /opt >> $OSBDET_LOGFILE 2>&1
+  unzip /opt/$NIFI_ZIP_FILE -d /opt
   rm /opt/$NIFI_ZIP_FILE
   mv /opt/$NIFI_DEFAULT_DIR /opt/nifi
   chown -R osbdet:osbdet /opt/nifi
@@ -44,7 +44,7 @@ remove(){
 nifisetup(){
   debug "nifi.nifisetup DEBUG [`date +"%Y-%m-%d %T"`] Setting up NiFi" >> $OSBDET_LOGFILE
   # From https://www.cyberciti.biz/faq/how-to-use-sed-to-find-and-replace-text-in-files-in-linux-unix-shell/
-  sed -i 's+^#export JAVA_HOME.*+export JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-arm64+' \
+  sed -i 's+^#export JAVA_HOME.*+export JAVA_HOME=/usr/lib/jvm/temurin-11-jdk-arm64+' \
          /opt/nifi/bin/nifi-env.sh
   sed -i 's+^nifi\.remote\.input\.secure.*+nifi.remote.input.secure=false+' \
          /opt/nifi/conf/nifi.properties
@@ -101,9 +101,9 @@ module_install(){
   #   2. Setup NiFi
   #   3. Set up userprofile to get binaries accessible
   printf "  Installing module 'nifi' ... "
-  getandextract
-  nifisetup
-  userprofile
+  getandextract >> $OSBDET_LOGFILE 2>&1
+  nifisetup >> $OSBDET_LOGFILE 2>&1
+  userprofile >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "nifi.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -125,8 +125,8 @@ module_uninstall(){
   #   1. Remove references to NiFi from user profile
   #   2. Remove NiFi binaries from the system
   printf "  Uninstalling module 'nifi' ... "
-  remove_userprofile
-  remove
+  remove_userprofile >> $OSBDET_LOGFILE 2>&1
+  remove >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "nifi.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
   
