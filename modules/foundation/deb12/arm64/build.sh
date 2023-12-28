@@ -25,13 +25,13 @@ miscinstall(){
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation"
   apt update
   apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                 tmux python3-pip sudo emacs unzip ca-certificates-java default-jdk
+                 tmux python3-pip emacs unzip ca-certificates-java default-jdk
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done"
 }
 remove_miscinstall(){
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation"
   apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                tmux python3-pip sudo unzip --purge
+                tmux python3-pip unzip --purge
   apt autoremove -y
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done"
 }
@@ -54,6 +54,8 @@ remove_miscsetup() {
   debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous setup removal"
   sed -i "s/^127.0.0.1\tlocalhost\tosbdet/127.0.0.1\tlocalhost/" /etc/hosts
   sed -i "s/^#127.0.1.1\tosbdet/127.0.1.1\tosbdet/" /etc/hosts
+  # Remove tools from the osbdet user
+  su osbdet -c "rm -rf /home/osbdet/bin"
   debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup removal done"
 }
 
