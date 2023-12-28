@@ -43,6 +43,7 @@ miscsetup() {
   sed -i "s/^127.0.1.1\tosbdet/#127.0.1.1\tosbdet/" /etc/hosts
   # Adding some tools to the osbdet user
   su osbdet -c "mkdir -p /home/osbdet/bin"
+  cp $SCRIPT_HOME/osbdet-control.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-update.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-recipes.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-cook.sh /home/osbdet/bin
@@ -191,7 +192,7 @@ module_install(){
 }
 
 module_status() {
-  if [ -d "/home/osbdet" ]
+  if [ -f "/home/osbdet/.osbdet/foundation" ]
   then
     echo "Module is installed [OK]"
     exit 0
