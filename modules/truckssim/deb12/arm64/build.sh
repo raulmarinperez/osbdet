@@ -41,6 +41,18 @@ remove(){
   debug "truckssim.remove DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator removed"
 }
 
+install_jdk8(){
+  debug "truckssim.install_jdk8 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 8"
+  debig "IMPORTANT: The Temurin APT source has to be already installed; this should happen withint the Foundation module installation"
+  apt install -y temurin-8-jdk
+  debug "truckssim.install_jdk8 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 installation done"
+}
+remove_jdk8(){
+  debug "truckssim.remove_jdk8 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 8"
+  apt remove -y temurin-8-jdk
+  debug "truckssim.remove_jdk8 DEBUG [`date +"%Y-%m-%d %T"`] JDK 8 removed"
+}
+
 initscript(){
   debug "truckssim.initscript DEBUG [`date +"%Y-%m-%d %T"`] Installing the trucks simulator systemd script"
   cp $SCRIPT_PATH/truckfleet-sim.service /lib/systemd/system/truckfleet-sim.service
@@ -63,11 +75,12 @@ module_install(){
   # The installation of this module consists on:
   #   1. Get the trucks simulator binaries and extract them
   #   2. Install the systemd init script
-  printf "  Installing module 'truckssim' ... "
-  getandextract
-  initscript
+  printf "  Installing module 'truckssim' ... " >> $OSBDET_LOGFILE
+  getandextract >> $OSBDET_LOGFILE 2>&1
+  install_jdk8 >> $OSBDET_LOGFILE 2>&1
+  initscript >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
-  debug "truckssim.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done"
+  debug "truckssim.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
 
 module_status() {
@@ -88,6 +101,7 @@ module_uninstall(){
   #   2. Install the systemd init script
   printf "  Uninstalling module 'truckssim' ... "
   remove_initscript >> $OSBDET_LOGFILE 2>&1
+  remove_jdk8 >> $OSBDET_LOGFILE 2>&1
   remove >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "truckssim.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
