@@ -39,7 +39,7 @@ getandextract(){
 removal(){
   debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Removing Spark 3 from the system"
   rm -rf /opt/spark3
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall findspark"  
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip -y uninstall findspark"  
   debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 removed from the system"
 }
 

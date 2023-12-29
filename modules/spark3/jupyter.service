@@ -8,6 +8,6 @@ Restart=always
 User=osbdet
 Environment="SPARK_HOME=/opt/spark3"
 WorkingDirectory=/home/osbdet/notebooks
-ExecStart=jupyter notebook
+ExecStart=/home/osbdet/.jupyter_venv/bin/jupyter notebook
 [Install]
 WantedBy=multi-user.target
