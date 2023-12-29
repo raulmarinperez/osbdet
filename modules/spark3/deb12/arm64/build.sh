@@ -65,8 +65,6 @@ jupyterspark(){
      service jupyter stop
      cp $SCRIPT_HOME/jupyter.service /lib/systemd/system/jupyter.service
      chmod 644 /lib/systemd/system/jupyter.service
-     rm -f /etc/systemd/system/jupyter.service
-     ln -s /lib/systemd/system/jupyter.service /etc/systemd/system/jupyter.service
      systemctl daemon-reload
      systemctl enable jupyter.service
      service jupyter start
