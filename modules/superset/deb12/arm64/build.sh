@@ -22,12 +22,12 @@ debug() {
 bienv_install(){
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the BI environment"
   apt-get update
-  apt-get install -y libffi-dev libsasl2-dev libldap2-dev python3-venv
+  apt-get install -y libffi-dev libsasl2-dev libldap2-dev python3-venv default-libmysqlclient-dev build-essential pkg-config
   mkdir /opt/superset
   python3 -m venv /opt/superset/
   . /opt/superset/bin/activate
   python -m pip install --upgrade pip
-  python -m pip install mariadb apache-superset
+  python -m pip install mysqlclient apache-superset
   python -m pip install WTForms
   deactivate
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed"
@@ -35,7 +35,7 @@ bienv_install(){
 remove_bienv(){
   debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] Removing BI environment software"
   rm -rf /opt/superset
-  apt-get remove -y libffi-dev libsasl2-dev libldap2-dev python3-venv --purge
+  apt-get remove -y libffi-dev libsasl2-dev libldap2-dev python3-venv default-libmysqlclient-dev build-essential pkg-config --purge
   apt autoremove -y
   debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] BI environment software removed"
 }
@@ -44,7 +44,7 @@ initialsetup(){
   debug "superset.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset"
   # 2024R1: A secret key needs to be created - https://superset.apache.org/docs/installation/installing-superset-from-scratch/#python-virtual-environment
   cp $SCRIPT_HOME/superset_config.py /opt/superset
-  sed -i "s/YOUR_OWN_RANDOM_GENERATED_SECRET_KEY/`openssl rand -base64 42`/" /opt/superset/superset_config.py 
+  sed -i 's@YOUR_OWN_RANDOM_GENERATED_SECRET_KEY@'`openssl rand -base64 42`'@' /opt/superset/superset_config.py
   # All set to do the initial configuration
   . /opt/superset/bin/activate
   export SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py;
