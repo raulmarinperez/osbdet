@@ -22,15 +22,15 @@ debug() {
 install(){
   debug "mariadb.install DEBUG [`date +"%Y-%m-%d %T"`] Install MariaDB"
   apt-get update
-  apt-get install -y mariadb-server default-libmysqlclient-dev libmariadb-java
+  apt-get install -y mariadb-server libmariadbd-dev libmariadb-java
   su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install --upgrade pip setuptools wheel"
   su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install pkgconfig"
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install mysqlclient"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install mariadb"
   debug "mariadb.install DEBUG [`date +"%Y-%m-%d %T"`] MariaDB installed"
 }
 remove_install(){
   debug "mariadb.remove_install DEBUG [`date +"%Y-%m-%d %T"`] Removing MariaDB"
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y mysqlclient"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y mariadb"
   apt remove -y mariadb-server libmariadbclient-dev --purge
   rm -rf /var/lib/mysql /var/log/mysql
   rm /etc/mysql/mariadb.conf.d/50-sqlmode.cnf
