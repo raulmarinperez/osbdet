@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 User=osbdet
 Environment="TRUCKFLEETSIM_HOME=/opt/truckfleet-sim"
-ExecStart=/usr/lib/jvm/adoptopenjdk-8-hotspot-arm64/bin/java -cp ${TRUCKFLEETSIM_HOME}/stream-simulator-jar-with-dependencies.jar hortonworks.hdp.refapp.trucking.simulator.SimulationRunnerApp 20000 hortonworks.hdp.refapp.trucking.simulator.impl.domain.transport.Truck hortonworks.hdp.refapp.trucking.simulator.impl.collectors.FileEventCollector 1 ${TRUCKFLEETSIM_HOME}/routes/midwest/ 10000 ${TRUCKFLEETSIM_HOME}/truck-sensor-data/all-streams.txt ALL_STREAMS
+ExecStart=/usr/lib/jvm/temurin-11-jdk-arm64/bin/java -cp ${TRUCKFLEETSIM_HOME}/stream-simulator-jar-with-dependencies.jar hortonworks.hdp.refapp.trucking.simulator.SimulationRunnerApp 20000 hortonworks.hdp.refapp.trucking.simulator.impl.domain.transport.Truck hortonworks.hdp.refapp.trucking.simulator.impl.collectors.FileEventCollector 1 ${TRUCKFLEETSIM_HOME}/routes/midwest/ 10000 ${TRUCKFLEETSIM_HOME}/truck-sensor-data/all-streams.txt ALL_STREAMS
 StandardOutput=file:/dev/null
 StandardError=file:/dev/null
 
