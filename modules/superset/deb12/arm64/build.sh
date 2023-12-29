@@ -42,6 +42,11 @@ remove_bienv(){
 
 initialsetup(){
   debug "superset.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset"
+  # 2024R1: A secret key needs to be created - https://superset.apache.org/docs/installation/installing-superset-from-scratch/#python-virtual-environment
+  cp $SCRIPT_HOME/superset_config.py /opt/superset
+  sed -i "s/YOUR_OWN_RANDOM_GENERATED_SECRET_KEY/`openssl rand -base64 42`/" /opt/superset/superset_config.py 
+  export SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py
+  # All set to do the initial configuration
   . /opt/superset/bin/activate
   export FLASK_APP=superset; 
   superset db upgrade
