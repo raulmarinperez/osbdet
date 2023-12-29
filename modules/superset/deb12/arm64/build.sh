@@ -45,9 +45,9 @@ initialsetup(){
   # 2024R1: A secret key needs to be created - https://superset.apache.org/docs/installation/installing-superset-from-scratch/#python-virtual-environment
   cp $SCRIPT_HOME/superset_config.py /opt/superset
   sed -i "s/YOUR_OWN_RANDOM_GENERATED_SECRET_KEY/`openssl rand -base64 42`/" /opt/superset/superset_config.py 
-  export SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py
   # All set to do the initial configuration
   . /opt/superset/bin/activate
+  export SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py;
   export FLASK_APP=superset; 
   superset db upgrade
   superset fab create-admin --username osbdet --firstname osb --lastname bdet \
