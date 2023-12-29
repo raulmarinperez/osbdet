@@ -5,7 +5,6 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-TRUCKFLEETSIM_URL=https://github.com/raulmarinperez/collaterals/raw/master/knowledge/data_generation/trucking_data_sim/Data-Loader.zip
 TRUCKFLEETSIM_ZIPFILE=/opt/Data-Loader.zip
 TRUCKFLEETSIM_HOME=/opt/truckfleet-sim
 
@@ -24,7 +23,7 @@ debug() {
 getandextract(){
   debug "truckssim.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting the trucks simulator"
   apt-get install unzip
-  wget $TRUCKFLEETSIM_URL -O $TRUCKFLEETSIM_ZIPFILE
+  cp $SCRIPT_HOME/Data-Loader.zip $TRUCKFLEETSIM_ZIPFILE
   cd /opt
   unzip $TRUCKFLEETSIM_ZIPFILE
   mv /opt/Data-Loader $TRUCKFLEETSIM_HOME
