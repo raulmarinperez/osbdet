@@ -39,7 +39,7 @@ getandextract(){
 removal(){
   debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Removing Spark 3 from the system"
   rm -rf /opt/spark3
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip -y uninstall findspark"  
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y findspark"  
   debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 removed from the system"
 }
 
@@ -81,8 +81,6 @@ remove_jupyterspark(){
      service jupyter stop
      cp $SCRIPT_HOME/jupyter_nospark3.service /lib/systemd/system/jupyter.service
      chmod 644 /lib/systemd/system/jupyter.service
-     rm -f /etc/systemd/system/jupyter.service
-     ln -s /lib/systemd/system/jupyter.service /etc/systemd/system/jupyter.service
      systemctl daemon-reload
      systemctl enable jupyter.service
      service jupyter start
