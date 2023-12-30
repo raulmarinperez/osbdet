@@ -75,7 +75,7 @@ module_install(){
   # The installation of this module consists on:
   #   1. Get the trucks simulator binaries and extract them
   #   2. Install the systemd init script
-  printf "  Installing module 'truckssim' ... " >> $OSBDET_LOGFILE
+  printf "  Installing module 'truckssim' ... "
   getandextract >> $OSBDET_LOGFILE 2>&1
   install_jdk8 >> $OSBDET_LOGFILE 2>&1
   initscript >> $OSBDET_LOGFILE 2>&1
