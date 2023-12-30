@@ -71,7 +71,7 @@ remove_initscript(){
 # Primary functions
 #
 module_install(){
-  debug "truckssim.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation"
+  debug "truckssim.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
   #   1. Get the trucks simulator binaries and extract them
   #   2. Install the systemd init script

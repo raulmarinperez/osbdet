@@ -5,7 +5,6 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-TRUCKFLEETSIM_URL=https://github.com/raulmarinperez/collaterals/raw/master/knowledge/data_generation/trucking_data_sim/Data-Loader.zip
 TRUCKFLEETSIM_ZIPFILE=/opt/Data-Loader.zip
 TRUCKFLEETSIM_HOME=/opt/truckfleet-sim
 
@@ -22,39 +21,51 @@ debug() {
 }
 
 getandextract(){
-  debug "truckssim.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting the trucks simulator" >> $OSBDET_LOGFILE
-  apt-get install unzip >> $OSBDET_LOGFILE 2>&1
-  wget $TRUCKFLEETSIM_URL -O $TRUCKFLEETSIM_ZIPFILE >> $OSBDET_LOGFILE 2>&1
+  debug "truckssim.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting the trucks simulator"
+  apt-get install unzip
+  cp $SCRIPT_HOME/Data-Loader.zip $TRUCKFLEETSIM_ZIPFILE
   cd /opt
-  unzip $TRUCKFLEETSIM_ZIPFILE >> $OSBDET_LOGFILE 2>&1
+  unzip $TRUCKFLEETSIM_ZIPFILE
   mv /opt/Data-Loader $TRUCKFLEETSIM_HOME
   cd $TRUCKFLEETSIM_HOME
   mkdir $TRUCKFLEETSIM_HOME/truck-sensor-data
-  tar zxf routes.tar.gz >> $OSBDET_LOGFILE 2>&1
+  tar zxf routes.tar.gz
   rm routes.tar.gz
   rm $TRUCKFLEETSIM_ZIPFILE
   chown -R osbdet:osbdet $TRUCKFLEETSIM_HOME
-  debug "truckssim.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator downloaded and extracted" >> $OSBDET_LOGFILE
+  debug "truckssim.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator downloaded and extracted"
 }
 remove(){
-  debug "truckssim.remove DEBUG [`date +"%Y-%m-%d %T"`] Removing the trucks simulator" >> $OSBDET_LOGFILE
+  debug "truckssim.remove DEBUG [`date +"%Y-%m-%d %T"`] Removing the trucks simulator"
   rm -rf $TRUCKFLEETSIM_HOME
-  debug "truckssim.remove DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator removed" >> $OSBDET_LOGFILE
+  debug "truckssim.remove DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator removed"
+}
+
+install_jdk8(){
+  debug "truckssim.install_jdk8 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 8"
+  debig "IMPORTANT: The Temurin APT source has to be already installed; this should happen withint the Foundation module installation"
+  apt install -y temurin-8-jdk
+  debug "truckssim.install_jdk8 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 installation done"
+}
+remove_jdk8(){
+  debug "truckssim.remove_jdk8 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 8"
+  apt remove -y temurin-8-jdk
+  debug "truckssim.remove_jdk8 DEBUG [`date +"%Y-%m-%d %T"`] JDK 8 removed"
 }
 
 initscript(){
-  debug "truckssim.initscript DEBUG [`date +"%Y-%m-%d %T"`] Installing the trucks simulator systemd script" >> $OSBDET_LOGFILE
+  debug "truckssim.initscript DEBUG [`date +"%Y-%m-%d %T"`] Installing the trucks simulator systemd script"
   cp $SCRIPT_PATH/truckfleet-sim.service /lib/systemd/system/truckfleet-sim.service
   chmod 644 /lib/systemd/system/truckfleet-sim.service
-  systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
-  debug "truckssim.initscript DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator systemd script installed" >> $OSBDET_LOGFILE
+  systemctl daemon-reload
+  debug "truckssim.initscript DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator systemd script installed"
 }
 remove_initscript(){
-  debug "truckssim.remove_initscript DEBUG [`date +"%Y-%m-%d %T"`] Removing the trucks simulator systemd script" >> $OSBDET_LOGFILE
-  service truckfleet-sim stop >> $OSBDET_LOGFILE 2>&1
+  debug "truckssim.remove_initscript DEBUG [`date +"%Y-%m-%d %T"`] Removing the trucks simulator systemd script"
+  service truckfleet-sim stop
   rm /lib/systemd/system/truckfleet-sim.service
-  systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
-  debug "truckssim.remove_initscript DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator systemd script removed" >> $OSBDET_LOGFILE
+  systemctl daemon-reload
+  debug "truckssim.remove_initscript DEBUG [`date +"%Y-%m-%d %T"`] Trucks simulator systemd script removed"
 }
 
 # Primary functions
@@ -64,9 +75,10 @@ module_install(){
   # The installation of this module consists on:
   #   1. Get the trucks simulator binaries and extract them
   #   2. Install the systemd init script
-  printf "  Installing module 'truckssim' ... "
-  getandextract
-  initscript
+  printf "  Installing module 'truckssim' ... " >> $OSBDET_LOGFILE
+  getandextract >> $OSBDET_LOGFILE 2>&1
+  install_jdk8 >> $OSBDET_LOGFILE 2>&1
+  initscript >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "truckssim.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -88,8 +100,9 @@ module_uninstall(){
   #   1. Get the trucks simulator binaries and extract them
   #   2. Install the systemd init script
   printf "  Uninstalling module 'truckssim' ... "
-  remove_initscript
-  remove
+  remove_initscript >> $OSBDET_LOGFILE 2>&1
+  remove_jdk8 >> $OSBDET_LOGFILE 2>&1
+  remove >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "truckssim.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }
