@@ -6,6 +6,6 @@ After=network.target
 Type=simple
 Restart=always
 User=root
-ExecStart=docker run --rm --name mongo -p 27017:27017/tcp --mount source=mongodb-vol,target=/data/db arm64v8/mongo:4.4
+ExecStart=docker run --rm --name mongo -p 27017:27017/tcp --mount source=mongodb-vol,target=/data/db arm64v8/mongo:7.0.4-jammy
 [Install]
 WantedBy=multi-user.target
