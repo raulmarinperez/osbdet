@@ -20,7 +20,7 @@ debug() {
 }
 
 addrepoandinstall(){
-  debug "mongodb7.addrepoandinstall DEBUG [`date +"%Y-%m-%d %T"`] Adding MongoDB 7.0 CE repo and install MongoDB"
+  debug "mongodb7.addrepoandinstall DEBUG [`date +"%Y-%m-%d %T"`] Adding MongoDB 7 CE repo and install MongoDB"
   # Procedure as it's documented at https://www.mongodb.com/docs/current/tutorial/install-mongodb-on-debian/
   apt-get install -y gnupg
   curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
