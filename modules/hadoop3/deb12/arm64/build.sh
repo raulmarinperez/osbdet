@@ -120,20 +120,19 @@ remove_hdfsinit(){
   debug "hadoop3.remove_hdfsinit DEBUG [`date +"%Y-%m-%d %T"`] HDFS initialization removed"
 }
 
-scriptscopy(){
-  debug "hadoop3.scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Copying scripts to operate the pseudo-cluster"
-  cp $SCRIPT_PATH/hadoop-start.sh /home/osbdet/bin
-  cp $SCRIPT_PATH/hadoop-stop.sh /home/osbdet/bin
-  chown -R osbdet:osbdet /home/osbdet/bin
-  debug "hadoop3.scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Scripts to operate the pseudo-cluster copied"
+serviceinstall(){
+  debug "hadoop3.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation"
+  cp $SCRIPT_PATH/hadoop3.service /lib/systemd/system/hadoop3.service
+  chmod 644 /lib/systemd/system/hadoop3.service
+  systemctl daemon-reload
+  debug "hadoop3.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation done"
 }
-remove_scriptscopy(){
-  debug "hadoop3.remove_scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Removing scripts to operate the pseudo-cluster"
-  rm /home/osbdet/bin/hadoop-start.sh
-  rm /home/osbdet/bin/hadoop-stop.sh
-  # rmdir only removes empty folders (hide stderr output)
-  rmdir /home/osbdet/bin 2> /dev/null
-  debug "hadoop3.remove_scriptscopy DEBUG [`date +"%Y-%m-%d %T"`] Scripts to operate the pseudo-cluster removed"
+remove_serviceinstall(){
+  debug "hadoop3.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation"
+  systemctl stop hadoop3.service
+  rm /lib/systemd/system/hadoop3.service 
+  systemctl daemon-reload
+  debug "hadoop3.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation done"
 }
 
 userprofile(){
@@ -172,7 +171,7 @@ module_install(){
   #   3. Copy Hadoop 3 configuration files
   #   4. Password-less ssh connections setup
   #   5. HDFS initialization
-  #   6. Copy of scripts to operate Hadoop 3 (start and stop)
+  #   6. Hadoop 3 service installation (start and stop)
   #   7. Update of osdbet user profile to have access to Hadoop 3 binaries
   printf "  Installing module 'hadoop3' ... "
   getandextract >> $OSBDET_LOGFILE 2>&1
@@ -180,7 +179,7 @@ module_install(){
   configfilessetup >> $OSBDET_LOGFILE 2>&1
   sshsetup >> $OSBDET_LOGFILE 2>&1
   hdfsinit >> $OSBDET_LOGFILE 2>&1
-  scriptscopy >> $OSBDET_LOGFILE 2>&1
+  serviceinstall >> $OSBDET_LOGFILE 2>&1
   userprofile >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "hadoop3.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
@@ -201,14 +200,14 @@ module_uninstall(){
   debug "hadoop3.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
   #   1. Remove references to Hadoop 3 binaries from osbdet's profile
-  #   2. Remove scripts to operate the Hadoop 3 pseudo-cluster
+  #   2. Remove the Hadoop 3 service
   #   3. Remove HDFS initialization (data folder)
   #   4. Remove password-less ssh access setup
   #   5. Remove Hadoop 3 binaries
   #
   printf "  Uninstalling module 'hadoop3' ... "
   remove_userprofile >> $OSBDET_LOGFILE 2>&1
-  remove_scriptscopy >> $OSBDET_LOGFILE 2>&1
+  remove_serviceinstall >> $OSBDET_LOGFILE 2>&1
   remove_hdfsinit >> $OSBDET_LOGFILE 2>&1
   remove_sshsetup >> $OSBDET_LOGFILE 2>&1
   binaries_removal >> $OSBDET_LOGFILE 2>&1

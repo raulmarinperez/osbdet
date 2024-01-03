@@ -17,7 +17,8 @@ NIFI_HOME=/opt/nifi
 #     0/up message - module is up and running
 #     1/down message - module is not running
 status_hadoop() {
-  hdfs dfs -ls / > /dev/null 2>&1
+  # sudo needed just in case the control script is run as root
+  sudo -u osbdet bash -c ". ~/.profile && hdfs dfs -ls /"  > /dev/null 2>&1
   if [ $? -eq 0 ]
   then
     echo "up"
@@ -38,7 +39,7 @@ start_hadoop() {
   status=$(status_hadoop)
   if [ "$status" == "down" ]
   then
-    $OSBDET_HOME/bin/hadoop-start.sh > /dev/null 2>&1
+    sudo service hadoop3 start > /dev/null 2>&1
     return 0
   fi
 
@@ -56,7 +57,7 @@ stop_hadoop() {
   status=$(status_hadoop)
   if [ "$status" == "up" ]
   then
-    $OSBDET_HOME/bin/hadoop-stop.sh > /dev/null 2>&1
+    sudo service hadoop3 stop > /dev/null 2>&1
     return 0
   fi
 
