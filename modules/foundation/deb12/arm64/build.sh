@@ -48,6 +48,8 @@ miscsetup() {
   cp $SCRIPT_HOME/osbdet-recipes.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-cook.sh /home/osbdet/bin
   chown -R osbdet:osbdet /home/osbdet/bin
+  # Removing the need of typing a password when sudoing a command
+  echo "osbdet ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/osbdet
   debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup done"
 }
 remove_miscsetup() {
@@ -56,6 +58,8 @@ remove_miscsetup() {
   sed -i "s/^#127.0.1.1\tosbdet/127.0.1.1\tosbdet/" /etc/hosts
   # Remove tools from the osbdet user
   su osbdet -c "rm -rf /home/osbdet/bin"
+  # Enabling the need of typing a password when sudoing a command
+  rm -f /etc/sudoers.d/osbdet
   debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup removal done"
 }
 
