@@ -20,52 +20,54 @@ debug() {
 }
 
 dsenv_install(){
-  debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the data science environment" >> $OSBDET_LOGFILE
-  apt-get install -y pandoc texlive-xetex texlive-fonts-recommended >> $OSBDET_LOGFILE 2>&1
-  python3 -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
-  python3 -m pip install jupyter numpy pandas seaborn statsmodels >> $OSBDET_LOGFILE 2>&1
-  debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the data science environment installed" >> $OSBDET_LOGFILE
+  debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the data science environment"
+  apt-get install -y pandoc texlive-xetex texlive-fonts-recommended python3-venv
+  su osbdet -c "mkdir /home/osbdet/.jupyter_venv"
+  su osbdet -c "python3 -m venv /home/osbdet/.jupyter_venv"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install --upgrade pip"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install jupyter numpy pandas seaborn statsmodels streamlit"
+  debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the data science environment installed"
 }
 remove_dsenv(){
-  debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Removing data science environment software" >> $OSBDET_LOGFILE
-  python3 -m pip uninstall -y jupyter numpy pandas seaborn statsmodels >> $OSBDET_LOGFILE 2>&1
-  apt-get remove -y pandoc texlive-xetex texlive-fonts-recommended  --purge >> $OSBDET_LOGFILE 2>&1
-  apt autoremove -y >>$OSBDET_LOGFILE 2>&1
-  debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Data science environment software removed" >> $OSBDET_LOGFILE
+  debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Removing data science environment software"
+  apt-get remove -y pandoc texlive-xetex texlive-fonts-recommended python3-venv --purge
+  apt autoremove -y
+  rm -rf /home/osbdet/.jupyter_venv
+  debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Data science environment software removed"
 }
 
 initialsetup(){
-  debug "jupyter.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Jupyter" >> $OSBDET_LOGFILE
-  su osbdet -c "mkdir /home/osbdet/notebooks" >> $OSBDET_LOGFILE 2>&1
-  su osbdet -c "jupyter notebook --generate-config" >> $OSBDET_LOGFILE 2>&1
-  sed -i "s/^# c\.NotebookApp\.ip = 'localhost'/c\.NotebookApp\.ip = '\*'/" /home/osbdet/.jupyter/jupyter_notebook_config.py
-  sed -i "s/^# c\.NotebookApp\.password = ''/c\.NotebookApp\.password = 'sha1:51a108786a75:0798779c484abd8a6218db7d4e9d3370ffbcd9c8'/"\
+  debug "jupyter.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Jupyter"
+  su osbdet -c "mkdir /home/osbdet/notebooks"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/jupyter notebook --generate-config"
+  sed -i "s/^# c\.ServerApp\.ip = 'localhost'/c\.ServerApp\.ip = '\*'/" /home/osbdet/.jupyter/jupyter_notebook_config.py
+  sed -i "s/^# c\.ServerApp\.password = ''/c\.ServerApp\.password = 'sha1:51a108786a75:0798779c484abd8a6218db7d4e9d3370ffbcd9c8'/"\
          /home/osbdet/.jupyter/jupyter_notebook_config.py
-  sed -i "s/^# c\.NotebookApp\.notebook\_dir = ''/c\.NotebookApp\.notebook\_dir = '\/home\/osbdet\/notebooks'/"\
+  sed -i "s/^# c\.ServerApp\.notebook\_dir = ''/c\.ServerApp\.notebook\_dir = '\/home\/osbdet\/notebooks'/"\
          /home/osbdet/.jupyter/jupyter_notebook_config.py
-  debug "jupyter.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Jupyter done" >> $OSBDET_LOGFILE
+  debug "jupyter.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Jupyter done"
 }
 remove_initialsetup(){
-  debug "jupyter.remove_initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Removing initial setup of Jupyter" >> $OSBDET_LOGFILE
-  rm -rf /home/osbdet/.jupyter /home/osbdet/notebooks >> $OSBDET_LOGFILE 2>&1
-  debug "jupyter.remove_initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Removing initial setup of Jupyter" >> $OSBDET_LOGFILE
+  debug "jupyter.remove_initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Removing initial setup of Jupyter"
+  rm -rf /home/osbdet/.jupyter /home/osbdet/notebooks
+  debug "jupyter.remove_initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Removing initial setup of Jupyter"
 }
 
 serviceinstall(){
-  debug "jupyter.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation" >> $OSBDET_LOGFILE
+  debug "jupyter.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation"
   cp $SCRIPT_HOME/jupyter.service /lib/systemd/system/jupyter.service
   chmod 644 /lib/systemd/system/jupyter.service
-  systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
-  systemctl enable jupyter.service >> $OSBDET_LOGFILE 2>&1
-  debug "jupyter.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation done" >> $OSBDET_LOGFILE
+  systemctl daemon-reload
+  systemctl enable jupyter.service
+  debug "jupyter.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation done"
 }
 remove_serviceinstall(){
-  debug "jupyter.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation" >> $OSBDET_LOGFILE
-  service jupyter stop >> $OSBDET_LOGFILE 2>&1
-  systemctl disable jupyter.service >> $OSBDET_LOGFILE 2>&1
+  debug "jupyter.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation"
+  systemctl stop jupyter.service
+  systemctl disable jupyter.service
   rm /lib/systemd/system/jupyter.service 
-  systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
-  debug "jupyter.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation done" >> $OSBDET_LOGFILE
+  systemctl daemon-reload
+  debug "jupyter.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation done"
 }
 
 # Primary functions
@@ -77,9 +79,9 @@ module_install(){
   #   2. Initial setup of Jupyter
   #   3. Systemd script installation
   printf "  Installing module 'jupyter' ... "
-  dsenv_install
-  initialsetup
-  serviceinstall
+  dsenv_install >> $OSBDET_LOGFILE 2>&1
+  initialsetup >> $OSBDET_LOGFILE 2>&1
+  serviceinstall >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "jupyter.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -102,9 +104,9 @@ module_uninstall(){
   #   2. Undoing setup of Jupyter
   #   3. Data Science environment removal
   printf "  Uninstalling module 'jupyter' ... "
-  remove_serviceinstall
-  remove_initialsetup
-  remove_dsenv
+  remove_serviceinstall >> $OSBDET_LOGFILE 2>&1
+  remove_initialsetup >> $OSBDET_LOGFILE 2>&1
+  remove_dsenv >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "jupyter.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }

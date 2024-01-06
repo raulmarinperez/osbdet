@@ -1,7 +1,7 @@
 # Open Source Big Data Educational Toolkit (OSBDET)
-OSBDET is a test environment creation tool which facilitates the build of sandboxes containing a bunch of open source technologies altogether. These tests environments are targeting people who want to take their first steps with Big Data technologies easily.
+OSBDET is a test environment creation tool which facilitates the build of sandboxes containing a bunch of open source technologies altogether. This test environment is targeting people who want to take their first steps with Big Data technologies easily.
 
-The following are some of the Big Data frameworks that OSBDET is able to bring into a test environment:
+The following are some of the Big Data frameworks included in OSBDET:
 
 - Hadoop 3
 - Spark 3
@@ -10,7 +10,7 @@ The following are some of the Big Data frameworks that OSBDET is able to bring i
 
 OSBDET's architecture encourages the extension of the toolkit by introducing new frameworks with very little effort.
 ## How to use OSBDET
-OSBDET can be controlled with one single script, `osbdet-builder.sh`, which brings the following options:
+OSBDET can be controlled with one single script, `osbdet_builder.sh`, which brings the following options:
 ```root@osbdet:~/osbdet# ./osbdet_builder.sh
 Usage: osbdet_builder.sh [OPTION] [comma separated list of modules/recipes]
 
@@ -31,71 +31,74 @@ Before being able to use the script, it has to be configured to pull the right v
 of the frameworks. This is accomplished by using the `setup` option as follows:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh setup
-Let's setup your OSBDET 23r1 builder:
+Let's setup your OSBDET 24r1 builder:
   Log level (DEBUG*): DEBUG
-  Target Operating System (deb11*): deb11
+  Target Operating System (deb12*): deb12
   Target Architecture (amd64*|arm64): amd64
   OSBDET recipes home (/root/osbdet-recipes*): 
   OSBDET repository (https://github.com/raulmarinperez/osbdet-recipes.git*): 
 Persisting changes in /root/osbdet/shared/osbdet_builder.conf... [Done]
 ```
-As you can see, OSBDET is compatible with amd64 and arm64 architectures and the Debian 11 GNU/Linux operating system.
+As you can see, OSBDET 2024R1 is compatible with amd64 and arm64 architectures and the Debian 12 GNU/Linux operating system.
 The current configuration can be always checked by invoking the `currentconf` option:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh currentconf
-This is the current configuration of OSBDET 23r1:
-  OSBDET_HOME: /root/osbdet
+This is the current configuration of OSBDET 24r1:
+  OSBDET_HOME: /home/osbdet/repos/osbdet
   LOGLEVEL: DEBUG
-  OSBDET_TARGETOS: deb11
-  OSBDET_ARCHITECTURE: amd64
-  OSBDETRECIPES_HOME: /root/osbdet-recipes
+  OSBDET_TARGETOS: deb12
+  OSBDET_ARCHITECTURE: arm64
+  OSBDETRECIPES_HOME: /home/osbdet/repos/osbdet-recipes
   OSBDETRECIPES_REPO: https://github.com/raulmarinperez/osbdet-recipes.git
 ```
-The file `osbdet.log` tracks all the steps taken by the script; tail this file while building or removing modules to get all the information about the process.
+The `osbdet.log` file tracks all the steps taken by the script; tail this file while building or removing modules to get all the information about the process.
 ### Listing available modules
 The `modules` option lists all the available modules:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh modules
-These are the modules available in OSBDET vs22r1:
-  - mongodb44: MongoDB 4.4 installation, depends on: foundation
+These are the modules available in OSBDET v24r1:
+  - superset: Superset installation, depends on: foundation
+  - labbuilder: Lab builder installation, depends on: foundation,hadoop3
+  - spark3: Spark 3 installation, depends on: foundation
+  - grafana: Grafana installation, depends on: foundation
+  - truckssim: Truck fleet simulator, depends on: foundation
+  - nifi: NiFi installation, depends on: foundation
+  - jupyter: Jupyter Notebook installation, depends on: foundation
   - hadoop3: Hadoop 3 installation, depends on: foundation
   - mariadb: MariaDB installation, depends on: foundation
   - airflow: Airflow installation, depends on: foundation
-  - truckssim: Truck fleet simulator, depends on: foundation
-  - kafka3: Kafka 3 installation, depends on: foundation
-  - nifi: NiFi installation, depends on: foundation
-  - jupyter: Jupyter Notebook installation, depends on: foundation
-  - superset: Superset installation, depends on: foundation
   - foundation: Configurations and dependencies to satisfy the installation of other modules, depends on: no_dependencies
-  - labbuilder: Lab builder installation, depends on: foundation,hadoop3,hive3
-  - spark3: Spark 3 installation, depends on: foundation
+  - kafka3: Kafka 3 installation, depends on: foundation
   - minio: MinIO (object store) installation, depends on: foundation
-  - grafana: Grafana installation, depends on: foundation
+  - mongodb7: MongoDB 7 installation, depends on: foundation
 ```
 ### Listing available recipes
 The `recipes` option lists all the available recipes:
 ```
-These are the recipes available for OSBDET vs22r1:
-  - helloworld[s22r1]: Hello world recipe, depends on: no_dependencies
+These are the recipes available for OSBDET v24r1:
+  - vscodetunnel[24r1]: Setup a VS Code tunnel to use OSBDET from an external VS Code, depends on: no_dependencies
+  - helloworld[24r1]: Hello world recipe, depends on: no_dependencies
+  - osbdetweb[24r1]: Install a web UI to easily operate OSBDET, depends on: no_dependencies
 ```
 ### Displaying the status of available modules
 The `status` option lists the status of all the available modules:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh status
 The folowing list shows the status of all available modules:
-  - mongodb44: Module is installed [OK]
-  - hadoop3: Module is installed [OK]
-  - mariadb: Module is installed [OK]
+  - superset: Module is installed [OK]
+  - labbuilder: Module is not installed [KO]
+  - spark3: Module is installed [OK]
+  - grafana: Module is installed [OK]
   - truckssim: Module is installed [OK]
-  - kafka3: Module is installed [OK]
   - nifi: Module is installed [OK]
   - jupyter: Module is installed [OK]
-  - superset: Module is installed [OK]
+  - hadoop3: Module is installed [OK]
+  - mariadb: Module is installed [OK]
+  - airflow: Module is installed [OK]
   - foundation: Module is installed [OK]
-  - labbuilder: Module is installed [OK]
-  - spark3: Module is installed [OK]
+  - kafka3: Module is installed [OK]
   - minio: Module is installed [OK]
-  - grafana: Module is installed [OK]
+  - mongodb7: Module is installed [OK]
 ```
 ### Building modules
 The `build` option tells OSBDET to install the modules provided as arguments:
@@ -113,7 +116,7 @@ Removing modules from OSBDET:
   Uninstalling module 'mariadb' ... [Done]
 ```
 ### Cooking recipes
-The `cook` option tells OSBDET to 'cook' some recipies on the OSBDET environment:
+The `cook` option tells OSBDET to 'cook' some recipes on the OSBDET environment:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh cook helloworld
 Cooking some recipes for OSBDET:
@@ -129,7 +132,8 @@ The following table outlines the different frameworks TCP ports, and the TCP por
 
    |**Framework/Tool** |**Original TCP port** |**Mapped TCP port**   |
    |-------------------|----------------------|----------------------|
-   |NGINX Web Server   |80                    |2023                  |
+   |SSH server         |22                    |2222                  |
+   |Next.js Web App    |2024                  |2024                  |
    |Jupyter Notebook   |8888                  |28888                 |
    |HDFS UI            |50070                 |50070                 |
    |HDFS Data Node     |50075                 |50075                 |

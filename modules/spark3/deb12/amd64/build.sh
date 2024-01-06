@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-SPARK_BINARY_URL=https://dlcdn.apache.org/spark/spark-3.2.3/spark-3.2.3-bin-hadoop3.2.tgz
-SPARK_TGZ_FILE=spark-3.2.3-bin-hadoop3.2.tgz
-SPARK_DEFAULT_DIR=spark-3.2.3-bin-hadoop3.2
+SPARK_BINARY_URL=https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz
+SPARK_TGZ_FILE=spark-3.5.0-bin-hadoop3.tgz
+SPARK_DEFAULT_DIR=spark-3.5.0-bin-hadoop3
 
 # Aux functions
 # debug
@@ -22,92 +22,87 @@ debug() {
 }
 
 getandextract(){
-  debug "spark3.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting Spark 3" >> $OSBDET_LOGFILE
-  wget $SPARK_BINARY_URL -O /opt/$SPARK_TGZ_FILE >> $OSBDET_LOGFILE 2>&1
+  debug "spark3.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting Spark 3"
+  wget $SPARK_BINARY_URL -O /opt/$SPARK_TGZ_FILE
   if [[ $? -ne 0 ]]; then
     echo "[Error]"
     exit 1
   fi
   
-  tar zxf /opt/$SPARK_TGZ_FILE -C /opt >> $OSBDET_LOGFILE 2>&1
+  tar zxf /opt/$SPARK_TGZ_FILE -C /opt
   rm /opt/$SPARK_TGZ_FILE
   mv /opt/$SPARK_DEFAULT_DIR /opt/spark3
   chown -R osbdet:osbdet /opt/spark3
-  pip3 install findspark >> $OSBDET_LOGFILE 2>&1
-  debug "spark3.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 downloading and extracting process done" >> $OSBDET_LOGFILE
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install findspark"
+  debug "spark3.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 downloading and extracting process done"
 }
 removal(){
-  debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Removing Spark 3 from the system" >> $OSBDET_LOGFILE
+  debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Removing Spark 3 from the system"
   rm -rf /opt/spark3
-  pip3 uninstall -y findspark >> $OSBDET_LOGFILE 2>&1
-  debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 removed from the system" >> $OSBDET_LOGFILE
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y findspark"  
+  debug "spark3.removal DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 removed from the system"
 }
 
 setenvvars(){
-  debug "spark3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Setting the environment variables for the installation process"\
- >> $OSBDET_LOGFILE
+  debug "spark3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Setting the environment variables for the installation process"
   export SPARK_HOME=/opt/spark3
-  debug "spark3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Environment variables already defined" >> $OSBDET_LOGFILE
+  debug "spark3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Environment variables already defined"
 }
 
 configfilessetup(){
-  debug "spark3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Copying Spark 3 configuration files" >> $OSBDET_LOGFILE
+  debug "spark3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Copying Spark 3 configuration files"
 
   cp $SCRIPT_HOME/log4j.properties $SPARK_HOME/conf
   chown osbdet:osbdet $SPARK_HOME/conf/log4j.properties
 
-  debug "spark3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 configuration files copied" >> $OSBDET_LOGFILE
+  debug "spark3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Spark 3 configuration files copied"
 }
 
 jupyterspark(){
-  debug "spark3.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] If Jupyter is installed, the service is updated to consider Spark 3" >> $OSBDET_LOGFILE
+  debug "spark3.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] If Jupyter is installed, the service is updated to consider Spark 3"
   if [ -f "/lib/systemd/system/jupyter.service" ]
   then
-     service jupyter stop >> $OSBDET_LOGFILE 2>&1
+     service jupyter stop
      cp $SCRIPT_HOME/jupyter.service /lib/systemd/system/jupyter.service
      chmod 644 /lib/systemd/system/jupyter.service
-     rm -f /etc/systemd/system/jupyter.service
-     ln -s /lib/systemd/system/jupyter.service /etc/systemd/system/jupyter.service
-     systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
-     systemctl enable jupyter.service >> $OSBDET_LOGFILE 2>&1
-     service jupyter start >> $OSBDET_LOGFILE 2>&1
-     debug "spark3.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script updated" >> $OSBDET_LOGFILE
+     systemctl daemon-reload
+     systemctl enable jupyter.service
+     service jupyter start
+     debug "spark3.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script updated"
   else
-     debug "spark3.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script update skipped as Jupyter was not found" >> $OSBDET_LOGFILE
+     debug "spark3.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script update skipped as Jupyter was not found"
   fi
-  debug "spark3.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter and Spark 3 integration done" >> $OSBDET_LOGFILE
+  debug "spark3.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter and Spark 3 integration done"
 }
 remove_jupyterspark(){
   debug "spark3.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] If Jupyter is installed, the service is updated to remove the reference to Spark 3" >> $OSBDET_LOGFILE
   if [ -f "/lib/systemd/system/jupyter.service" ]
   then
-     service jupyter stop >> $OSBDET_LOGFILE 2>&1
+     service jupyter stop
      cp $SCRIPT_HOME/jupyter_nospark3.service /lib/systemd/system/jupyter.service
      chmod 644 /lib/systemd/system/jupyter.service
-     rm -f /etc/systemd/system/jupyter.service
-     ln -s /lib/systemd/system/jupyter.service /etc/systemd/system/jupyter.service
-     systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
-     systemctl enable jupyter.service >> $OSBDET_LOGFILE 2>&1
-     service jupyter start >> $OSBDET_LOGFILE 2>&1
-     debug "spark3.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script updated" >> $OSBDET_LOGFILE
+     systemctl daemon-reload
+     systemctl enable jupyter.service
+     service jupyter start
+     debug "spark3.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script updated"
   else
-     debug "spark3.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script update skipped as Jupyter was not found" >> $OSBDET_LOGFILE
+     debug "spark3.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script update skipped as Jupyter was not found"
   fi
-  debug "spark3.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter and Spark 3 integration removed" >> $OSBDET_LOGFILE
+  debug "spark3.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter and Spark 3 integration removed"
 }
 
 userprofile(){
-  debug "spark3.userprofile DEBUG [`date +"%Y-%m-%d %T"`] Update user profile to find Spark 3 binaries" >> $OSBDET_LOGFILE
+  debug "spark3.userprofile DEBUG [`date +"%Y-%m-%d %T"`] Update user profile to find Spark 3 binaries"
   echo '# set SPARK_HOME and its bin folder to the PATH' >> /home/osbdet/.profile                                                   
   echo 'SPARK_HOME=/opt/spark3/' >> /home/osbdet/.profile                                                 
   echo 'HADOOP_HOME=${HADOOP_HOME:-/opt/spark3}' >> /home/osbdet/.profile                                                
   echo 'PATH="$PATH:$SPARK_HOME/bin"' >> /home/osbdet/.profile
-  debug "spark3.userprofile DEBUG [`date +"%Y-%m-%d %T"`] User profile to find Spark 3 binaries updated" >> $OSBDET_LOGFILE
+  debug "spark3.userprofile DEBUG [`date +"%Y-%m-%d %T"`] User profile to find Spark 3 binaries updated"
 }
 remove_userprofile(){
-  debug "spark3.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] Update user profile to remove Spark 3 binaries access" >> $OSBDET_LOGFILE
+  debug "spark3.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] Update user profile to remove Spark 3 binaries access"
   sed -i '/^# set SPARK.*/,+3d' ~osbdet/.profile
-  debug "spark3.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] User profile updated" >> $OSBDET_LOGFILE
+  debug "spark3.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] User profile updated"
 }
 
 # Primary functions
@@ -121,11 +116,11 @@ module_install(){
   #   4. Update jupyter systemd script if Jupyter is installed
   #   5. Update userprofile to get access to Spark 3 binaries
   printf "  Installing module 'spark3' ... "
-  getandextract
-  setenvvars
-  configfilessetup
-  jupyterspark
-  userprofile
+  getandextract >> $OSBDET_LOGFILE 2>&1
+  setenvvars >> $OSBDET_LOGFILE 2>&1
+  configfilessetup >> $OSBDET_LOGFILE 2>&1
+  jupyterspark >> $OSBDET_LOGFILE 2>&1
+  userprofile >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "spark3.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -148,9 +143,9 @@ module_uninstall(){
   #   2. Update jupyter systemd script to remove Spark 3 dependencies if Jupyter is installed
   #   3. Remove Spark 3 binaries
   printf "  Uninstalling module 'spark3' ... "
-  remove_userprofile
-  remove_jupyterspark
-  removal
+  remove_userprofile >> $OSBDET_LOGFILE 2>&1
+  remove_jupyterspark >> $OSBDET_LOGFILE 2>&1
+  removal >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "spark3.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }

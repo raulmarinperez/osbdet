@@ -1,4 +1,3 @@
-# Contents of /etc/systemd/system/jupyter.service
 [Unit]
 Description=Jupyter Notebook
 After=network.target

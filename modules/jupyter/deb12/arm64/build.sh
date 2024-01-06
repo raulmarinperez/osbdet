@@ -25,7 +25,7 @@ dsenv_install(){
   su osbdet -c "mkdir /home/osbdet/.jupyter_venv"
   su osbdet -c "python3 -m venv /home/osbdet/.jupyter_venv"
   su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install --upgrade pip"
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install jupyter numpy pandas seaborn statsmodels"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install jupyter numpy pandas seaborn statsmodels streamlit"
   debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the data science environment installed"
 }
 remove_dsenv(){

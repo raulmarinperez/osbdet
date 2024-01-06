@@ -1,0 +1,28 @@
+# Reference: What sysadmins need to know about systemd's oneshot service type
+[Unit]
+Description=Hadoop 3 service
+After=network.target
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+User=osbdet
+Environment="HADOOP_HOME=/opt/hadoop3"
+Environment="HADOOP_COMMON_HOME=/opt/hadoop3"
+Environment="HADOOP_HDFS_HOME=/opt/hadoop3"
+Environment="HADOOP_MAPRED_HOME=/opt/hadoop3"
+Environment="HADOOP_YARN_HOME=/opt/hadoop3"
+Environment="HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop"
+Environment="HDFS_DATANODE_USER=osbdet"
+Environment="HDFS_NAMENODE_USER=osbdet"
+Environment="HDFS_SECONDARYNAMENODE_USER=osbdet"
+Environment="YARN_RESOURCEMANAGER_USER=osbdet"
+Environment="YARN_NODEMANAGER_USER=osbdet"
+Environment="JAVA_HOME=/usr/lib/jvm/temurin-11-jdk-amd64"
+ExecStart=/bin/bash -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh && $HADOOP_HOME/sbin/start-dfs.sh"
+ExecStart=/bin/bash -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh && $HADOOP_HOME/sbin/start-yarn.sh"
+ExecStart=/bin/bash -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh && $HADOOP_HOME/bin/mapred --daemon start historyserver"
+ExecStop=/bin/bash -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh && $HADOOP_HOME/bin/mapred --daemon stop historyserver"
+ExecStop=/bin/bash -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh && $HADOOP_HOME/sbin/stop-yarn.sh"
+ExecStop=/bin/bash -c ". $HADOOP_HOME/etc/hadoop/hadoop-env.sh && $HADOOP_HOME/sbin/stop-dfs.sh"
+[Install]
+WantedBy=multi-user.target

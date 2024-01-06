@@ -20,52 +20,57 @@ debug() {
 }
 
 bienv_install(){
-  debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the BI environment" >> $OSBDET_LOGFILE
-  apt-get update >> $OSBDET_LOGFILE 2>&1
-  apt-get install -y libffi-dev libsasl2-dev libldap2-dev python3-venv >> $OSBDET_LOGFILE 2>&1
-  mkdir /opt/superset >> $OSBDET_LOGFILE 2>&1
-  python3 -m venv /opt/superset/ >> $OSBDET_LOGFILE 2>&1
-  . /opt/superset/bin/activate >> $OSBDET_LOGFILE 2>&1
-  python -m pip install --upgrade pip >> $OSBDET_LOGFILE 2>&1
-  python -m pip install mysqlclient apache-superset==2.0.1 >> $OSBDET_LOGFILE 2>&1
-  python -m pip install WTForms==2.3.3 >> $OSBDET_LOGFILE 2>&1
+  debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the BI environment"
+  apt-get update
+  apt-get install -y libffi-dev libsasl2-dev libldap2-dev python3-venv default-libmysqlclient-dev build-essential pkg-config
+  mkdir /opt/superset
+  python3 -m venv /opt/superset/
+  . /opt/superset/bin/activate
+  python -m pip install --upgrade pip
+  python -m pip install mysqlclient apache-superset
+  python -m pip install WTForms
   deactivate
-  debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed" >> $OSBDET_LOGFILE
+  debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed"
 }
 remove_bienv(){
-  debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] Removing BI environment software" >> $OSBDET_LOGFILE
+  debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] Removing BI environment software"
   rm -rf /opt/superset
-  apt-get remove -y libffi-dev libsasl2-dev libldap2-dev python3-venv --purge >> $OSBDET_LOGFILE 2>&1
-  apt autoremove -y >>$OSBDET_LOGFILE 2>&1
-  debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] BI environment software removed" >> $OSBDET_LOGFILE
+  apt-get remove -y libffi-dev libsasl2-dev libldap2-dev python3-venv default-libmysqlclient-dev build-essential pkg-config --purge
+  apt autoremove -y
+  debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] BI environment software removed"
 }
 
 initialsetup(){
-  debug "superset.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset" >> $OSBDET_LOGFILE
-  . /opt/superset/bin/activate >> $OSBDET_LOGFILE 2>&1
+  debug "superset.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset"
+  # 2024R1: A secret key needs to be created - https://superset.apache.org/docs/installation/installing-superset-from-scratch/#python-virtual-environment
+  cp $SCRIPT_HOME/superset_config.py /opt/superset
+  sed -i 's@YOUR_OWN_RANDOM_GENERATED_SECRET_KEY@'`openssl rand -base64 42`'@' /opt/superset/superset_config.py
+  # All set to do the initial configuration
+  . /opt/superset/bin/activate
+  export SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py;
   export FLASK_APP=superset; 
-  superset db upgrade >> $OSBDET_LOGFILE 2>&1
+  superset db upgrade
   superset fab create-admin --username osbdet --firstname osb --lastname bdet \
-                            --email osbdet@osbdet.com --password osbdet123\$ >> $OSBDET_LOGFILE 2>&1
-  superset init >> $OSBDET_LOGFILE 2>&1
+                            --email osbdet@osbdet.com --password osbdet123\$
+  superset init
   deactivate
-  debug "superset.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset done" >> $OSBDET_LOGFILE
+  debug "superset.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset done"
 }
 
 serviceinstall(){
-  debug "superset.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation" >> $OSBDET_LOGFILE
+  debug "superset.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation"
   cp $SCRIPT_HOME/superset.service /lib/systemd/system/superset.service
   chmod 644 /lib/systemd/system/superset.service
-  systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
-  debug "superset.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation done" >> $OSBDET_LOGFILE
+  systemctl daemon-reload
+  debug "superset.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation done"
 }
 remove_serviceinstall(){
-  debug "superset.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation" >> $OSBDET_LOGFILE
-  service superset stop >> $OSBDET_LOGFILE 2>&1
-  systemctl disable superset.service >> $OSBDET_LOGFILE 2>&1
+  debug "superset.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation"
+  service superset stop
+  systemctl disable superset.service
   rm /lib/systemd/system/superset.service 
-  systemctl daemon-reload >> $OSBDET_LOGFILE 2>&1
-  debug "jupyter.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation done" >> $OSBDET_LOGFILE
+  systemctl daemon-reload
+  debug "jupyter.remove_serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script uninstallation done"
 }
 
 # Primary functions
@@ -77,9 +82,9 @@ module_install(){
   #   2. Initial setup of Superset
   #   3. Systemd script installation
   printf "  Installing module 'superset' ... "
-  bienv_install
-  initialsetup
-  serviceinstall
+  bienv_install >> $OSBDET_LOGFILE 2>&1
+  initialsetup >> $OSBDET_LOGFILE 2>&1
+  serviceinstall >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "superset.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -102,8 +107,8 @@ module_uninstall(){
   #   2. Undoing setup of Superset
   #   3. BI environment removal
   printf "  Uninstalling module 'superset' ... "
-  remove_serviceinstall
-  remove_bienv
+  remove_serviceinstall >> $OSBDET_LOGFILE 2>&1
+  remove_bienv >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "jupyter.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }

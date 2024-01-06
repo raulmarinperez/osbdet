@@ -8,6 +8,7 @@ Restart=always
 User=root
 WorkingDirectory=/opt/superset
 Environment="FLASK_APP=superset"
+Environment="SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py"
 ExecStart=/usr/bin/bash -c "cd /opt/superset && source /opt/superset/bin/activate && superset run -h 0.0.0.0 -p 8880 --with-threads --reload"
 [Install]
 WantedBy=multi-user.target

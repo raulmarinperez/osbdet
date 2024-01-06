@@ -5,6 +5,10 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
+MINIO_URL=https://dl.min.io/server/minio/release/linux-amd64/archive/minio_20231223071911.0.0_amd64.deb
+MINIO_MCLI_URL=https://dl.min.io/client/mc/release/linux-amd64/mcli_20231223084721.0.0_amd64.deb
+MINIO_FILE=minio_20231223071911.0.0_amd64.deb
+MINIO_MCLI_FILE=mcli_20231223084721.0.0_amd64.deb
 
 # Aux functions
 
@@ -35,13 +39,13 @@ remove_data_folder(){
 install_minio(){
   debug "minio.install_minio DEBUG [`date +"%Y-%m-%d %T"`] Installing minio server and client"
   # 1. Download the server and client to /tmp
-  wget -P /tmp/ https://dl.min.io/server/minio/release/linux-amd64/minio_20221212192727.0.0_amd64.deb
-  wget -P /tmp/ https://dl.min.io/client/mc/release/linux-amd64/mcli_20221213002328.0.0_amd64.deb 
+  wget -P /tmp/ $MINIO_URL
+  wget -P /tmp/ $MINIO_MCLI_URL
   # 2. Install both packages
-  dpkg -i /tmp/minio_20221212192727.0.0_amd64.deb
-  dpkg -i /tmp/mcli_20221213002328.0.0_amd64.deb
+  dpkg -i /tmp/$MINIO_FILE
+  dpkg -i /tmp/$MINIO_MCLI_FILE
   # 3. Remove the packages
-  rm /tmp/minio_20221212192727.0.0_amd64.deb /tmp/mcli_20221213002328.0.0_amd64.deb
+  rm /tmp/$MINIO_FILE /tmp/$MINIO_MCLI_FILE
   # 4. Copy the default configuration
   cp $SCRIPT_HOME/minio /etc/default/minio
   debug "minio.install_minio DEBUG [`date +"%Y-%m-%d %T"`] Minio server and client installed"

@@ -5,6 +5,8 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
+OTELCOLCONTRIB_URL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.91.0/otelcol-contrib_0.91.0_linux_amd64.deb"
+OTELCOLCONTRIB_LOCAL="/tmp/otelcol-contrib_0.91.0_linux_amd64.deb"
 
 # Aux functions
 
@@ -19,58 +21,45 @@ debug() {
   fi
 }
 
-create_osbdetuser(){
-  debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] Starting osbdet user creation"
-  if [ ! -d "/home/osbdet" ]
-  then
-    useradd -m -s /bin/bash osbdet
-    echo osbdet:osbdet123$ | chpasswd 2> /dev/null
-    debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user created"
-  else
-    debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet already existed and wasn't created"
-  fi
-  debug "foundation.create_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user creation process done"
-}
-remove_osbdetuser(){
-  debug "foundation.remove_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] Starting osbdet user deletion"
-  deluser --remove-home osbdet >> $OSBDET_LOGFILE
-  debug "foundation.remove_osbdetuser DEBUG [`date +"%Y-%m-%d %T"`] osbdet user deletion done"
-}
-
 miscinstall(){
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation"
   apt update
   apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                 tmux python3-pip sudo git emacs unzip nginx ca-certificates-java default-jdk
+                 tmux python3-pip emacs unzip ca-certificates-java default-jdk
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done"
 }
 remove_miscinstall(){
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation"
   apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                tmux python3-pip sudo git unzip nginx ca-certificates-java default-jdk --purge
+                tmux python3-pip emacs unzip ca-certificates-java default-jdk --purge
   apt autoremove -y
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done" 
 }
 
 miscsetup() {
   debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous setup"
-  usermod -aG sudo osbdet
+  # Adapting /etc/hosts
   sed -i "s/^127.0.0.1\tlocalhost/127.0.0.1\tlocalhost\tosbdet/" /etc/hosts
   sed -i "s/^127.0.1.1\tosbdet/#127.0.1.1\tosbdet/" /etc/hosts
+  # Adding some tools to the osbdet user
   su osbdet -c "mkdir -p /home/osbdet/bin"
+  cp $SCRIPT_HOME/osbdet-control.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-update.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-recipes.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-cook.sh /home/osbdet/bin
-  mv /var/www/html /var/www/html.old
-  cp -rf $SCRIPT_HOME/osbdet-web /var/www/html
   chown -R osbdet:osbdet /home/osbdet/bin
+  # Removing the need of typing a password when sudoing a command
+  echo "osbdet ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/osbdet
   debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup done"
 }
 remove_miscsetup() {
   debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous setup removal"
-  deluser osbdet sudo
   sed -i "s/^127.0.0.1\tlocalhost\tosbdet/127.0.0.1\tlocalhost/" /etc/hosts
   sed -i "s/^#127.0.1.1\tosbdet/127.0.1.1\tosbdet/" /etc/hosts
+  # Remove tools from the osbdet user
+  su osbdet -c "rm -rf /home/osbdet/bin"
+  # Enabling the need of typing a password when sudoing a command
+  rm -f /etc/sudoers.d/osbdet
   debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup removal done"
 }
 
@@ -118,11 +107,10 @@ install_docker(){
 }
 remove_docker(){
   debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Removing Docker"
-  apt-get update
   apt-get remove -y docker-ce docker-ce-cli containerd.io --purge
   rm /etc/apt/sources.list.d/docker.list
   rm /usr/share/keyrings/docker-archive-keyring.gpg
-  apt-get remove -y apt-transport-https ca-certificates curl gnupg lsb-release --purge
+  apt-get update
   debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker removed"
 }
 
@@ -145,9 +133,9 @@ remove_cloudproviders_clis(){
 install_otel_collector(){
   debug "foundation.install_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] Installing OpenTelemetry collector"
   # Download from the official repo
-  wget -O /tmp/otelcol-contrib_0.81.0_linux_amd64.deb https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.81.0/otelcol-contrib_0.81.0_linux_amd64.deb
-  dpkg -i /tmp/otelcol-contrib_0.81.0_linux_amd64.deb
-  rm /tmp/otelcol-contrib_0.81.0_linux_amd64.deb
+  wget -O $OTELCOLCONTRIB_LOCAL $OTELCOLCONTRIB_URL
+  dpkg -i $OTELCOLCONTRIB_LOCAL
+  rm $OTELCOLCONTRIB_LOCAL
   # Disable service autostart
   systemctl stop otelcol-contrib
   systemctl disable otelcol-contrib
@@ -159,61 +147,19 @@ remove_otel_collector(){
   debug "foundation.remove_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] OpenTelemetry collector removed"
 }
 
-install_vscode(){
-  debug "foundation.install_vscode DEBUG [`date +"%Y-%m-%d %T"`] Installing Visual Studio Code"
-  # Installation instructions documented at https://code.visualstudio.com/docs/setup/linux
-  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-  install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-  echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list
-  rm -f packages.microsoft.gpg
-  apt-get update
-  apt-get install -y code
-  debug "foundation.install_vscode DEBUG [`date +"%Y-%m-%d %T"`] Visual Studio Code installation done"
-}
-remove_vscode(){
-  debug "foundation.remove_vscode DEBUG [`date +"%Y-%m-%d %T"`] Removing Visual Studio Code"
-  rm -f /etc/apt/sources.list.d/vscode.list /etc/apt/keyrings/packages.microsoft.gpg
-  apt-get remove -y code --purge
-  apt-get update
-  debug "foundation.remove_vscode DEBUG [`date +"%Y-%m-%d %T"`] Visual Studio Code removed"
-}
-
-install_nodejs_20(){
-  debug "foundation.install_nodejs_20 DEBUG [`date +"%Y-%m-%d %T"`] Installing NodeJS 20"
-  # Installation instructions documented at https://github.com/nodesource/distributions#debinstall
-  curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
-  apt-get update
-  apt-get install -y nodejs
-  debug "foundation.install_nodejs_20 DEBUG [`date +"%Y-%m-%d %T"`] NodeJS 20 installation done"
-}
-remove_nodejs_20(){
-  debug "foundation.remove_nodejs_20 DEBUG [`date +"%Y-%m-%d %T"`] Removing NodeJS 20"
-  # Removal instructions documented at https://github.com/nodesource/distributions#debinstall
-  apt-get remove -y nodejs --purge
-  rm -r /etc/apt/sources.list.d/nodesource.list
-  rm -r /etc/apt/keyrings/nodesource.gpg
-  apt-get update
-  debug "foundation.remove_nodejs_20 DEBUG [`date +"%Y-%m-%d %T"`] NodeJS 20 removed"
-}
-
 # Primary functions
 #
 module_install(){
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
-  #   1. Creating the osbdet system user
-  #   2. Installation miscellaneous software
-  #   3. Miscellaneous setup
-  #   4. Adding AdoptiumOpenJDK repo
-  #   5. Installing JDK 11
-  #   6. Docker installation
-  #   7. Install cloud providers CLIs
-  #   8. Install the OpenTelemetry collector
-  #   9. Install Visual Studio Code
-  #   10. Install NodeJS 20
+  #   1. Installation miscellaneous software
+  #   2. Miscellaneous setup
+  #   3. Adding AdoptiumOpenJDK repo
+  #   4. Installing JDK 11
+  #   5. Docker installation
+  #   6. Install cloud providers CLIs
+  #   7. Install the OpenTelemetry collector
   printf "  Installing module 'foundation' ... "
-  create_osbdetuser >> $OSBDET_LOGFILE 2>&1
   miscinstall >> $OSBDET_LOGFILE 2>&1
   miscsetup >> $OSBDET_LOGFILE 2>&1
   add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
@@ -221,14 +167,13 @@ module_install(){
   install_docker >> $OSBDET_LOGFILE 2>&1
   install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   install_otel_collector >> $OSBDET_LOGFILE 2>&1
-  install_vscode >> $OSBDET_LOGFILE 2>&1
-  install_nodejs_20 >> $OSBDET_LOGFILE 2>&1
+  mkdir -p /home/osbdet/.osbdet/ && touch /home/osbdet/.osbdet/foundation >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
 
 module_status() {
-  if [ -d "/home/osbdet" ]
+  if [ -f "/home/osbdet/.osbdet/foundation" ]
   then
     echo "Module is installed [OK]"
     exit 0
@@ -241,28 +186,23 @@ module_status() {
 module_uninstall(){
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
-  #   1. Install NodeJS 20
-  #   2. Remove Visual Studio Code
-  #   3. Remove the OpenTelemetry collector
-  #   4. Remove cloud providers CLIs
-  #   5. Remove Docker
-  #   6. Uninstall JDK 8 and 11
-  #   7. Remove AdoptOpenJDK repo
-  #   8. Miscellaneous setup
-  #   9. Uninstallation miscellaneous software
-  #   10. Remove the osbdet system user
+  #   1. Remove the OpenTelemetry collector
+  #   2. Remove cloud providers CLIs
+  #   3. Remove Docker
+  #   4. Uninstall JDK 11
+  #   5. Remove AdoptiumOpenJDK repo
+  #   6. Miscellaneous setup
+  #   7. Uninstallation miscellaneous software
   #   
   printf "  Uninstalling module 'foundation' ... "
-  remove_nodejs_20 >> $OSBDET_LOGFILE 2>&1
-  remove_vscode >> $OSBDET_LOGFILE 2>&1
   remove_otel_collector >> $OSBDET_LOGFILE 2>&1
   remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   remove_docker >> $OSBDET_LOGFILE 2>&1
-  remove_jdk8_11 >> $OSBDET_LOGFILE 2>&1
-  remove_adoptopenjdkrepo >> $OSBDET_LOGFILE 2>&1
+  remove_jdk11 >> $OSBDET_LOGFILE 2>&1
+  remove_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
   remove_miscsetup >> $OSBDET_LOGFILE 2>&1
   remove_miscinstall >> $OSBDET_LOGFILE 2>&1
-  remove_osbdetuser >> $OSBDET_LOGFILE 2>&1
+  rm /home/osbdet/.osbdet/foundation >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }

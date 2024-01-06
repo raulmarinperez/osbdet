@@ -5,6 +5,8 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
+OTELCOLCONTRIB_URL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.91.0/otelcol-contrib_0.91.0_linux_arm64.deb"
+OTELCOLCONTRIB_LOCAL="/tmp/otelcol-contrib_0.91.0_linux_arm64.deb"
 
 # Aux functions
 
@@ -23,37 +25,41 @@ miscinstall(){
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation"
   apt update
   apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                 tmux python3-pip sudo emacs unzip ca-certificates-java default-jdk
+                 tmux python3-pip emacs unzip ca-certificates-java default-jdk
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done"
 }
 remove_miscinstall(){
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation"
   apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
-                tmux python3-pip sudo unzip --purge
+                tmux python3-pip emacs unzip ca-certificates-java default-jdk --purge
   apt autoremove -y
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done"
 }
 
 miscsetup() {
   debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous setup"
-  # Making the osbdet user a sudoer
-  usermod -aG sudo osbdet
   # Adapting /etc/hosts
   sed -i "s/^127.0.0.1\tlocalhost/127.0.0.1\tlocalhost\tosbdet/" /etc/hosts
   sed -i "s/^127.0.1.1\tosbdet/#127.0.1.1\tosbdet/" /etc/hosts
   # Adding some tools to the osbdet user
   su osbdet -c "mkdir -p /home/osbdet/bin"
+  cp $SCRIPT_HOME/osbdet-control.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-update.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-recipes.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-cook.sh /home/osbdet/bin
   chown -R osbdet:osbdet /home/osbdet/bin
+  # Removing the need of typing a password when sudoing a command
+  echo "osbdet ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/osbdet
   debug "foundation.miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup done"
 }
 remove_miscsetup() {
   debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous setup removal"
-  deluser osbdet sudo
   sed -i "s/^127.0.0.1\tlocalhost\tosbdet/127.0.0.1\tlocalhost/" /etc/hosts
   sed -i "s/^#127.0.1.1\tosbdet/127.0.1.1\tosbdet/" /etc/hosts
+  # Remove tools from the osbdet user
+  su osbdet -c "rm -rf /home/osbdet/bin"
+  # Enabling the need of typing a password when sudoing a command
+  rm -f /etc/sudoers.d/osbdet
   debug "foundation.remove_miscsetup DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous setup removal done"
 }
 
@@ -101,11 +107,10 @@ install_docker(){
 }
 remove_docker(){
   debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Removing Docker"
-  apt-get update
   apt-get remove -y docker-ce docker-ce-cli containerd.io --purge
   rm /etc/apt/sources.list.d/docker.list
   rm /usr/share/keyrings/docker-archive-keyring.gpg
-  apt-get remove -y apt-transport-https ca-certificates curl gnupg lsb-release --purge
+  apt-get update
   debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker removed"
 }
 
@@ -128,9 +133,9 @@ remove_cloudproviders_clis(){
 install_otel_collector(){
   debug "foundation.install_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] Installing OpenTelemetry collector"
   # Download from the official repo
-  wget -O /tmp/otelcol-contrib_0.81.0_linux_arm64.deb https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.81.0/otelcol-contrib_0.81.0_linux_arm64.deb
-  dpkg -i /tmp/otelcol-contrib_0.81.0_linux_arm64.deb
-  rm /tmp/otelcol-contrib_0.81.0_linux_arm64.deb
+  wget -O $OTELCOLCONTRIB_LOCAL $OTELCOLCONTRIB_URL
+  dpkg -i $OTELCOLCONTRIB_LOCAL
+  rm $OTELCOLCONTRIB_LOCAL
   # Disable service autostart
   systemctl stop otelcol-contrib
   systemctl disable otelcol-contrib
@@ -140,28 +145,6 @@ remove_otel_collector(){
   debug "foundation.remove_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] Removing OpenTelemetry collector"
   dpkg --purge otelcol-contrib 
   debug "foundation.remove_otel_collector DEBUG [`date +"%Y-%m-%d %T"`] OpenTelemetry collector removed"
-}
-
-add_nodejs_and_website(){
-  debug "foundation.add_nodejs_and_website DEBUG [`date +"%Y-%m-%d %T"`] Adding NodeJs and the course environment website"
-  # Adding NodeJS
-  curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&\
-  apt-get install -y nodejs
-  #su osbdet -c "cd /home/osbdet; npm install next react react-dom"
-  # Adding the osbdet website
-  #mv /var/www/html /var/www/html.old
-  #cp -rf $SCRIPT_HOME/osbdet-web /var/www/html
-  debug "foundation.add_nodejs_and_website DEBUG [`date +"%Y-%m-%d %T"`] NodeJs and course environment added"
-}
-remove_nodejs_and_website(){
-  debug "foundation.remove_nodejs_and_website DEBUG [`date +"%Y-%m-%d %T"`] Removing NodeJs and the course environment website"
-  # Removing NodeJS
-  #su osbdet -c "cd /home/osbdet; npm uninstall next react react-dom"
-  apt-get remove -y nodejs --purge
-  rm /etc/apt/sources.list.d/nodesource.list
-  apt-get update
-  # Removing the osbdet website
-  debug "foundation.remove_nodejs_and_website DEBUG [`date +"%Y-%m-%d %T"`] NodeJs and the course environment website removed"
 }
 
 # Primary functions
@@ -176,7 +159,6 @@ module_install(){
   #   5. Docker installation
   #   6. Install cloud providers CLIs
   #   7. Install the OpenTelemetry collector
-  #   8. Adding NodeJs and the course environment web site
   printf "  Installing module 'foundation' ... "
   miscinstall >> $OSBDET_LOGFILE 2>&1
   miscsetup >> $OSBDET_LOGFILE 2>&1
@@ -185,13 +167,13 @@ module_install(){
   install_docker >> $OSBDET_LOGFILE 2>&1
   install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   install_otel_collector >> $OSBDET_LOGFILE 2>&1
-  add_nodejs_and_website >> $OSBDET_LOGFILE 2>&1
+  mkdir -p /home/osbdet/.osbdet/ && touch /home/osbdet/.osbdet/foundation >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
 
 module_status() {
-  if [ -d "/home/osbdet" ]
+  if [ -f "/home/osbdet/.osbdet/foundation" ]
   then
     echo "Module is installed [OK]"
     exit 0
@@ -204,17 +186,15 @@ module_status() {
 module_uninstall(){
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
-  #   1. Remove NodeJs and the course environment web site
-  #   2. Remove the OpenTelemetry collector
-  #   3. Remove cloud providers CLIs
-  #   4. Remove Docker
-  #   5. Uninstall JDK 11
-  #   6. Remove AdoptiumOpenJDK repo
-  #   7. Miscellaneous setup
-  #   8. Uninstallation miscellaneous software
+  #   1. Remove the OpenTelemetry collector
+  #   2. Remove cloud providers CLIs
+  #   3. Remove Docker
+  #   4. Uninstall JDK 11
+  #   5. Remove AdoptiumOpenJDK repo
+  #   6. Miscellaneous setup
+  #   7. Uninstallation miscellaneous software
   #   
   printf "  Uninstalling module 'foundation' ... "
-  remove_nodejs_and_website >> $OSBDET_LOGFILE 2>&1
   remove_otel_collector >> $OSBDET_LOGFILE 2>&1
   remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   remove_docker >> $OSBDET_LOGFILE 2>&1
@@ -222,6 +202,7 @@ module_uninstall(){
   remove_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
   remove_miscsetup >> $OSBDET_LOGFILE 2>&1
   remove_miscinstall >> $OSBDET_LOGFILE 2>&1
+  rm /home/osbdet/.osbdet/foundation >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }
