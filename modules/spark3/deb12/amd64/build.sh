@@ -12,6 +12,7 @@ HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3
 HADOOP_AWS_JAR_NAME=hadoop-aws-3.3.4.jar
 HADOOP3_LIBS=/opt/hadoop3/share/hadoop/tools/lib
 NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh
+NVM_DIR=/home/osbdet/.nvm
 
 # Aux functions
 # debug
@@ -29,7 +30,7 @@ install_dependencies(){
   debug "spark3.install_dependencies DEBUG [`date +"%Y-%m-%d %T"`] Installing dependencies to make Spark 3 work"
 
   su osbdet -c "curl -o- $NVM_INSTALL_SCRIPT | bash"
-  su osbdet -c "nvm install --lts"
+  su osbdet -c ". $NVM_DIR/nvm.sh && . $NVM_DIR/bash_completion && nvm install --lts"
 
   debug "spark3.install_dependencies DEBUG [`date +"%Y-%m-%d %T"`] Dependencies to make Spark 3 work installed"
 }
