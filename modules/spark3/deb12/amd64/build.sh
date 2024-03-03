@@ -45,14 +45,14 @@ remove_dependencies(){
 install_pyspark(){
   debug "spark3.install_pyspark DEBUG [`date +"%Y-%m-%d %T"`] Installing pyspark, jupyterlab-sql-editor and others"
 
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install jupyterlab-lsp jupyterlab-sql-editor pyspark==$SPARK_VERSION"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark==$SPARK_VERSION"
 
   debug "spark3.install_pyspark DEBUG [`date +"%Y-%m-%d %T"`] pyspark, jupyterlab-sql-editor and others installed"
 }
 remove_pyspark(){
   debug "spark3.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] Removing pyspark, jupyterlab-sql-editor and others"
 
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y jupyterlab-lsp jupyterlab-sql-editor pyspark"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark"
 
   debug "spark3.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] pyspark, jupyterlab-sql-editor and others removed"
 }
