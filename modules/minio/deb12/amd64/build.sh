@@ -59,6 +59,19 @@ uninstall_minio(){
   debug "minio.uninstall_minio DEBUG [`date +"%Y-%m-%d %T"`] Minio server and client uninstalled"
 }
 
+initialize_minio(){
+  debug "minio.initialize_minio DEBUG [`date +"%Y-%m-%d %T"`] Initializing MinIO creating an alias, secret/access keys and raw-data bucket"
+  # 1. Create an alias to manipulate the local instance
+  mcli alias set myminio http://localhost:9000 osbdet osbdet123$
+  mcli admin info myminio
+  # 2. Create a user (access key) and a password (secret key) to use from NiFi and Spark
+  mcli admin user add myminio s3access _s3access123$
+  mcli admin policy attach myminio readwrite --user=s3access
+  # 3. Create a default bucket to upload stuff called raw-data
+  mcli mb --with-lock myminio/raw-data
+  debug "minio.initialize_minio DEBUG [`date +"%Y-%m-%d %T"`] MinIO initialized"
+}
+
 create_minio-user(){
   debug "minio.create_minio-user DEBUG [`date +"%Y-%m-%d %T"`] Create a system user and group"
   # 1. Create the system user and group
@@ -80,10 +93,12 @@ module_install(){
   #   1. Create minio system user and group
   #   2. Create the folder that will hold the files
   #   3. Install MinIO server and client
+  #   4. Initialize MinIO creating an alias, access/secret keys and raw-data bucket
   printf "  Installing module 'minio' ... "
   create_minio-user >>$OSBDET_LOGFILE 2>&1
   create_data_folder >>$OSBDET_LOGFILE 2>&1
   install_minio >>$OSBDET_LOGFILE 2>&1
+  initialize_minio >>$OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "minio.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
