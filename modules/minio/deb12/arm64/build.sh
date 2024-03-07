@@ -61,6 +61,7 @@ uninstall_minio(){
 
 initialize_minio(){
   debug "minio.initialize_minio DEBUG [`date +"%Y-%m-%d %T"`] Initializing MinIO creating an alias, secret/access keys and raw-data bucket"
+  service minio start
   # 1. Create an alias to manipulate the local instance
   mcli alias set myminio http://localhost:9000 osbdet osbdet123$
   mcli admin info myminio
@@ -69,6 +70,7 @@ initialize_minio(){
   mcli admin policy attach myminio readwrite --user=s3access
   # 3. Create a default bucket to upload stuff called raw-data
   mcli mb --with-lock myminio/raw-data
+  service minio stop
   debug "minio.initialize_minio DEBUG [`date +"%Y-%m-%d %T"`] MinIO initialized"
 }
 

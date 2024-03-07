@@ -53,6 +53,8 @@ remove_pyspark(){
   debug "spark3.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] Removing pyspark, jupyterlab-sql-editor and others"
 
   su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark"
+  # the following file makes the sparksql magic available in Jupyter
+  su osbdet -c "cp -rf $SCRIPT_HOME/ipython_config.py /home/osbdet/.ipython/profile_default/ipython_config.py"
 
   debug "spark3.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] pyspark, jupyterlab-sql-editor and others removed"
 }
