@@ -6,12 +6,14 @@
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
 
-SPARK_VERSION=3.5.0
+SPARK_VERSION=3.5.4
 SPARK_JARS_DIR=/home/osbdet/.jupyter_venv/lib/python3.11/site-packages/pyspark/jars
-HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
-HADOOP_AWS_JAR_NAME=hadoop-aws-3.3.4.jar
+HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.0/hadoop-aws-3.4.0.jar
+HADOOP_AWS_JAR_NAME=hadoop-aws-3.4.0.jar
+AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.777/aws-java-sdk-bundle-1.12.777.jar
+AWS_JAVA_SDK_JAR_NAME=aws-java-sdk-bundle-1.12.777.jar
 HADOOP3_LIBS=/opt/hadoop3/share/hadoop/tools/lib
-NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh
+NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/refs/tags/v0.40.1/install.sh
 NVM_DIR=/home/osbdet/.nvm
 
 # Aux functions
@@ -62,7 +64,7 @@ remove_pyspark(){
 deploy_jars(){
   debug "spark3.deploy_jars DEBUG [`date +"%Y-%m-%d %T"`] Deploying JARs to make S3-compatible storage accessible from Spark"
 
-  su osbdet -c "ln -s $HADOOP3_LIBS/aws-java-sdk-bundle-1.12.367.jar $SPARK_JARS_DIR"
+  su osbdet -c "wget -O $SPARK_JARS_DIR/$AWS_JAVA_SDK_JAR_NAME $AWS_JAVA_SDK_JAR_URL"
   su osbdet -c "wget -O $SPARK_JARS_DIR/$HADOOP_AWS_JAR_NAME $HADOOP_AWS_JAR_URL"
 
   debug "spark3.deploy_jars DEBUG [`date +"%Y-%m-%d %T"`] JARs to make S3-compatible storage accessible from Spark deployed"
@@ -120,7 +122,7 @@ module_status() {
   if [ -f "/home/osbdet/.jupyter_venv/bin/python3" ]
   then
     # is the pyspark module installed?
-    su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip list | grep pyspark"
+    su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip list | grep pyspark > /dev/null"
     if [ $? -eq 0 ]
     then
       echo "Module is installed [OK]"

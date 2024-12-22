@@ -1,0 +1,15 @@
+[Unit]
+Description=Kestra Event-Driven Declarative Orchestrator
+Documentation=https://kestra.io/docs/
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/bin/sh /opt/kestra/kestra server local
+User=osbdet
+Group=osbdet
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

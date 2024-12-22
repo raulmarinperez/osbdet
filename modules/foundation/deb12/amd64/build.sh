@@ -5,8 +5,8 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-OTELCOLCONTRIB_URL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.91.0/otelcol-contrib_0.91.0_linux_amd64.deb"
-OTELCOLCONTRIB_LOCAL="/tmp/otelcol-contrib_0.91.0_linux_amd64.deb"
+OTELCOLCONTRIB_URL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.113.0/otelcol-contrib_0.113.0_linux_amd64.deb"
+OTELCOLCONTRIB_LOCAL="/tmp/otelcol-contrib_0.113.0_linux_amd64.deb"
 
 # Aux functions
 
@@ -65,7 +65,7 @@ remove_miscsetup() {
 
 add_adoptiumopenjdkrepo(){
   debug "foundation.add_adoptiumopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] Adding AdoptiumOpenJDK repo"
-  wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | tee /etc/apt/keyrings/adoptium.asc
+  wget -O - https://packages.adoptium.net/artifactory/api/security/keypair/default-gpg-key/public | tee /etc/apt/keyrings/adoptium.asc
   echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
   apt update
   debug "foundation.add_adoptiumopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] AdoptiumOpenJDK repo added"
@@ -78,18 +78,18 @@ remove_adoptiumopenjdkrepo(){
   debug "foundation.remove_adoptiumopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] AdoptiumOpenJDK repo removed"
 }
 
-install_jdk11(){
-  debug "foundation.install_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 11"
-  apt install -y temurin-11-jdk
-  # Removes platform dependency while using JDK 11 CACERTS (NiFi's Binance Lab)
-  sudo ln -s /usr/lib/jvm/temurin-11-jdk-amd64/lib/security/cacerts /opt/jdk-11-cacerts
-  debug "foundation.install_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 installation done"
+install_jdk21(){
+  debug "foundation.install_jdk21 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 21"
+  apt install -y temurin-21-jdk
+  # Removes platform dependency while using JDK 21 CACERTS (NiFi's Binance Lab)
+  sudo ln -s /usr/lib/jvm/temurin-21-jdk-amd64/lib/security/cacerts /opt/jdk-21-cacerts
+  debug "foundation.install_jdk21 DEBUG [`date +"%Y-%m-%d %T"`] JDK 21 installation done"
 }
-remove_jdk11(){
-  debug "foundation.remove_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 11"
-  rm /opt/jdk-11-cacerts
-  apt remove -y temurin-11-jdk
-  debug "foundation.remove_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 removed"
+remove_jdk21(){
+  debug "foundation.remove_jdk21 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 21"
+  rm /opt/jdk-21-cacerts
+  apt remove -y temurin-21-jdk
+  debug "foundation.remove_jdk21 DEBUG [`date +"%Y-%m-%d %T"`] JDK 21 removed"
 }
 
 install_docker(){
@@ -155,7 +155,7 @@ module_install(){
   #   1. Installation miscellaneous software
   #   2. Miscellaneous setup
   #   3. Adding AdoptiumOpenJDK repo
-  #   4. Installing JDK 11
+  #   4. Installing JDK 17
   #   5. Docker installation
   #   6. Install cloud providers CLIs
   #   7. Install the OpenTelemetry collector
@@ -163,7 +163,7 @@ module_install(){
   miscinstall >> $OSBDET_LOGFILE 2>&1
   miscsetup >> $OSBDET_LOGFILE 2>&1
   add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
-  install_jdk11 >> $OSBDET_LOGFILE 2>&1
+  install_jdk17 >> $OSBDET_LOGFILE 2>&1
   install_docker >> $OSBDET_LOGFILE 2>&1
   install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   install_otel_collector >> $OSBDET_LOGFILE 2>&1
@@ -189,7 +189,7 @@ module_uninstall(){
   #   1. Remove the OpenTelemetry collector
   #   2. Remove cloud providers CLIs
   #   3. Remove Docker
-  #   4. Uninstall JDK 11
+  #   4. Uninstall JDK 17
   #   5. Remove AdoptiumOpenJDK repo
   #   6. Miscellaneous setup
   #   7. Uninstallation miscellaneous software
@@ -198,7 +198,7 @@ module_uninstall(){
   remove_otel_collector >> $OSBDET_LOGFILE 2>&1
   remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   remove_docker >> $OSBDET_LOGFILE 2>&1
-  remove_jdk11 >> $OSBDET_LOGFILE 2>&1
+  remove_jdk17 >> $OSBDET_LOGFILE 2>&1
   remove_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
   remove_miscsetup >> $OSBDET_LOGFILE 2>&1
   remove_miscinstall >> $OSBDET_LOGFILE 2>&1
