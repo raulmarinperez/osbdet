@@ -5,10 +5,10 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-MINIO_URL=https://dl.min.io/server/minio/release/linux-amd64/archive/minio_20231223071911.0.0_amd64.deb
-MINIO_MCLI_URL=https://dl.min.io/client/mc/release/linux-amd64/mcli_20231223084721.0.0_amd64.deb
-MINIO_FILE=minio_20231223071911.0.0_amd64.deb
-MINIO_MCLI_FILE=mcli_20231223084721.0.0_amd64.deb
+MINIO_URL=https://dl.min.io/server/minio/release/linux-amd64/archive/minio_20241107005220.0.0_amd64.deb
+MINIO_MCLI_URL=https://dl.min.io/client/mc/release/linux-amd64/archive/mcli_20241105112945.0.0_amd64.deb
+MINIO_FILE=minio_20241107005220.0.0_amd64.deb
+MINIO_MCLI_FILE=mcli_20241105112945.0.0_amd64.deb
 
 # Aux functions
 

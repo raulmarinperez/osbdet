@@ -6,7 +6,7 @@
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
 
-SPARK_VERSION=3.5.0
+SPARK_VERSION=3.5.4
 SPARK_JARS_DIR=/home/osbdet/.jupyter_venv/lib/python3.11/site-packages/pyspark/jars
 HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
 HADOOP_AWS_JAR_NAME=hadoop-aws-3.3.4.jar
@@ -120,7 +120,7 @@ module_status() {
   if [ -f "/home/osbdet/.jupyter_venv/bin/python3" ]
   then
     # is the pyspark module installed?
-    su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip list | grep pyspark"
+    su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip list | grep pyspark > /dev/null"
     if [ $? -eq 0 ]
     then
       echo "Module is installed [OK]"

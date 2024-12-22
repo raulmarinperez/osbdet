@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/1.24.0/nifi-1.24.0-bin.zip
-NIFI_ZIP_FILE=nifi-1.24.0-bin.zip
-NIFI_DEFAULT_DIR=nifi-1.24.0
+NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/2.0.0/nifi-2.0.0-bin.zip
+NIFI_ZIP_FILE=nifi-2.0.0-bin.zip
+NIFI_DEFAULT_DIR=nifi-2.0.0
 
 # Aux functions
 # debug
@@ -44,7 +44,7 @@ remove(){
 nifisetup(){
   debug "nifi.nifisetup DEBUG [`date +"%Y-%m-%d %T"`] Setting up NiFi" >> $OSBDET_LOGFILE
   # From https://www.cyberciti.biz/faq/how-to-use-sed-to-find-and-replace-text-in-files-in-linux-unix-shell/
-  sed -i 's+^#export JAVA_HOME.*+export JAVA_HOME=/usr/lib/jvm/temurin-11-jdk-amd64+' \
+  sed -i 's+^#export JAVA_HOME.*+export JAVA_HOME=/usr/lib/jvm/temurin-21-jdk-amd64/+' \
          /opt/nifi/bin/nifi-env.sh
   sed -i 's+^nifi\.remote\.input\.secure.*+nifi.remote.input.secure=false+' \
          /opt/nifi/conf/nifi.properties
