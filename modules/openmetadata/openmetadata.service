@@ -1,0 +1,11 @@
+# Contents of /lib/systemd/system/openmetadata.service
+[Unit]
+Description=OpenMetadata Service
+After=network.target
+[Service]
+Type=simple
+Restart=always
+User=root
+ExecStart=docker compose -f /opt/openmetadata/docker-compose-postgres.yml up
+[Install]
+WantedBy=multi-user.target
