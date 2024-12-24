@@ -2,7 +2,7 @@
 
 # Global variables definition
 #
-OSBDET_VER=24r1
+OSBDET_VER=25r1
 OSBDET_HOME=/home/osbdet
 NIFI_HOME=/opt/nifi
 
@@ -395,15 +395,15 @@ stop_mongodb() {
   exit 1
 }
 
-# status_airflow
+# status_kestra
 #   desc: Identifiy if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
 #     0/up message - module is up and running
 #     1/down message - module is not running
-status_airflow() {
-  curl -sSf http://localhost:8080/login  > /dev/null 2>&1
+status_kestra() {
+  curl -sSf http://localhost:8080/ui/welcome  > /dev/null 2>&1
   if [ $? -eq 0 ]
   then
     echo "up"
@@ -413,40 +413,40 @@ status_airflow() {
   echo "down"
   return 1
 }
-# start_airflow
+# start_kestra
 #   desc: Start the specified module if it wasn't running already
 #   params:
 #     none
 #   return (status code/stdout):
 #     0/ok message - module started correctly
 #     1/ko message - module doesn't exists or it was already running
-start_airflow() {
-  status=$(status_airflow)
+start_kestra() {
+  status=$(status_kestra)
   if [ "$status" == "down" ]
   then
-    sudo service airflow start > /dev/null 2>&1
+    sudo service kestra start > /dev/null 2>&1
     return 0
   fi
 
   echo "AirFlow is already running"
   exit 1
 }
-# stop_airflow
+# stop_kestra
 #   desc: Stop the specified module if it wasn't running already
 #   params:
 #     none
 #   return (status code/stdout):
 #     0/ok message - module started correctly
 #     1/ko message - module doesn't exists or it was already running
-stop_airflow() {
-  status=$(status_airflow)
+stop_kestra() {
+  status=$(status_kestra)
   if [ "$status" == "up" ]
   then
-    sudo service airflow stop > /dev/null 2>&1
+    sudo service kestra stop > /dev/null 2>&1
     return 0
   fi
 
-  echo "AirFlow is not running"
+  echo "Kestra is not running"
   exit 1
 }
 
@@ -560,6 +560,61 @@ stop_grafana() {
   exit 1
 }
 
+# status_openmetadata
+#   desc: Identifiy if the module is up and running
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/up message - module is up and running
+#     1/down message - module is not running
+status_openmetadata() {
+  curl -sSf http://localhost:8585/  > /dev/null 2>&1
+  if [ $? -eq 0 ]
+  then
+    echo "up"
+    return 0
+  fi
+
+  echo "down"
+  return 1
+}
+# start_openmetadata
+#   desc: Start the specified module if it wasn't running already
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/ok message - module started correctly
+#     1/ko message - module doesn't exists or it was already running
+start_openmetadata() {
+  status=$(status_openmetadata)
+  if [ "$status" == "down" ]
+  then
+    sudo service openmetadata start > /dev/null 2>&1
+    return 0
+  fi
+
+  echo "OpenMetadata is already running"
+  exit 1
+}
+# stop_openmetadata
+#   desc: Stop the specified module if it wasn't running already
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/ok message - module started correctly
+#     1/ko message - module doesn't exists or it was already running
+stop_openmetadata() {
+  status=$(status_openmetadata)
+  if [ "$status" == "up" ]
+  then
+    sudo service openmetadata stop > /dev/null 2>&1
+    return 0
+  fi
+
+  echo "OpenMetadata is not running"
+  exit 1
+}
+
 # Main functions
 #
 
@@ -592,15 +647,18 @@ module_status() {
     elif [ "$1" == "mongodb" ]
     then
       status_mongodb
-    elif [ "$1" == "airflow" ]
+    elif [ "$1" == "kestra" ]
     then
-      status_airflow
+      status_kestra
     elif [ "$1" == "superset" ]
     then
       status_superset
     elif [ "$1" == "grafana" ]
     then
       status_grafana
+    elif [ "$1" == "openmetadata" ]
+    then
+      status_openmetadata
     fi
 
     return 0
@@ -635,15 +693,18 @@ start_module() {
     elif [ "$1" == "mongodb" ]
     then
       start_mongodb
-    elif [ "$1" == "airflow" ]
+    elif [ "$1" == "kestra" ]
     then
-      start_airflow
+      start_kestra
     elif [ "$1" == "superset" ]
     then
       start_superset
     elif [ "$1" == "grafana" ]
     then
       start_grafana
+    elif [ "$1" == "openmetadata" ]
+    then
+      start_openmetadata
     fi
 
     return 0
@@ -678,15 +739,18 @@ stop_module() {
     elif [ "$1" == "mongodb" ]
     then
       stop_mongodb
-    elif [ "$1" == "airflow" ]
+    elif [ "$1" == "kestra" ]
     then
-      stop_airflow
+      stop_kestra
     elif [ "$1" == "superset" ]
     then
       stop_superset
     elif [ "$1" == "grafana" ]
     then
       stop_grafana
+    elif [ "$1" == "openmetadata" ]
+    then
+      stop_openmetadata
     fi
 
     return 0
@@ -713,9 +777,10 @@ usage() {
   echo "  minio               S3 compatible Object storage"
   echo "  mariadb             Open Source Relational Database Management System"
   echo "  mongodb             Open Source NoSQL Database"
-  echo "  airflow             Workflow scheduler/orchestrator"
+  echo "  kestra              Unified orchestration platform"
   echo "  superset            Open Source BI visualization tool"
   echo "  grafana             Open Source operational visualization tool"
+  echo "  openmetadata        Open and unified metadata platform for data discovery, observability and governance"
 }
 
 # eval_args

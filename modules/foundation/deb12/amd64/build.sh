@@ -5,8 +5,8 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-OTELCOLCONTRIB_URL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.113.0/otelcol-contrib_0.113.0_linux_amd64.deb"
-OTELCOLCONTRIB_LOCAL="/tmp/otelcol-contrib_0.113.0_linux_amd64.deb"
+OTELCOLCONTRIB_URL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.116.1/otelcol-contrib_0.116.1_linux_amd64.deb"
+OTELCOLCONTRIB_LOCAL="/tmp/otelcol-contrib_0.116.1_linux_amd64.deb"
 
 # Aux functions
 
@@ -155,7 +155,7 @@ module_install(){
   #   1. Installation miscellaneous software
   #   2. Miscellaneous setup
   #   3. Adding AdoptiumOpenJDK repo
-  #   4. Installing JDK 17
+  #   4. Installing JDK 21
   #   5. Docker installation
   #   6. Install cloud providers CLIs
   #   7. Install the OpenTelemetry collector
@@ -163,7 +163,7 @@ module_install(){
   miscinstall >> $OSBDET_LOGFILE 2>&1
   miscsetup >> $OSBDET_LOGFILE 2>&1
   add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
-  install_jdk17 >> $OSBDET_LOGFILE 2>&1
+  install_jdk21 >> $OSBDET_LOGFILE 2>&1
   install_docker >> $OSBDET_LOGFILE 2>&1
   install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   install_otel_collector >> $OSBDET_LOGFILE 2>&1
@@ -189,7 +189,7 @@ module_uninstall(){
   #   1. Remove the OpenTelemetry collector
   #   2. Remove cloud providers CLIs
   #   3. Remove Docker
-  #   4. Uninstall JDK 17
+  #   4. Uninstall JDK 21
   #   5. Remove AdoptiumOpenJDK repo
   #   6. Miscellaneous setup
   #   7. Uninstallation miscellaneous software
@@ -198,7 +198,7 @@ module_uninstall(){
   remove_otel_collector >> $OSBDET_LOGFILE 2>&1
   remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   remove_docker >> $OSBDET_LOGFILE 2>&1
-  remove_jdk17 >> $OSBDET_LOGFILE 2>&1
+  remove_jdk21s >> $OSBDET_LOGFILE 2>&1
   remove_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
   remove_miscsetup >> $OSBDET_LOGFILE 2>&1
   remove_miscinstall >> $OSBDET_LOGFILE 2>&1

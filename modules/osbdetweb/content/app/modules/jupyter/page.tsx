@@ -1,43 +1,66 @@
-import Image from 'next/image';
+"use client";
+
+import { poweroff } from "@/actions/osbdet_actions";
+
+import CurrentPath from '@/app/path'
 
 export default function Jupyter() {
+
+    function handleClick() {
+      const stopOSBDET = async () => {
+        const exec_result = await poweroff()
+        if (exec_result.status == 0) {
+          console.log("Environment stopped")
+        }
+        else {
+          console.log("ERROR: unable to stop OSBDET - " + exec_result.output)
+        }
+        
+      }
+      stopOSBDET()
+    }
+
     return (
-        <main className="z-40 relative">               
-            <div className=" container py-24  flex justify-between px-4 mx-auto  gap-x-2 ">
-                <article className="w-full   px-4 rounded-lg    mx-auto format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
-                    <div className="relative py-4 lg:py-16 pt-0 lg:pt-24">
-                        <div className="max-w-8xl   mx-auto  ">        
+        <main className="z-40 relative">  
+            <div className="container px-5 py-5 mx-auto">
+                <div className="grid grid-cols-2 gap-1">
+                    <div className="col-start-1 col-span-1">
+                        <CurrentPath current_path="Jupyter"/>
+                    </div>
+                    <div className="col-start-2 col-span-1">
+                        <div className="flex flex-row-reverse mr-5">
+                            <button title="Switch the environment off" onClick={handleClick}>
+                                <img className="w-8 hover:drop-shadow-md" src="/images/poweroff.png"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>             
+            <div className=" container flex justify-between px-4 mx-auto gap-x-2 ">
+                <article className="w-full px-4 rounded-lg mx-auto format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+                    <div className="relative pt-0">
+                        <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <svg viewBox="0 0 52 24" fill="currentColor" className="absolute text-black -top-4 left-12 z-0 hidden w-32 -mt-8 -ml-20 text-blue-gray-100 lg:w-32 lg:-ml-28 lg:-mt-10 sm:block">
-                                        <defs>
-                                            <pattern id="70326c9b-4a0f-429b-9c76-792941e326d5" x="0" y="0" width=".135" height=".30">
-                                                <circle cx="1" cy="1" r="1"></circle>
-                                            </pattern>
-                                        </defs>
-                                        <rect fill="url(#70326c9b-4a0f-429b-9c76-792941e326d5)" width="52" height="52">
-                                        </rect>
-                                    </svg>
-                                    <span className="relative text-xl lg:text-3xl text-center "> Jupyter Notebook 1.0 <em>(running)</em></span>
+                                    <span className="relative text-xl lg:text-3xl text-center "> Jupyter Notebook 7.0.6</span>
                                     <img className="mt-5" src="/images/jupyter_banner.png"/>
                                 </span>
                             </h2>
                         </div>
-                        <p className="pt-4 "> Justo et est sit accusam labore et dolores sadipscing ut accusam. Ipsum vero at amet
-                            kasd dolore, accusam et voluptua labore diam sea duo no dolore voluptua, clita diam accusam lorem dolor
-                            dolor no dolor. Et accusam vero elitr ea invidunt sit. Justo eirmod eirmod et dolor stet, sed sanctus
-                            lorem elitr ipsum. At et dolor diam et aliquyam. Lorem lorem duo vero diam eirmod dolor. Takimata
-                            voluptua nonumy et nonumy diam est, et ut gubergren sed sanctus sed lorem kasd sed, nonumy aliquyam
-                            gubergren elitr ipsum ipsum nonumy rebum et voluptua. Elitr ut clita no sit diam diam amet dolor, sed
-                            ipsum diam amet et rebum duo lorem gubergren, rebum amet stet ipsum eirmod, justo accusam dolore ipsum
-                            accusam invidunt, gubergren ipsum voluptua gubergren sanctus kasd. Et stet est sed diam no justo. Amet
-                            rebum diam erat dolor amet aliquyam sea no. Sit ipsum vero ea stet, aliquyam lorem sea sed sit no,
-                            sanctus sea et amet takimata voluptua, sea amet sadipscing dolor sed magna eos diam, sanctus duo labore
-                            eirmod vero dolore aliquyam sadipscing, dolore kasd sed sed stet amet eirmod clita, diam dolore lorem
-                            sit magna duo stet eirmod lorem, clita erat duo ut sit magna stet,.</p>
+                        <p className="pt-4 pb-4"><strong className="text-lg">How to start it up:</strong> You don&apos;t have to, it&apos;s automatically started when the environment is started up.</p>
+                        <p className="pb-4"><strong className="text-lg">How to shut it down:</strong> You don&apos;t have to, it&apos;s automatically stopped when the environment is shut down.</p>
+                        <p><strong className="text-lg">How to access: </strong></p>
+                        <ul className="pb-4 ml-8 mt-2 list-disc">
+                            <li><em><strong>Jupyter UI -</strong></em> accessible via <a href="http://localhost:28888/lab" className="underline" target="_blank">http://localhost:28888/lab</a>; use the <strong>osbdet123$</strong> password when prompted.</li>
+                        </ul>
+                        <p className="pb-4"><strong className="text-lg">Description: </strong>JupyterLab is the latest web-based interactive development environment for notebooks, code, and data. Its flexible interface allows users to configure and arrange workflows in data science, scientific computing, computational journalism, and machine learning. A modular design invites extensions to expand and enrich functionality.</p>
+                        <p className="pb-4"><strong className="text-lg">Project website: </strong> <a href="https://jupyter.org/" className="underline" target="_blank">https://jupyter.org</a></p>
+                        <p className="pb-4"><strong className="text-lg">Additional notes:</strong><br/>
+                            Jupyter Notebook is a core component of the environment as, by using the embedded terminal, allows its operation; additionally to the environment operation, <em>Jupyter Notebook is used to write notebooks and applications implementing non-production class use cases</em>.</p>
+                        <p className="pb-4 ">Try to be as much organized as possible by relaying on folders; all those files belonging to the same notebook, application, ... should be in the same folder to easily find them and to avoid messing things up.</p>
                     </div>
                 </article>
             </div>
-            </main>
+        </main>
     )
 }

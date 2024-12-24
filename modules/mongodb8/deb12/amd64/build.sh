@@ -34,7 +34,7 @@ installation(){
 remove_installation(){
   debug "mongodb8.remove_installation DEBUG [`date +"%Y-%m-%d %T"`] Removing MongoDB 8 OSS repo and MongoDB 8"
   service mongod stop
-  apt remove -y mongod --purge 
+  apt remove -y mongodb-org mongodb-org-database mongodb-org-server mongodb-mongosh mongodb-org-mongos mongodb-org-tools --purge 
   apt autoremove -y 
   rm /usr/share/keyrings/mongodb-server-8.0.gpg
   rm /etc/apt/sources.list.d/mongodb-org-8.0.list
