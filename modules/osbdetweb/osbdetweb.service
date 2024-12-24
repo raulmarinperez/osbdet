@@ -1,0 +1,11 @@
+[Unit]
+Description=OSBDET Web App
+After=network.target
+[Service]
+Type=simple
+Restart=always
+User=osbdet
+WorkingDirectory=/opt/osbdetweb
+ExecStart=/usr/bin/npm run start
+[Install]
+WantedBy=multi-user.target
