@@ -5,8 +5,8 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-OTELCOLCONTRIB_URL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.91.0/otelcol-contrib_0.91.0_linux_arm64.deb"
-OTELCOLCONTRIB_LOCAL="/tmp/otelcol-contrib_0.91.0_linux_arm64.deb"
+OTELCOLCONTRIB_URL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.116.1/otelcol-contrib_0.116.1_linux_arm64.deb"
+OTELCOLCONTRIB_LOCAL="/tmp/otelcol-contrib_0.116.1_linux_arm64.deb"
 
 # Aux functions
 
@@ -43,7 +43,6 @@ miscsetup() {
   sed -i "s/^127.0.1.1\tosbdet/#127.0.1.1\tosbdet/" /etc/hosts
   # Adding some tools to the osbdet user
   su osbdet -c "mkdir -p /home/osbdet/bin"
-  cp $SCRIPT_HOME/osbdet-control.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-update.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-recipes.sh /home/osbdet/bin
   cp $SCRIPT_HOME/osbdet-cook.sh /home/osbdet/bin
@@ -78,18 +77,19 @@ remove_adoptiumopenjdkrepo(){
   debug "foundation.remove_adoptiumopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] AdoptiumOpenJDK repo removed"
 }
 
-install_jdk11(){
-  debug "foundation.install_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 11"
-  apt install -y temurin-11-jdk
-  # Removes platform dependency while using JDK 11 CACERTS (NiFi's Binance Lab)
-  sudo ln -s /usr/lib/jvm/temurin-11-jdk-arm64/lib/security/cacerts /opt/jdk-11-cacerts
-  debug "foundation.install_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 installation done"
+install_jdk11_21(){
+  debug "foundation.install_jdk11_21 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 11 and 21"
+  # JDK 11 needed by Hadoop, JDK 21 needed by NiFi
+  apt install -y temurin-11-jdk temurin-21-jdk
+  # Removes platform dependency while using JDK 21 CACERTS (NiFi's Binance Lab)
+  sudo ln -s /usr/lib/jvm/temurin-21-jdk-arm64/lib/security/cacerts /opt/jdk-21-cacerts
+  debug "foundation.install_jdk11_21 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 and 21 installation done"
 }
-remove_jdk11(){
-  debug "foundation.remove_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 11"
-  rm /opt/jdk-11-cacerts
-  apt remove -y temurin-11-jdk
-  debug "foundation.remove_jdk11 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 removed"
+remove_jdk11_21(){
+  debug "foundation.remove_jdk11_21 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 11 and 21"
+  rm /opt/jdk-21-cacerts
+  apt remove -y temurin-11-jdk temurin-21-jdk
+  debug "foundation.remove_jdk11_21 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 and 21 removed"
 }
 
 install_docker(){
@@ -103,10 +103,12 @@ install_docker(){
     | tee /etc/apt/sources.list.d/docker.list
   apt-get update
   apt-get install -y docker-ce docker-ce-cli containerd.io
+  usermod -aG docker osbdet
   debug "foundation.install_docker DEBUG [`date +"%Y-%m-%d %T"`] Docker installed"
 }
 remove_docker(){
   debug "foundation.remove_docker DEBUG [`date +"%Y-%m-%d %T"`] Removing Docker"
+  gpasswd -d osbdet docker
   apt-get remove -y docker-ce docker-ce-cli containerd.io --purge
   rm /etc/apt/sources.list.d/docker.list
   rm /usr/share/keyrings/docker-archive-keyring.gpg
@@ -155,7 +157,7 @@ module_install(){
   #   1. Installation miscellaneous software
   #   2. Miscellaneous setup
   #   3. Adding AdoptiumOpenJDK repo
-  #   4. Installing JDK 11
+  #   4. Installing JDK 11 and 21
   #   5. Docker installation
   #   6. Install cloud providers CLIs
   #   7. Install the OpenTelemetry collector
@@ -163,7 +165,7 @@ module_install(){
   miscinstall >> $OSBDET_LOGFILE 2>&1
   miscsetup >> $OSBDET_LOGFILE 2>&1
   add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
-  install_jdk11 >> $OSBDET_LOGFILE 2>&1
+  install_jdk11_21 >> $OSBDET_LOGFILE 2>&1
   install_docker >> $OSBDET_LOGFILE 2>&1
   install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   install_otel_collector >> $OSBDET_LOGFILE 2>&1
@@ -189,7 +191,7 @@ module_uninstall(){
   #   1. Remove the OpenTelemetry collector
   #   2. Remove cloud providers CLIs
   #   3. Remove Docker
-  #   4. Uninstall JDK 11
+  #   4. Uninstall JDK 11 and 21
   #   5. Remove AdoptiumOpenJDK repo
   #   6. Miscellaneous setup
   #   7. Uninstallation miscellaneous software
@@ -198,7 +200,7 @@ module_uninstall(){
   remove_otel_collector >> $OSBDET_LOGFILE 2>&1
   remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   remove_docker >> $OSBDET_LOGFILE 2>&1
-  remove_jdk11 >> $OSBDET_LOGFILE 2>&1
+  remove_jdk11_21 >> $OSBDET_LOGFILE 2>&1
   remove_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
   remove_miscsetup >> $OSBDET_LOGFILE 2>&1
   remove_miscinstall >> $OSBDET_LOGFILE 2>&1

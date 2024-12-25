@@ -33,12 +33,12 @@ getandextract(){
   rm /opt/$NIFI_ZIP_FILE
   mv /opt/$NIFI_DEFAULT_DIR /opt/nifi
   chown -R osbdet:osbdet /opt/nifi
-  debug "nifi.getandextract DEBUG [`date +"%Y-%m-%d %T"`] NiFi downloading and extracting process done" >> $OSBDET_LOGFILE
+  debug "nifi.getandextract DEBUG [`date +"%Y-%m-%d %T"`] NiFi downloading and extracting process done"
 }
 remove(){
-  debug "nifi.remove DEBUG [`date +"%Y-%m-%d %T"`] Removing NiFi binaries" >> $OSBDET_LOGFILE
+  debug "nifi.remove DEBUG [`date +"%Y-%m-%d %T"`] Removing NiFi binaries"
   rm -rf /opt/nifi
-  debug "nifi.remove DEBUG [`date +"%Y-%m-%d %T"`] NiFi binaries removed" >> $OSBDET_LOGFILE
+  debug "nifi.remove DEBUG [`date +"%Y-%m-%d %T"`] NiFi binaries removed"
 }
 
 nifisetup(){
@@ -64,18 +64,18 @@ nifisetup(){
          /opt/nifi/conf/nifi.properties
   sed -i 's+^nifi\.security\.allow\.anonymous.*+nifi.security.allow.anonymous.authentication=true+' \
          /opt/nifi/conf/nifi.properties
-  debug "nifi.nifisetup DEBUG [`date +"%Y-%m-%d %T"`] NiFi properly setup" >> $OSBDET_LOGFILE
+  debug "nifi.nifisetup DEBUG [`date +"%Y-%m-%d %T"`] NiFi properly setup"
 }
 
 userprofile(){
-  debug "nifi.userprofile DEBUG [`date +"%Y-%m-%d %T"`] Setting up user profile to run NiFi" >> $OSBDET_LOGFILE
+  debug "nifi.userprofile DEBUG [`date +"%Y-%m-%d %T"`] Setting up user profile to run NiFi"
   echo >> /home/osbdet/.profile
   echo '# Add NiFi''s bin folder to the PATH' >> /home/osbdet/.profile
   echo 'PATH="$PATH:/opt/nifi/bin"' >> /home/osbdet/.profile
-  debug "nifi.userprofile DEBUG [`date +"%Y-%m-%d %T"`] User profile to run NiFi setup" >> $OSBDET_LOGFILE
+  debug "nifi.userprofile DEBUG [`date +"%Y-%m-%d %T"`] User profile to run NiFi setup" 
 }
 remove_userprofile(){
-  debug "nifi.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] Removing references to NiFi from user profile" >> $OSBDET_LOGFILE
+  debug "nifi.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] Removing references to NiFi from user profile"
   # remove the break line before the user profile setup for NiFi
   #   - https://stackoverflow.com/questions/4396974/sed-or-awk-delete-n-lines-following-a-pattern                                     
   #   - https://unix.stackexchange.com/questions/29906/delete-range-of-lines-above-pattern-with-sed-or-awk                            
@@ -89,7 +89,7 @@ remove_userprofile(){
   # remove user profile setup for NiFi
   sed -i '/^# Add NiFi.*/,+2d' /home/osbdet/.profile
   rm -f /home/osbdet/.eliforp
-  debug "nifi.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] References to NiFi removed from user profile" >> $OSBDET_LOGFILE
+  debug "nifi.remove_userprofile DEBUG [`date +"%Y-%m-%d %T"`] References to NiFi removed from user profile" 
 }
 
 # Primary functions
@@ -172,7 +172,7 @@ main(){
 }
 
 if ! [ -z "$*" ]
-then
+the
   SCRIPT_PATH=$(dirname $(realpath $0))
   SCRIPT_HOME=$SCRIPT_PATH/../..
   OSBDET_HOME=$SCRIPT_HOME/../..
