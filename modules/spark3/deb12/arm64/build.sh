@@ -8,10 +8,11 @@ SCRIPT_HOME=""  # OS and Architecture agnostic
 
 SPARK_VERSION=3.5.4
 SPARK_JARS_DIR=/home/osbdet/.jupyter_venv/lib/python3.11/site-packages/pyspark/jars
-HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
-HADOOP_AWS_JAR_NAME=hadoop-aws-3.3.4.jar
-HADOOP3_LIBS=/opt/hadoop3/share/hadoop/tools/lib
-NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh
+HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.0/hadoop-aws-3.4.0.jar
+HADOOP_AWS_JAR_NAME=hadoop-aws-3.4.0.jar
+AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.777/aws-java-sdk-bundle-1.12.777.jar
+AWS_JAVA_SDK_JAR_NAME=aws-java-sdk-bundle-1.12.777.jar
+NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/refs/tags/v0.40.1/install.sh
 NVM_DIR=/home/osbdet/.nvm
 
 # Aux functions
@@ -47,7 +48,8 @@ install_pyspark(){
 
   su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark==$SPARK_VERSION"
   # the following file makes the sparksql magic available in Jupyter
-  su osbdet -c "cp -rf $SCRIPT_HOME/ipython_config.py /home/osbdet/.ipython/profile_default/ipython_config.py"
+  su osbdet -c "mkdir -p /home/osbdet/.ipython/profile_default/"
+  su osbdet -c "cp -f $SCRIPT_HOME/ipython_config.py /home/osbdet/.ipython/profile_default/ipython_config.py"
 
   debug "spark3.install_pyspark DEBUG [`date +"%Y-%m-%d %T"`] pyspark, jupyterlab-sql-editor and others installed"
 }
@@ -62,7 +64,7 @@ remove_pyspark(){
 deploy_jars(){
   debug "spark3.deploy_jars DEBUG [`date +"%Y-%m-%d %T"`] Deploying JARs to make S3-compatible storage accessible from Spark"
 
-  su osbdet -c "ln -s $HADOOP3_LIBS/aws-java-sdk-bundle-1.12.367.jar $SPARK_JARS_DIR"
+  su osbdet -c "wget -O $SPARK_JARS_DIR/$AWS_JAVA_SDK_JAR_NAME $AWS_JAVA_SDK_JAR_URL"
   su osbdet -c "wget -O $SPARK_JARS_DIR/$HADOOP_AWS_JAR_NAME $HADOOP_AWS_JAR_URL"
 
   debug "spark3.deploy_jars DEBUG [`date +"%Y-%m-%d %T"`] JARs to make S3-compatible storage accessible from Spark deployed"
