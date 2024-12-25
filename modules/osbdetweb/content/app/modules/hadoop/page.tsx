@@ -42,7 +42,7 @@ export default function Hadoop() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center ">Apache Hadoop 3.3.6</span>
+                                    <span className="relative text-xl lg:text-3xl text-center ">Apache Hadoop 3.4.0</span>
                                     <img className="mt-5" src="/images/hadoop_banner.png"/>
                                 </span>
                             </h2>

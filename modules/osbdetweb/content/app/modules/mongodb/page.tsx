@@ -42,7 +42,7 @@ export default function MongoDB() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center "> MongoDB 7.0.4 CE</span>
+                                    <span className="relative text-xl lg:text-3xl text-center "> MongoDB 8.0.4 CE</span>
                                     <img className="mt-5" src="/images/mongodb_banner.png"/>
                                 </span>
                             </h2>

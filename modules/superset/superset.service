@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 Restart=always
-User=root
+User=osbdet
 WorkingDirectory=/opt/superset
 Environment="FLASK_APP=superset"
 Environment="SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py"

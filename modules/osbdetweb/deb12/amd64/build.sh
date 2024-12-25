@@ -64,7 +64,7 @@ serviceinstall(){
   cp $SCRIPT_HOME/osbdetweb.service /lib/systemd/system/osbdetweb.service
   chmod 644 /lib/systemd/system/osbdetweb.service
   systemctl daemon-reload
-  systemctl disable osbdetweb.service
+  systemctl enable osbdetweb.service
   debug "osbdetweb.serviceinstall DEBUG [`date +"%Y-%m-%d %T"`] Systemd script installation done"
 }
 remove_serviceinstall(){
