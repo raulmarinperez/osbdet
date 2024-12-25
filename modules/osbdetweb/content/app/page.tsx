@@ -14,8 +14,9 @@ import MariaDBBox from '@/app/modules/mariadb/mariadb-box'
 import SuperSetBox from '@/app/modules/superset/superset-box'
 import MongoDBBox from '@/app/modules/mongodb/mongodb-box'
 import MinIOBox from '@/app/modules/minio/minio-box'
-import AirflowBox from '@/app/modules/airflow/airflow-box'
+import KestraBox from '@/app/modules/kestra/kestra-box'
 import GrafanaBox from '@/app/modules/grafana/grafana-box'
+import OpenMetadataBox from '@/app/modules/openmetadata/openmetadata-box'
 
 export default function Page() {
 
@@ -57,15 +58,16 @@ export default function Page() {
           <h1 className="sm:text-3xl text-2xl font-medium title-font text-gray-900">
             OSBDET, <em>Open Source Big Data Educational Toolkit</em>, Home Page.</h1>
           <p className="sm mt-4 leading-relaxed text-base">
-          Welcome to the <strong><em>OSBDET v2024r1</em></strong> home page which will drive you through all the contents in the 
-          environment and how to make them work. Please, bear in mind this is an educational environment and <strong><em>it shouldn&apos;t 
-          be used for production use cases</em></strong> as it doesn&apos;t scale to handle large volumes of data (everything runs on one single 
-          node); use it to learn the different frameworks available in the environment or to proof concepts with small datasets.</p>
-          <p className="sm mt-4 leading-relaxed text-base">A few tips to avoid making the environment unusable:</p>
+          Welcome to the <strong><em>OSBDET v2025r1</em></strong> homepage, your guide to exploring the environment&apos;s contents 
+          and understanding how to use them effectively. Please note that this is an educational environment and is 
+          <strong><em> not suitable for production use cases</em></strong>, as it is designed to run on a single node and 
+          cannot scale to handle large data volumes. Use OSBDET to learn about the available frameworks or to validate concepts with 
+          small datasets.</p>
+          <p className="sm mt-4 leading-relaxed text-base">Tips to Keep the environment usable:</p>
           <ul className="ml-8 mt-2 list-disc">
-            <li>Only enable the technology that you are going to use.</li>
-            <li>Most likely, you won&apos;t be able to make more than two technologies work together.</li>
-            <li>Shut down the environment once you&apos;re done, that&apos;ll release resources and will make your computer work better.</li>
+            <li>Enable only the technologies you intend to use.</li>
+            <li>Avoid attempting to run more than two technologies simultaneously, as this may cause issues.</li>
+            <li>Shut down the environment after use to free up resources and improve your computer&apos;s performance.</li>
           </ul>
           <p className="sm mt-4 leading-relaxed text-base">
           For more information visit the <strong><em><Link className="underline" href="https://github.com/raulmarinperez/osbdet" target="_blank">OSBDET&apos;s Github repository</Link></em></strong>.</p>
@@ -84,8 +86,9 @@ export default function Page() {
           <SuperSetBox/>
           <MongoDBBox/>
           <MinIOBox/>
-          <AirflowBox/>
+          <KestraBox/>
           <GrafanaBox/>
+          <OpenMetadataBox/>
         </div>
       </div>
     </section>

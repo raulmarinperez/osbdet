@@ -42,7 +42,7 @@ export default function Spark() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center ">Apache Spark 3.5</span>
+                                    <span className="relative text-xl lg:text-3xl text-center ">Apache Spark 3.5.4</span>
                                     <img className="mt-5" src="/images/spark_banner.png"/>
                                 </span>
                             </h2>
@@ -63,7 +63,7 @@ export default function Spark() {
                         <p>
                           <strong className="text-lg">Additional notes:</strong><br/>
                           The Spark deployment available in this environment is configured in <em>Standalone Cluster Mode</em>, which 
-                          means only one node will be used for jobs execution. It&apos;s highly suggested to work with small datasets (up 
+                          means only one node will be used for job execution. It&apos;s highly suggested to work with small datasets (up 
                           to some hundreds of Megabytes) to avoid hitting the limits. All the main libraries available in Spark have 
                           been successfully used:</p>
                         <ul className="pb-4 ml-8 mt-2 list-disc">

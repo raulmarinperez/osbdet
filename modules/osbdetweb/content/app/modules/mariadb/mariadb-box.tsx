@@ -28,7 +28,7 @@ export default function MariaDBBox() {
         {/* Text box with information */}
         <div className="container w-full px-8 py-1 h-full opacity-0 hover:opacity-90">
           <div className="flex flex-col w-full border-4 p-4 border-gray-200 bg-white ">
-            <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500 mb-1">MariaDB 10.11.4</h2>
+            <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500 mb-1">MariaDB 10.11.6</h2>
             <h1 className="title-font text-lg font-medium text-gray-900 mb-3">Data Serving</h1>
             <p className="leading-relaxed">MariaDB Server is one of the most popular open source relational databases.</p>
           </div>

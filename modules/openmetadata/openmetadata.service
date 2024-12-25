@@ -7,5 +7,6 @@ Type=simple
 Restart=always
 User=root
 ExecStart=docker compose -f /opt/openmetadata/docker-compose-postgres.yml up
+ExecStop=docker compose -f /opt/openmetadata/docker-compose-postgres.yml down
 [Install]
 WantedBy=multi-user.target

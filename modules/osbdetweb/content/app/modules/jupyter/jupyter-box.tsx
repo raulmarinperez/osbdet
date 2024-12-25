@@ -15,7 +15,7 @@ export default function JupyterBox() {
                 <Link href="/modules/jupyter" title="More info about the module"><img className="w-[24px] hover:drop-shadow-md" src="/images/info.png"/></Link>
               </span>
               <span className="ml-2">
-                <Link href="http://localhost:28888/lab" title="Open the Jupyter UI" target="_blank"><img className="w-[24px] hover:drop-shadow-md" src="/images/ui.png"/></Link>
+                <Link href="http://localhost:28888/lab" title="Open the JupyterLab UI" target="_blank"><img className="w-[24px] hover:drop-shadow-md" src="/images/ui.png"/></Link>
               </span>
             </div>
           </div>
@@ -32,9 +32,9 @@ export default function JupyterBox() {
         {/* Text box with information */}
         <div className="container w-full px-8 py-1 h-full opacity-0 hover:opacity-90">
           <div className="flex flex-col w-full border-4 p-4 border-gray-200 bg-white ">
-            <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500 mb-1">Jupyter 7.0.6</h2>
+            <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500 mb-1">JupyterLab 4.2.5</h2>
             <h1 className="title-font text-lg font-medium text-gray-900 mb-3">Notebooks</h1>
-            <p className="leading-relaxed">Web application used to operate the environment and do all the labs during the course.</p>
+            <p className="leading-relaxed">A web application provided to manage the environment and do all the labs during the course.</p>
           </div>
         </div>
       </div>

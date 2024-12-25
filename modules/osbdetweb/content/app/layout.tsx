@@ -6,7 +6,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'OSBDET v2024r1',
+  title: 'OSBDET v2025r1',
   description: 'Open Source Big Data Educational Toolkit',
 }
 
@@ -26,10 +26,10 @@ export default function RootLayout({
             <div className="col-span-4">
               <div className="flex flex-col relative gap-2 h-full w-full pr-20">
                 <h1 className="text-2xl font-bold mb-2">About OSBDET</h1>
-                <p><Link href="https://github.com/raulmarinperez/osbdet" className="underline" target="_blank">OSBDET</Link> is a test environment 
-                  creation tool which facilitates the build of sandboxes containing a bunch of open source technologies altogether. 
-                  These tests environments are targeting people who want to take their first steps with Big Data technologies easily.</p>
-                <p>OSBDET&apos;s architecture encourages the extension of the toolkit by introducing new frameworks with very little effort.</p>
+                <p><Link href="https://github.com/raulmarinperez/osbdet" className="underline" target="_blank">OSBDET</Link> is a tool for 
+                creating test environments that simplifies building sandboxes integrating various open-source technologies. These environments 
+                are designed for individuals looking to take their first steps with Big Data technologies effortlessly.</p>
+                <p>OSBDET&apos;s architecture promotes extensibility, allowing users to integrate new frameworks with minimal effort.</p>
               </div>
             </div>
             <div className="col-span-2">
@@ -44,7 +44,7 @@ export default function RootLayout({
             </div>
           </div>
           <div className="mt-10 text-sm italic">
-            <p>&copy; OSBDET 2024. All rights reserved - Web application built with <Link href="https://nextjs.org/" className="underline"  target="_blank">NextJS</Link>.</p>
+            <p>&copy; OSBDET 2025. All rights reserved - Web application built with <Link href="https://nextjs.org/" className="underline"  target="_blank">NextJS</Link>.</p>
           </div>
         </div>
       </section>

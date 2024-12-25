@@ -4,7 +4,7 @@ import { poweroff } from "@/actions/osbdet_actions";
 
 import CurrentPath from '@/app/path'
 
-export default function Grafana() {
+export default function Kestra() {
 
     function handleClick() {
       const stopOSBDET = async () => {
@@ -25,7 +25,7 @@ export default function Grafana() {
             <div className="container px-5 py-5 mx-auto">
                 <div className="grid grid-cols-2 gap-1">
                     <div className="col-start-1 col-span-1">
-                        <CurrentPath current_path="Grafana"/>
+                        <CurrentPath current_path="Kestra"/>
                     </div>
                     <div className="col-start-2 col-span-1">
                         <div className="flex flex-row-reverse mr-5">
@@ -42,26 +42,25 @@ export default function Grafana() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center "> Grafana 11.4.0</span>
-                                    <img className="mt-5" src="/images/grafana_banner.png"/>
+                                    <span className="relative text-xl lg:text-3xl text-center ">Kestra 0.20</span>
+                                    <img className="mt-5" src="/images/kestra_banner.png"/>
                                 </span>
                             </h2>
                         </div>
-                        <p className="pt-4 pb-4"><strong className="text-lg">How to start it up: </strong>Type the <code className="bg-slate-300 p-1">sudo service grafana-server start</code> command in a Jupyter Terminal window:</p>
-                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/grafana_start.png"/>
-	                    <p className="pb-4"><strong className="text-lg">How to shut it down: </strong>Type the <code className="bg-slate-300 p-1">sudo service grafana-server stop</code> command in a Jupyter Terminal window:</p>
-                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/grafana_stop.png"/>
+                        <p className="pt-4 pb-4"><strong className="text-lg">How to manually start it up: </strong>Type the <code className="bg-slate-300 p-1">sudo service kestra start</code> command in a Jupyter Terminal window:</p>
+                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/kestra_start.png"/>
+	                    <p className="pb-4"><strong className="text-lg">How to manually shut it down: </strong>Type the <code className="bg-slate-300 p-1">sudo service kestra stop</code> command in a Jupyter Terminal window:</p>
+                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/kestra_stop.png"/>
 	                    <p><strong className="text-lg">How to access: </strong></p>
-                        <ul className="ml-8 mt-2 list-disc">
+                        <ul className="pb-4 ml-8 mt-2 list-disc">
                             <li>
-                                <em><strong>Grafana Dashboards -</strong></em> accessible via <a href="http://localhost:23000" className="underline" target="_blank">http://localhost:23000</a>; log into Grafana as user <em><strong>admin</strong></em> with password <em><strong>admin</strong></em>.
-                                <img className="pt-4 pb-4 w-[600px] drop-shadow-md" src="/images/grafana_login.png"/>
+                                <em><strong>Kestra Web UI -</strong></em> accessible via <a href="http://localhost:28080" className="underline" target="_blank">http://localhost:28080</a>; no username nor password are needed.
                             </li>   
                         </ul>
-	                    <p className="pb-4"><strong className="text-lg">Description: </strong>Query, visualize, alert on, and understand your data no matter where it&apos;s stored. With Grafana you can create, explore, and share all of your data through beautiful, flexible dashboards.</p>
-                        <p className="pb-4"><strong className="text-lg">Project website: </strong> <a href="https://grafana.com/" className="underline" target="_blank">https://grafana.com</a></p>
+	                    <p className="pb-4"><strong className="text-lg">Description: </strong>Kestra is a Unified Orchestration Platform to Simplify Business-Critical Workflows and Govern them as Code and from the UI.</p>
+                        <p className="pb-4"><strong className="text-lg">Project website: </strong> <a href="https://kestra.io/" className="underline" target="_blank">https://kestra.io</a></p>
                         <p className="pb-4 "><strong className="text-lg">Additional notes:</strong><br/>
-                          The first time you log into Grafana you&apos;ve asked to replace the default <em><strong>admin</strong></em> password.
+                          No additional notes.
 	                    </p>
                     </div>
                 </article>

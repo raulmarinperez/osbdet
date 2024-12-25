@@ -369,7 +369,7 @@ start_mongodb() {
   status=$(status_mongodb)
   if [ "$status" == "down" ]
   then
-    sudo service mongodb start > /dev/null 2>&1
+    sudo service mongod start > /dev/null 2>&1
     return 0
   fi
 
@@ -387,7 +387,7 @@ stop_mongodb() {
   status=$(status_mongodb)
   if [ "$status" == "up" ]
   then
-    sudo service mongodb stop > /dev/null 2>&1
+    sudo service mongod stop > /dev/null 2>&1
     return 0
   fi
 
@@ -428,7 +428,7 @@ start_kestra() {
     return 0
   fi
 
-  echo "AirFlow is already running"
+  echo "Kestra is already running"
   exit 1
 }
 # stop_kestra
