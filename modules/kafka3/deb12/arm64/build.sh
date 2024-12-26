@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-KAFKA_BINARY_URL=https://downloads.apache.org/kafka/3.6.1/kafka_2.13-3.6.1.tgz
-KAFKA_TGZ_FILE=kafka_2.13-3.6.1.tgz
-KAFKA_DEFAULT_DIR=kafka_2.13-3.6.1
+KAFKA_BINARY_URL=https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz
+KAFKA_TGZ_FILE=kafka_2.13-3.9.0.tgz
+KAFKA_DEFAULT_DIR=kafka_2.13-3.9.0
 
 # Aux functions
 # debug
