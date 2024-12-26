@@ -30,11 +30,13 @@ bienv_install(){
   python -m pip install mysqlclient apache-superset
   python -m pip install WTForms
   deactivate
+  chown -R osbdet:osbdet /opt/superset
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed"
 }
 remove_bienv(){
   debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] Removing BI environment software"
   rm -rf /opt/superset
+  rm -rf /home/osbdet/.superset
   apt-get remove -y libffi-dev libsasl2-dev libldap2-dev python3-venv default-libmysqlclient-dev build-essential pkg-config --purge
   apt autoremove -y
   debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] BI environment software removed"
@@ -54,6 +56,9 @@ initialsetup(){
                             --email osbdet@osbdet.com --password osbdet123\$
   superset init
   deactivate
+  chown -R osbdet:osbdet /opt/superset
+  mv /root/.superset /home/osbdet/.superset
+  chown -R osbdet:osbdet /home/osbdet/.superset
   debug "superset.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset done"
 }
 

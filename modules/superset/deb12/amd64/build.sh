@@ -11,7 +11,7 @@ SCRIPT_HOME=""  # OS and Architecture agnostic
 # debug
 #   desc: Display a debug message if LOGLEVEL is DEBUG
 #   params:
-#     $1 - Debug messu - osbdet -c sage
+#     $1 - Debug message
 #   return (status code/stdout):
 debug() {
   if [[ "$LOGLEVEL" == "DEBUG" ]]; then
