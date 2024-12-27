@@ -8,10 +8,10 @@ SCRIPT_HOME=""  # OS and Architecture agnostic
 
 SPARK_VERSION=3.5.4
 SPARK_JARS_DIR=/home/osbdet/.jupyter_venv/lib/python3.11/site-packages/pyspark/jars
-HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.0/hadoop-aws-3.4.0.jar
-HADOOP_AWS_JAR_NAME=hadoop-aws-3.4.0.jar
-AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.777/aws-java-sdk-bundle-1.12.777.jar
-AWS_JAVA_SDK_JAR_NAME=aws-java-sdk-bundle-1.12.777.jar
+HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
+HADOOP_AWS_JAR_NAME=hadoop-aws-3.3.4.jar
+AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.780/aws-java-sdk-bundle-1.12.780.jar
+AWS_JAVA_SDK_JAR_NAME=aws-java-sdk-bundle-1.12.780.jar
 NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/refs/tags/v0.40.1/install.sh
 NVM_DIR=/home/osbdet/.nvm
 
