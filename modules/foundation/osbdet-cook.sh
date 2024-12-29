@@ -22,7 +22,7 @@ eval_args(){
   if [ $# -eq 1 ]
   then
     echo "Starting the recipe cooking process."
-    su root -c "cd /home/osbdet/repos/osbdet; ./osbdet_builder.sh cook $1"
+    sudo bash -c "cd /home/osbdet/repos/osbdet; ./osbdet_builder.sh cook $1"
   else
     echo "Error: you must provide the name of the recipe as the only argument"
     usage
