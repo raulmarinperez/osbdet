@@ -31,7 +31,7 @@ Before being able to use the script, it has to be configured to pull the right v
 of the frameworks. This is accomplished by using the `setup` option as follows:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh setup
-Let's setup your OSBDET 24r1 builder:
+Let's setup your OSBDET 25r1 builder:
   Log level (DEBUG*): DEBUG
   Target Operating System (deb12*): deb12
   Target Architecture (amd64*|arm64): amd64
@@ -39,16 +39,16 @@ Let's setup your OSBDET 24r1 builder:
   OSBDET repository (https://github.com/raulmarinperez/osbdet-recipes.git*): 
 Persisting changes in /root/osbdet/shared/osbdet_builder.conf... [Done]
 ```
-As you can see, OSBDET 2024R1 is compatible with amd64 and arm64 architectures and the Debian 12 GNU/Linux operating system.
+As you can see, OSBDET 2025R1 is compatible with amd64 and arm64 architectures and the Debian 12 GNU/Linux operating system.
 The current configuration can be always checked by invoking the `currentconf` option:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh currentconf
-This is the current configuration of OSBDET 24r1:
-  OSBDET_HOME: /home/osbdet/repos/osbdet
+This is the current configuration of OSBDET 25r1:
+  OSBDET_HOME: /root/osbdet
   LOGLEVEL: DEBUG
   OSBDET_TARGETOS: deb12
   OSBDET_ARCHITECTURE: arm64
-  OSBDETRECIPES_HOME: /home/osbdet/repos/osbdet-recipes
+  OSBDETRECIPES_HOME: /root/osbdet-recipes
   OSBDETRECIPES_REPO: https://github.com/raulmarinperez/osbdet-recipes.git
 ```
 The `osbdet.log` file tracks all the steps taken by the script; tail this file while building or removing modules to get all the information about the process.
@@ -56,29 +56,33 @@ The `osbdet.log` file tracks all the steps taken by the script; tail this file w
 The `modules` option lists all the available modules:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh modules
-These are the modules available in OSBDET v24r1:
+These are the modules available in OSBDET v25r1:
   - superset: Superset installation, depends on: foundation
   - labbuilder: Lab builder installation, depends on: foundation,hadoop3
   - spark3: Spark 3 installation, depends on: foundation
   - grafana: Grafana installation, depends on: foundation
+  - openmetadata: Open Metadata installation, depends on: foundation
   - truckssim: Truck fleet simulator, depends on: foundation
   - nifi: NiFi installation, depends on: foundation
   - jupyter: Jupyter Notebook installation, depends on: foundation
   - hadoop3: Hadoop 3 installation, depends on: foundation
+  - osbdetweb: OSBDET web installation, depends on: foundation
   - mariadb: MariaDB installation, depends on: foundation
-  - airflow: Airflow installation, depends on: foundation
   - foundation: Configurations and dependencies to satisfy the installation of other modules, depends on: no_dependencies
+  - kestra: Kestra installation, depends on: foundation
   - kafka3: Kafka 3 installation, depends on: foundation
   - minio: MinIO (object store) installation, depends on: foundation
-  - mongodb7: MongoDB 7 installation, depends on: foundation
+  - mongodb8: MongoDB 8 installation, depends on: foundation
 ```
 ### Listing available recipes
 The `recipes` option lists all the available recipes:
 ```
-These are the recipes available for OSBDET v24r1:
-  - vscodetunnel[24r1]: Setup a VS Code tunnel to use OSBDET from an external VS Code, depends on: no_dependencies
-  - helloworld[24r1]: Hello world recipe, depends on: no_dependencies
-  - osbdetweb[24r1]: Install a web UI to easily operate OSBDET, depends on: no_dependencies
+root@osbdet:~/osbdet# ./osbdet_builder.sh recipes
+These are the recipes available for OSBDET v25r1:
+  - terraform[25r1]: Install Terraform on this OSBDET release (Debian 12), depends on: no_dependencies
+  - vscodetunnel[25r1]: Setup a VS Code tunnel to use OSBDET from an external VS Code, depends on: no_dependencies
+  - helloworld[25r1]: Hello world recipe, depends on: no_dependencies
+  - hugo0.140.1[25r1]: Install a recent go-lang version and a recent hugo version, depends on: no_dependencies
 ```
 ### Displaying the status of available modules
 The `status` option lists the status of all the available modules:
@@ -89,16 +93,18 @@ The folowing list shows the status of all available modules:
   - labbuilder: Module is not installed [KO]
   - spark3: Module is installed [OK]
   - grafana: Module is installed [OK]
+  - openmetadata: Module is installed [OK]
   - truckssim: Module is installed [OK]
   - nifi: Module is installed [OK]
   - jupyter: Module is installed [OK]
   - hadoop3: Module is installed [OK]
+  - osbdetweb: Module is installed [OK]
   - mariadb: Module is installed [OK]
-  - airflow: Module is installed [OK]
   - foundation: Module is installed [OK]
+  - kestra: Module is installed [OK]
   - kafka3: Module is installed [OK]
   - minio: Module is installed [OK]
-  - mongodb7: Module is installed [OK]
+  - mongodb8: Module is installed [OK]
 ```
 ### Building modules
 The `build` option tells OSBDET to install the modules provided as arguments:
@@ -133,7 +139,7 @@ The following table outlines the different frameworks TCP ports, and the TCP por
    |**Framework/Tool** |**Original TCP port** |**Mapped TCP port**   |
    |-------------------|----------------------|----------------------|
    |SSH server         |22                    |2222                  |
-   |Next.js Web App    |2024                  |2024                  |
+   |Next.js Web App    |2024                  |2025                  |
    |Jupyter Notebook   |8888                  |28888                 |
    |HDFS UI            |50070                 |50070                 |
    |HDFS Data Node     |50075                 |50075                 |
@@ -142,6 +148,7 @@ The following table outlines the different frameworks TCP ports, and the TCP por
    |Spark UI           |4040                  |24040                 |
    |Superset UI        |8880                  |28880                 |
    |MinIO Console      |9001                  |29001                 |
-   |Airflow UI         |8080                  |28080                 |
+   |Kestra UI          |8080                  |28080                 |
    |Grafana UI         |3000                  |23000                 |
+   |Open Metadata UI   |8585                  |28585                 |
 
