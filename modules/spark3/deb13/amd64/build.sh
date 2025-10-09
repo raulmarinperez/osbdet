@@ -46,7 +46,7 @@ remove_dependencies(){
 install_pyspark(){
   debug "spark3.install_pyspark DEBUG [`date +"%Y-%m-%d %T"`] Installing pyspark, jupyterlab-sql-editor and others"
 
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark==$SPARK_VERSION"
+  su osbdet -c "export TMPDIR=/var/tmp;/home/osbdet/.jupyter_venv/bin/python3 -m pip install bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark==$SPARK_VERSION"
   # the following file makes the sparksql magic available in Jupyter
   su osbdet -c "mkdir -p /home/osbdet/.ipython/profile_default/"
   su osbdet -c "cp -f $SCRIPT_HOME/ipython_config.py /home/osbdet/.ipython/profile_default/ipython_config.py"
