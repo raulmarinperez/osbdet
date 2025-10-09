@@ -2,7 +2,7 @@
 
 # Global variables definition
 #
-OSBDET_VER=25r1
+OSBDET_VER=26r1
 export OSBDET_HOME=$(dirname $(realpath $0))
 export OSBDET_MODULESLIST=$OSBDET_HOME/shared/modules_list.conf
 export OSBDET_MODULESDIR=$OSBDET_HOME/modules
@@ -339,9 +339,9 @@ check_conf() {
   # 2. Checking values of the OSBDET_TARGETOS configuration variable
   elif [ "$1" == "OSBDET_TARGETOS" ]
   then
-    if [ "$2" == "" ] || [ "$2" == "deb12" ]
+    if [ "$2" == "" ] || [ "$2" == "deb13" ]
     then
-      VALUE="deb12"
+      VALUE="deb13"
     elif  [ "$2" == "ubu20" ]
     then
       VALUE=$2
@@ -430,8 +430,8 @@ setup() {
   printf "  Log level (DEBUG*): "
   read_valid_conf LOGLEVEL "DEBUG*"
   LOGLEVEL=$VALUE
-  printf "  Target Operating System (deb12*): "
-  read_valid_conf OSBDET_TARGETOS "deb12*|ubu20"
+  printf "  Target Operating System (deb13*): "
+  read_valid_conf OSBDET_TARGETOS "deb13*|ubu20"
   OSBDET_TARGETOS=$VALUE
   printf "  Target Architecture (amd64*|arm64): "
   read_valid_conf OSBDET_ARCHITECTURE "amd64*|arm64"
