@@ -2,7 +2,7 @@
 
 # Global variables definition
 #
-OSBDET_VER=25r1
+OSBDET_VER=26r1
 OSBDET_HOME=/home/osbdet
 NIFI_HOME=/opt/nifi
 

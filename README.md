@@ -31,7 +31,7 @@ Before being able to use the script, it has to be configured to pull the right v
 of the frameworks. This is accomplished by using the `setup` option as follows:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh setup
-Let's setup your OSBDET 25r1 builder:
+Let's setup your OSBDET 26r1 builder:
   Log level (DEBUG*): DEBUG
   Target Operating System (deb12*): deb12
   Target Architecture (amd64*|arm64): amd64
@@ -39,11 +39,11 @@ Let's setup your OSBDET 25r1 builder:
   OSBDET repository (https://github.com/raulmarinperez/osbdet-recipes.git*): 
 Persisting changes in /root/osbdet/shared/osbdet_builder.conf... [Done]
 ```
-As you can see, OSBDET 2025R1 is compatible with amd64 and arm64 architectures and the Debian 12 GNU/Linux operating system.
+As you can see, OSBDET 2026R1 is compatible with amd64 and arm64 architectures and the Debian 12 GNU/Linux operating system.
 The current configuration can be always checked by invoking the `currentconf` option:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh currentconf
-This is the current configuration of OSBDET 25r1:
+This is the current configuration of OSBDET 26r1:
   OSBDET_HOME: /root/osbdet
   LOGLEVEL: DEBUG
   OSBDET_TARGETOS: deb12
@@ -56,7 +56,7 @@ The `osbdet.log` file tracks all the steps taken by the script; tail this file w
 The `modules` option lists all the available modules:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh modules
-These are the modules available in OSBDET v25r1:
+These are the modules available in OSBDET v26r1:
   - superset: Superset installation, depends on: foundation
   - labbuilder: Lab builder installation, depends on: foundation,hadoop3
   - spark3: Spark 3 installation, depends on: foundation
@@ -73,16 +73,16 @@ These are the modules available in OSBDET v25r1:
   - kafka3: Kafka 3 installation, depends on: foundation
   - minio: MinIO (object store) installation, depends on: foundation
   - mongodb8: MongoDB 8 installation, depends on: foundation
+  - clickhouse: ClickHouse installation, depends on: foundation
 ```
 ### Listing available recipes
 The `recipes` option lists all the available recipes:
 ```
 root@osbdet:~/osbdet# ./osbdet_builder.sh recipes
-These are the recipes available for OSBDET v25r1:
-  - terraform[25r1]: Install Terraform on this OSBDET release (Debian 12), depends on: no_dependencies
-  - vscodetunnel[25r1]: Setup a VS Code tunnel to use OSBDET from an external VS Code, depends on: no_dependencies
-  - helloworld[25r1]: Hello world recipe, depends on: no_dependencies
-  - hugo0.140.1[25r1]: Install a recent go-lang version and a recent hugo version, depends on: no_dependencies
+These are the recipes available for OSBDET v26r1:
+  - terraform[26r1]: Install Terraform on this OSBDET release (Debian 13), depends on: no_dependencies
+  - helloworld[26r1]: Hello world recipe, depends on: no_dependencies
+  - hugo0.140.1[26r1]: Install a recent go-lang version and a recent hugo version, depends on: no_dependencies
 ```
 ### Displaying the status of available modules
 The `status` option lists the status of all the available modules:
@@ -105,6 +105,7 @@ The folowing list shows the status of all available modules:
   - kafka3: Module is installed [OK]
   - minio: Module is installed [OK]
   - mongodb8: Module is installed [OK]
+  - clickhouse: Module is installed [OK]
 ```
 ### Building modules
 The `build` option tells OSBDET to install the modules provided as arguments:
@@ -139,7 +140,7 @@ The following table outlines the different frameworks TCP ports, and the TCP por
    |**Framework/Tool** |**Original TCP port** |**Mapped TCP port**   |
    |-------------------|----------------------|----------------------|
    |SSH server         |22                    |2222                  |
-   |Next.js Web App    |2024                  |2025                  |
+   |Next.js Web App    |2026                  |2026                  |
    |Jupyter Notebook   |8888                  |28888                 |
    |HDFS UI            |50070                 |50070                 |
    |HDFS Data Node     |50075                 |50075                 |

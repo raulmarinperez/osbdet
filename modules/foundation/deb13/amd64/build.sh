@@ -5,8 +5,8 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-OTELCOLCONTRIB_URL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.116.1/otelcol-contrib_0.116.1_linux_amd64.deb"
-OTELCOLCONTRIB_LOCAL="/tmp/otelcol-contrib_0.116.1_linux_amd64.deb"
+OTELCOLCONTRIB_URL="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.137.0/otelcol-contrib_0.137.0_linux_amd64.deb"
+OTELCOLCONTRIB_LOCAL="/tmp/otelcol-contrib_0.137.0_linux_amd64.deb"
 
 # Aux functions
 
