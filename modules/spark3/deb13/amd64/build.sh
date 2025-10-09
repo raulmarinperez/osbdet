@@ -6,13 +6,13 @@
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
 
-SPARK_VERSION=3.5.4
-SPARK_JARS_DIR=/home/osbdet/.jupyter_venv/lib/python3.11/site-packages/pyspark/jars
-HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
-HADOOP_AWS_JAR_NAME=hadoop-aws-3.3.4.jar
-AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.780/aws-java-sdk-bundle-1.12.780.jar
-AWS_JAVA_SDK_JAR_NAME=aws-java-sdk-bundle-1.12.780.jar
-NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/refs/tags/v0.40.1/install.sh
+SPARK_VERSION=4.0.1
+SPARK_JARS_DIR=/home/osbdet/.jupyter_venv/lib/python3.13/site-packages/pyspark/jars
+HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.2/hadoop-aws-3.4.2.jar
+HADOOP_AWS_JAR_NAME=hadoop-aws-3.4.2.jar
+AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.792/aws-java-sdk-bundle-1.12.792.jar
+AWS_JAVA_SDK_JAR_NAME=aws-java-sdk-bundle-1.12.792.jar
+NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/refs/tags/v0.40.3/install.sh
 NVM_DIR=/home/osbdet/.nvm
 
 # Aux functions
