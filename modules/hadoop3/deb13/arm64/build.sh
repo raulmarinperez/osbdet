@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-HADOOP_BINARY_URL=https://dlcdn.apache.org/hadoop/common/hadoop-3.4.0/hadoop-3.4.0.tar.gz
-HADOOP_TGZ_FILE=hadoop-3.4.0.tar.gz
-HADOOP_DEFAULT_DIR=hadoop-3.4.0
+HADOOP_BINARY_URL=https://dlcdn.apache.org/hadoop/common/hadoop-3.4.2/hadoop-3.4.2.tar.gz
+HADOOP_TGZ_FILE=hadoop-3.4.2.tar.gz
+HADOOP_DEFAULT_DIR=hadoop-3.4.2
 
 # Aux functions
 
