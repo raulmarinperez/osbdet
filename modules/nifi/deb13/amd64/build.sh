@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/2.0.0/nifi-2.0.0-bin.zip
-NIFI_ZIP_FILE=nifi-2.0.0-bin.zip
-NIFI_DEFAULT_DIR=nifi-2.0.0
+NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/2.6.0/nifi-2.6.0-bin.zip
+NIFI_ZIP_FILE=nifi-2.6.0-bin.zip
+NIFI_DEFAULT_DIR=nifi-2.6.0
 
 # Aux functions
 # debug
@@ -172,7 +172,7 @@ main(){
 }
 
 if ! [ -z "$*" ]
-the
+then
   SCRIPT_PATH=$(dirname $(realpath $0))
   SCRIPT_HOME=$SCRIPT_PATH/../..
   OSBDET_HOME=$SCRIPT_HOME/../..

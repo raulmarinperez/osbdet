@@ -6,7 +6,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'OSBDET v2025r1',
+  title: 'OSBDET v2026r1',
   description: 'Open Source Big Data Educational Toolkit',
 }
 
@@ -44,7 +44,7 @@ export default function RootLayout({
             </div>
           </div>
           <div className="mt-10 text-sm italic">
-            <p>&copy; OSBDET 2025. All rights reserved - Web application built with <Link href="https://nextjs.org/" className="underline"  target="_blank">NextJS</Link>.</p>
+            <p>&copy; OSBDET 2026. All rights reserved - Web application built with <Link href="https://nextjs.org/" className="underline"  target="_blank">NextJS</Link>.</p>
           </div>
         </div>
       </section>

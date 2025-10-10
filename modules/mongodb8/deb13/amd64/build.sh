@@ -23,10 +23,10 @@ installation(){
   debug "mongodb8.installation DEBUG [`date +"%Y-%m-%d %T"`] Adding MongoDB 8 OSS repo and install MongoDB 8"
   # Procedure as it's documented at https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-debian/#install-mongodb-community-edition
   apt-get install gnupg curl
-  curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
+  curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | gpg -o /usr/share/keyrings/mongodb-server-8.2.gpg --dearmor
   echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/8.0 main" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
   apt-get update
-  apt-get install -y mongodb-org=8.0.4 mongodb-org-database=8.0.4 mongodb-org-server=8.0.4 mongodb-mongosh mongodb-org-mongos=8.0.4 mongodb-org-tools=8.0.4
+  apt-get install -y mongodb-org=8.2.0 mongodb-org-database=8.2.0 mongodb-org-server=8.2.0 mongodb-mongosh mongodb-org-mongos=8.2.0 mongodb-org-tools=8.2.0
   systemctl daemon-reload
   systemctl disable mongod
   debug "mongodb8.installation DEBUG [`date +"%Y-%m-%d %T"`] MongoDB 8 OSS repo and MongoDB 8 added and installed" 

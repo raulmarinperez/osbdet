@@ -43,7 +43,7 @@ remove(){
 
 install_jdk8(){
   debug "truckssim.install_jdk8 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 8"
-  debig "IMPORTANT: The Temurin APT source has to be already installed; this should happen withint the Foundation module installation"
+  debug "IMPORTANT: The Temurin APT source has to be already installed; this should happen withint the Foundation module installation"
   apt install -y temurin-8-jdk
   debug "truckssim.install_jdk8 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 installation done"
 }
