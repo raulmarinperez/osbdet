@@ -42,7 +42,7 @@ export default function Spark() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center ">Apache Spark 3.5.4</span>
+                                    <span className="relative text-xl lg:text-3xl text-center ">Apache Spark 4.0.1</span>
                                     <img className="mt-5" src="/images/spark_banner.png"/>
                                 </span>
                             </h2>

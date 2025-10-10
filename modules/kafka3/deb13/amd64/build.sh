@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-KAFKA_BINARY_URL=https://downloads.apache.org/kafka/3.9.0/kafka_2.13-3.9.0.tgz
-KAFKA_TGZ_FILE=kafka_2.13-3.9.0.tgz
-KAFKA_DEFAULT_DIR=kafka_2.13-3.9.0
+KAFKA_BINARY_URL=https://dlcdn.apache.org/kafka/4.1.0/kafka_2.13-4.1.0.tgz
+KAFKA_TGZ_FILE=kafka_2.13-4.1.0.tgz
+KAFKA_DEFAULT_DIR=kafka_2.13-4.1.0
 
 # Aux functions
 # debug
@@ -77,8 +77,8 @@ remove_userprofile(){
 initwithkraft() {
   debug "kafka.initwithkraft DEBUG [`date +"%Y-%m-%d %T"`] Initializing server properties with KRaft"
   KAFKA_CLUSTER_ID="$(/opt/kafka/bin/kafka-storage.sh random-uuid)"
-  su - osbdet -c 'sed -i s/"tmp\/kraft-combined-logs"/"data\/kraft-combined-logs"/ /opt/kafka/config/kraft/server.properties'
-  su - osbdet -c "/opt/kafka/bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c /opt/kafka/config/kraft/server.properties"
+  su - osbdet -c 'sed -i s/"tmp\/kraft-combined-logs"/"data\/kraft-combined-logs"/ /opt/kafka/config/server.properties'
+  su - osbdet -c "/opt/kafka/bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c /opt/kafka/config/server.properties"
   debug "kafka.initwithkraft DEBUG [`date +"%Y-%m-%d %T"`] Server properties with KRaft initialized"
 }
 remove_kraftlogs() {
