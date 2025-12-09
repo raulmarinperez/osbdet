@@ -6,6 +6,8 @@
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
 
+MONGODB_VERSION=8.0.16
+
 # Aux functions
 
 # debug
@@ -23,10 +25,10 @@ installation(){
   debug "mongodb8.installation DEBUG [`date +"%Y-%m-%d %T"`] Adding MongoDB 8 OSS repo and install MongoDB 8"
   # Procedure as it's documented at https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-debian/#install-mongodb-community-edition
   apt-get install gnupg curl
-  curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | gpg -o /usr/share/keyrings/mongodb-server-8.2.gpg --dearmor
+  curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
   echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/8.0 main" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
   apt-get update
-  apt-get install -y mongodb-org=8.2.0 mongodb-org-database=8.2.0 mongodb-org-server=8.2.0 mongodb-mongosh mongodb-org-mongos=8.2.0 mongodb-org-tools=8.2.0
+  apt-get install -y mongodb-org=$MONGODB_VERSION mongodb-org-database=$MONGODB_VERSION mongodb-org-server=$MONGODB_VERSION mongodb-mongosh mongodb-org-mongos=$MONGODB_VERSION mongodb-org-tools=$MONGODB_VERSION
   systemctl daemon-reload
   systemctl disable mongod
   debug "mongodb8.installation DEBUG [`date +"%Y-%m-%d %T"`] MongoDB 8 OSS repo and MongoDB 8 added and installed" 
