@@ -106,7 +106,7 @@ remove_initscript() {
 module_install(){
   debug "kafka.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
-  #   1. Get Kafka 3 and extract it
+  #   1. Get Kafka 4 and extract it
   #   2. Install additional libraries
   #   3. Setup osbdet user profile to find Kafka binaries
   #   4. Initialize Kafka with KRaft to remove Zookeeper dependency
