@@ -73,7 +73,7 @@ deploy_jars(){
 }
 
 jupyterspark(){
-  debug "spark4.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] If Jupyter is installed, the service is updated to consider Spark 3"
+  debug "spark4.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] If Jupyter is installed, the service is updated to consider Spark 4"
   if [ -f "/lib/systemd/system/jupyter.service" ]
   then
      service jupyter stop
@@ -87,7 +87,7 @@ jupyterspark(){
   debug "spark4.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter and Spark 4 integration done"
 }
 remove_jupyterspark(){
-  debug "spark4.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] If Jupyter is installed, the service is updated to remove the reference to Spark 3" >> $OSBDET_LOGFILE
+  debug "spark4.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] If Jupyter is installed, the service is updated to remove the reference to Spark 4" >> $OSBDET_LOGFILE
   if [ -f "/lib/systemd/system/jupyter.service" ]
   then
      service jupyter stop
