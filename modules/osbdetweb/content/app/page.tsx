@@ -16,6 +16,7 @@ import MongoDBBox from '@/app/modules/mongodb/mongodb-box'
 import MinIOBox from '@/app/modules/minio/minio-box'
 import KestraBox from '@/app/modules/kestra/kestra-box'
 import GrafanaBox from '@/app/modules/grafana/grafana-box'
+import ClickHouseBox from '@/app/modules/grafana/clickhouse-box'
 import OpenMetadataBox from '@/app/modules/openmetadata/openmetadata-box'
 
 export default function Page() {
@@ -88,6 +89,7 @@ export default function Page() {
           <MinIOBox/>
           <KestraBox/>
           <GrafanaBox/>
+          <ClickHouseBox/>
           <OpenMetadataBox/>
         </div>
       </div>

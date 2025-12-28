@@ -21,24 +21,21 @@ debug() {
 
 bienv_install(){
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the BI environment"
-  apt-get update
-  apt-get install -y libffi-dev libsasl2-dev libldap2-dev python3-venv default-libmysqlclient-dev build-essential pkg-config
-  mkdir /opt/superset
-  python3 -m venv /opt/superset/
-  . /opt/superset/bin/activate
-  python -m pip install --upgrade pip
-  python -m pip install mysqlclient apache-superset
-  python -m pip install WTForms
-  deactivate
-  chown -R osbdet:osbdet /opt/superset
+  mkdir /opt/superset && chown osbdet:osbdet /opt/superset
+  # As Debian ships Python 3.13 and it's not a superset compatible, version
+  # we'll rely on uv to create a 3.11 Python Virtual Environment
+  su - osbdet -c 'curl -LsSf https://astral.sh/uv/install.sh | sh'
+  su - osbdet -c '/home/osbdet/.local/bin/uv venv /opt/superset/ --python 3.11'
+  su - osbdet -c 'VIRTUAL_ENV=/opt/superset /home/osbdet/.local/bin/uv pip install apache-superset==5.0.0 mysqlclient marshmallow==3.26.1'
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed"
 }
 remove_bienv(){
   debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] Removing BI environment software"
   rm -rf /opt/superset
   rm -rf /home/osbdet/.superset
-  apt-get remove -y libffi-dev libsasl2-dev libldap2-dev python3-venv default-libmysqlclient-dev build-essential pkg-config --purge
-  apt autoremove -y
+  rm /home/osbdet/.local/bin/env /home/osbdet/.local/bin/env.fish /home/osbdet/.local/bin/uv /home/osbdet/.local/bin/uvx
+  rmdir /home/osbdet/.local/bin/
+  sed -i '/\. "\$HOME\/\.local\/bin\/env"/d' .bashrc .profile
   debug "superset.remove_bienv DEBUG [`date +"%Y-%m-%d %T"`] BI environment software removed"
 }
 
@@ -48,17 +45,11 @@ initialsetup(){
   cp $SCRIPT_HOME/superset_config.py /opt/superset
   sed -i 's@YOUR_OWN_RANDOM_GENERATED_SECRET_KEY@'`openssl rand -base64 42`'@' /opt/superset/superset_config.py
   # All set to do the initial configuration
-  . /opt/superset/bin/activate
-  export SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py;
-  export FLASK_APP=superset; 
-  superset db upgrade
-  superset fab create-admin --username osbdet --firstname osb --lastname bdet \
-                            --email osbdet@osbdet.com --password osbdet123\$
-  superset init
-  deactivate
+  su - osbdet -c 'SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py FLASK_APP=superset /opt/superset/bin/superset db upgrade'
+  su - osbdet -c 'SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py FLASK_APP=superset /opt/superset/bin/superset fab create-admin --username osbdet --firstname osb --lastname bdet \
+                                            --email osbdet@osbdet.com --password osbdet123\$'
+  su - osbdet -c 'SUPERSET_CONFIG_PATH=/opt/superset/superset_config.py FLASK_APP=superset /opt/superset/bin/superset init'
   chown -R osbdet:osbdet /opt/superset
-  mv /root/.superset /home/osbdet/.superset
-  chown -R osbdet:osbdet /home/osbdet/.superset
   debug "superset.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of Superset done"
 }
 
@@ -83,6 +74,7 @@ remove_serviceinstall(){
 module_install(){
   debug "superset.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
+  #   1. Install 
   #   1. BI environment installation
   #   2. Initial setup of Superset
   #   3. Systemd script installation

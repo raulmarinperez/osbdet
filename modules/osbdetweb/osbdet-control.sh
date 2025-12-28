@@ -10,7 +10,7 @@ NIFI_HOME=/opt/nifi
 #
 
 # status_hadoop
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -66,7 +66,7 @@ stop_hadoop() {
 }
 
 # status_nifi
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -121,7 +121,7 @@ stop_nifi() {
 }
 
 # status_kafka
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -176,7 +176,7 @@ stop_kafka() {
 }
 
 # status_truckssim
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -231,7 +231,7 @@ stop_truckssim() {
 }
 
 # status_minio
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -286,7 +286,7 @@ stop_minio() {
 }
 
 # status_mariadb
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -341,7 +341,7 @@ stop_mariadb() {
 }
 
 # status_mongodb
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -396,7 +396,7 @@ stop_mongodb() {
 }
 
 # status_kestra
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -451,7 +451,7 @@ stop_kestra() {
 }
 
 # status_superset
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -506,7 +506,7 @@ stop_superset() {
 }
 
 # status_grafana
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -560,8 +560,63 @@ stop_grafana() {
   exit 1
 }
 
+# status_clickhouse
+#   desc: Identify if the module is up and running
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/up message - module is up and running
+#     1/down message - module is not running
+status_clickhouse() {
+  curl -sSf http://localhost:3000/login/  > /dev/null 2>&1
+  if [ $? -eq 0 ]
+  then
+    echo "up"
+    return 0
+  fi
+
+  echo "down"
+  return 1
+}
+# start_clickhouse
+#   desc: Start the specified module if it wasn't running already
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/ok message - module started correctly
+#     1/ko message - module doesn't exists or it was already running
+start_clickhouse() {
+  status=$(status_clickhouse)
+  if [ "$status" == "down" ]
+  then
+    sudo service clickhouse-server start > /dev/null 2>&1
+    return 0
+  fi
+
+  echo "Clickhouse is already running"
+  exit 1
+}
+# stop_clickhouse
+#   desc: Stop the specified module if it wasn't running already
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/ok message - module started correctly
+#     1/ko message - module doesn't exists or it was already running
+stop_clickhouse() {
+  status=$(status_clickhouse)
+  if [ "$status" == "up" ]
+  then
+    sudo service clickhouse-server stop > /dev/null 2>&1
+    return 0
+  fi
+
+  echo "Clickhouse is not running"
+  exit 1
+}
+
 # status_openmetadata
-#   desc: Identifiy if the module is up and running
+#   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
@@ -678,7 +733,7 @@ start_module() {
     elif [ "$1" == "nifi" ]
     then
       start_nifi
-    elif [ "$1" == "kafka3" ]
+    elif [ "$1" == "kafka4" ]
     then
       start_kafka
     elif [ "$1" == "truckssim" ]
@@ -702,6 +757,9 @@ start_module() {
     elif [ "$1" == "grafana" ]
     then
       start_grafana
+    elif [ "$1" == "clickhouse" ]
+    then
+      start_clickhouse
     elif [ "$1" == "openmetadata" ]
     then
       start_openmetadata
@@ -724,7 +782,7 @@ stop_module() {
     elif [ "$1" == "nifi" ]
     then
       stop_nifi
-    elif [ "$1" == "kafka3" ]
+    elif [ "$1" == "kafka4" ]
     then
       stop_kafka
     elif [ "$1" == "truckssim" ]
@@ -748,6 +806,9 @@ stop_module() {
     elif [ "$1" == "grafana" ]
     then
       stop_grafana
+    elif [ "$1" == "clickhouse" ]
+    then
+      stop_clickhouse
     elif [ "$1" == "openmetadata" ]
     then
       stop_openmetadata
@@ -772,7 +833,7 @@ usage() {
   echo "  ## modules names ##"
   echo "  hadoop3             Storage and processing at scale"
   echo "  nifi                Data ingestion"
-  echo "  kafka3              Real-time storage and processing at scale"
+  echo "  kafka4              Real-time storage and processing at scale"
   echo "  truckssim           Real-time data/events generator"
   echo "  minio               S3 compatible Object storage"
   echo "  mariadb             Open Source Relational Database Management System"
@@ -780,6 +841,7 @@ usage() {
   echo "  kestra              Unified orchestration platform"
   echo "  superset            Open Source BI visualization tool"
   echo "  grafana             Open Source operational visualization tool"
+  echo "  clickhouse          Open Source Columnar Database"
   echo "  openmetadata        Open and unified metadata platform for data discovery, observability and governance"
 }
 
