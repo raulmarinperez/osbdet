@@ -5,7 +5,7 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-DOCKER_COMPOSE_FILE_URL="https://github.com/open-metadata/OpenMetadata/releases/download/1.6.1-release/docker-compose-postgres.yml"
+DOCKER_COMPOSE_FILE_URL="https://github.com/open-metadata/OpenMetadata/releases/download/1.11.0-release/docker-compose-postgres.yml"
 DOCKER_COMPOSE_FILENAME="docker-compose-postgres.yml" 
 REPOSITORIES=(
     "docker.getcollate.io/openmetadata/ingestion"

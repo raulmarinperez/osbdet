@@ -23,8 +23,9 @@ installation(){
   debug "grafana.installation DEBUG [`date +"%Y-%m-%d %T"`] Adding Grafana OSS repo and install Grafana"
   # Procedure as it's documented at https://grafana.com/docs/grafana/latest/installation/debian/
   apt-get install -y apt-transport-https software-properties-common wget
-  wget -q -O - https://packages.grafana.com/gpg.key | apt-key add -
-  echo "deb https://packages.grafana.com/oss/deb stable main" | tee -a /etc/apt/sources.list.d/grafana.list
+  mkdir -p /etc/apt/keyrings/
+  wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | tee /etc/apt/keyrings/grafana.gpg > /dev/null
+  echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | tee -a /etc/apt/sources.list.d/grafana.list
   apt-get update 
   apt-get install -y grafana
   debug "grafana.installation DEBUG [`date +"%Y-%m-%d %T"`] Grafana OSS repo and Grafana added and installed" 
@@ -34,7 +35,7 @@ remove_installation(){
   apt remove -y grafana --purge 
   apt autoremove -y 
   apt-key del "`apt-key list | $OSBDET_HOME/shared/givemekey.awk -v pattern=Grafana`" 
-  rm /etc/apt/sources.list.d/grafana.list
+  rm /etc/apt/keyrings/grafana.gpg /etc/apt/sources.list.d/grafana.list
   apt-get update 
   debug "grafana.remove_installation DEBUG [`date +"%Y-%m-%d %T"`] Grafana OSS repo and Grafana removed"
 }
@@ -42,7 +43,7 @@ remove_installation(){
 set_default_pass(){
   debug "grafana.set_default_pass DEBUG [`date +"%Y-%m-%d %T"`] Setting up default password to admin user"
   service grafana-server start
-  su - grafana -c 'grafana-cli admin reset-admin-password osbdet123$'
+  grafana-cli admin reset-admin-password 'osbdet123$'
   service grafana-server stop
   debug "grafana.set_default_pass DEBUG [`date +"%Y-%m-%d %T"`] Default password setup"
 }
