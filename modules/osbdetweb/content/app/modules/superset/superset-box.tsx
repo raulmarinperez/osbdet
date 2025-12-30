@@ -31,7 +31,7 @@ export default function SuperSetBox() {
         {/* Text box with information */}
         <div className="container w-full px-8 py-1 h-full opacity-0 hover:opacity-90">
           <div className="flex flex-col w-full border-4 p-4 border-gray-200 bg-white ">
-            <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500 mb-1">Superset 4.1.1</h2>
+            <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500 mb-1">Superset 5.0.0</h2>
             <h1 className="title-font text-lg font-medium text-gray-900 mb-3">Data Visualization</h1>
             <p className="leading-relaxed">Fast, lightweight and intuitive data visualization.</p>
           </div>

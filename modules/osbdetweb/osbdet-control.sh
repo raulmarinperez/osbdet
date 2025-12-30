@@ -568,7 +568,7 @@ stop_grafana() {
 #     0/up message - module is up and running
 #     1/down message - module is not running
 status_clickhouse() {
-  curl -sSf http://localhost:3000/login/  > /dev/null 2>&1
+  curl 'http://localhost:8123/ping' > /dev/null 2>&1
   if [ $? -eq 0 ]
   then
     echo "up"
@@ -687,7 +687,7 @@ module_status() {
     elif [ "$1" == "nifi" ]
     then
       status_nifi
-    elif [ "$1" == "kafka3" ]
+    elif [ "$1" == "kafka4" ]
     then
       status_kafka
     elif [ "$1" == "truckssim" ]
@@ -711,6 +711,9 @@ module_status() {
     elif [ "$1" == "grafana" ]
     then
       status_grafana
+    elif [ "$1" == "clickhouse" ]
+    then
+      status_clickhouse
     elif [ "$1" == "openmetadata" ]
     then
       status_openmetadata

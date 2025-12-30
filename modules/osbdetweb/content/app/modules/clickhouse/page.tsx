@@ -42,26 +42,26 @@ export default function ClickHouse() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center "> Grafana 11.4.0</span>
-                                    <img className="mt-5" src="/images/grafana_banner.png"/>
+                                    <span className="relative text-xl lg:text-3xl text-center "> ClickHouse 25.12</span>
+                                    <img className="mt-5" src="/images/clickhouse_banner.png"/>
                                 </span>
                             </h2>
                         </div>
                         <p className="pt-4 pb-4"><strong className="text-lg">How to start it up: </strong>Type the <code className="bg-slate-300 p-1">sudo service clickhouse-server start</code> command in a Jupyter Terminal window:</p>
-                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/grafana_start.png"/>
+                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/clickhouse_start.png"/>
 	                    <p className="pb-4"><strong className="text-lg">How to shut it down: </strong>Type the <code className="bg-slate-300 p-1">sudo service clickhouse-server stop</code> command in a Jupyter Terminal window:</p>
-                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/grafana_stop.png"/>
+                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/clickhouse_stop.png"/>
 	                    <p><strong className="text-lg">How to access: </strong></p>
                         <ul className="ml-8 mt-2 list-disc">
                             <li>
-                                <em><strong>Grafana Dashboards -</strong></em> accessible via <a href="http://localhost:23000" className="underline" target="_blank">http://localhost:23000</a>; log into Grafana as user <em><strong>admin</strong></em> with password <em><strong>admin</strong></em>.
+                                <em><strong>ClickHouse Client -</strong></em> The ClickHouse Client allows you to interact with your databases; just type the <code className="bg-slate-300 p-1">clickhouse</code> command in a Jupyter Terminal window (no password needed):
                                 <img className="pt-4 pb-4 w-[600px] drop-shadow-md" src="/images/grafana_login.png"/>
                             </li>   
                         </ul>
-	                    <p className="pb-4"><strong className="text-lg">Description: </strong>Query, visualize, alert on, and understand your data no matter where it&apos;s stored. With Grafana you can create, explore, and share all of your data through beautiful, flexible dashboards.</p>
-                        <p className="pb-4"><strong className="text-lg">Project website: </strong> <a href="https://grafana.com/" className="underline" target="_blank">https://clickhouse.com</a></p>
+	                    <p className="pb-4"><strong className="text-lg">Description: </strong>ClickHouse is a high-performance, column-oriented SQL database management system (DBMS) for online analytical processing (OLAP). It is available as both an open-source software and a cloud offering.</p>
+                        <p className="pb-4"><strong className="text-lg">Project website: </strong> <a href="https://clickhouse.com/" className="underline" target="_blank">https://clickhouse.com</a></p>
                         <p className="pb-4 "><strong className="text-lg">Additional notes:</strong><br/>
-                          The first time you log into Grafana you&apos;ve asked to replace the default <em><strong>admin</strong></em> password.
+                          The <em><strong>default</strong></em>, with full privileges to do whatever you need, doesn't have any password configured; this insecured setup will help you play around with ClickHouse without having to be worried about security.
 	                    </p>
                     </div>
                 </article>
