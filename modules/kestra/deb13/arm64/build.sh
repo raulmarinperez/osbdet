@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-KESTRA_BINARY_URL=https://repo.maven.apache.org/maven2/io/kestra/kestra/0.20.7/kestra-0.20.7.zip
-KESTRA_ZIP_FILE=kestra-0.20.7.zip
-KESTRA_DEFAULT_BIN=kestra-0.20.7
+KESTRA_BINARY_URL=https://repo1.maven.org/maven2/io/kestra/kestra/1.1.11/kestra-1.1.11-exec.zip
+KESTRA_ZIP_FILE=kestra-1.1.11-exec.zip
+KESTRA_DEFAULT_BIN=kestra-1.1.11
 
 # Aux functions
 

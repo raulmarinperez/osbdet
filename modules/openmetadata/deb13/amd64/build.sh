@@ -110,7 +110,7 @@ module_uninstall(){
   #   2. Remove all created Docker containers
   #   3. Remove Docker artifacts
   printf "  Uninstalling module 'openmetadata' ... "
-  #remove_serviceinstall >> $OSBDET_LOGFILE 2>&1
+  remove_serviceinstall >> $OSBDET_LOGFILE 2>&1
   remove_dockerartifacts >> $OSBDET_LOGFILE 2>&1
   remove_folderanddockercompose >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
