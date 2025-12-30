@@ -42,7 +42,7 @@ export default function Kestra() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center ">Kestra 0.20</span>
+                                    <span className="relative text-xl lg:text-3xl text-center ">Kestra 1.1.11</span>
                                     <img className="mt-5" src="/images/kestra_banner.png"/>
                                 </span>
                             </h2>

@@ -32,6 +32,8 @@ installation(){
   # Update apt package lists
   apt-get update
   DEBIAN_FRONTEND=noninteractive apt-get install -y clickhouse-server clickhouse-client
+  # Disable service
+  systemctl disable clickhouse-server
   debug "clickhouse.installation DEBUG [`date +"%Y-%m-%d %T"`] ClickHouse OSS repo and ClickHouse added and installed" 
 }
 remove_installation(){
