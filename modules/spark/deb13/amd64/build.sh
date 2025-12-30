@@ -57,8 +57,6 @@ remove_pyspark(){
   debug "spark.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] Removing pyspark, jupyterlab-sql-editor and others"
 
   su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark"
-  # the following file makes the sparksql magic available in Jupyter
-  su osbdet -c "cp -rf $SCRIPT_HOME/ipython_config.py /home/osbdet/.ipython/profile_default/ipython_config.py"
 
   debug "spark.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] pyspark, jupyterlab-sql-editor and others removed"
 }
@@ -93,6 +91,7 @@ remove_jupyterspark(){
   then
      service jupyter stop
      sed -i '/Environment="NVM_DIR=\/home\/osbdet\/.nvm"/d' /lib/systemd/system/jupyter.service
+     sed -i '/Environment="AWS_JAVA_V1_DISABLE_DEPRECATION_ANNOUNCEMENT=true"/d' /lib/systemd/system/jupyter.service 
      systemctl daemon-reload
      service jupyter start
      debug "spark.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script updated"

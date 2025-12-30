@@ -43,7 +43,7 @@ remove_installation(){
 set_default_pass(){
   debug "grafana.set_default_pass DEBUG [`date +"%Y-%m-%d %T"`] Setting up default password to admin user"
   service grafana-server start
-  su - grafana -c 'grafana-cli admin reset-admin-password osbdet123$'
+  grafana-cli admin reset-admin-password 'osbdet123$'
   service grafana-server stop
   debug "grafana.set_default_pass DEBUG [`date +"%Y-%m-%d %T"`] Default password setup"
 }

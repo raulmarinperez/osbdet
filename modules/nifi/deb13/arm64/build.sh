@@ -5,9 +5,12 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/2.7.1/nifi-2.7.1-bin.zip
-NIFI_ZIP_FILE=nifi-2.7.1-bin.zip
-NIFI_DEFAULT_DIR=nifi-2.7.1
+NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/2.7.2/nifi-2.7.2-bin.zip
+NIFI_ZIP_FILE=nifi-2.7.2-bin.zip
+NIFI_DEFAULT_DIR=nifi-2.7.2
+
+NIFI_HADOOP_NAR=https://repo1.maven.org/maven2/org/apache/nifi/nifi-hadoop-nar/2.7.2/nifi-hadoop-nar-2.7.2.nar
+NIFI_HADOOP_LIBRARIES_NAR=https://repo1.maven.org/maven2/org/apache/nifi/nifi-hadoop-libraries-nar/2.7.2/nifi-hadoop-libraries-nar-2.7.2.nar
 
 # Aux functions
 # debug
@@ -29,9 +32,14 @@ getandextract(){
     exit 1
   fi
   
+  # Unpackaging NiFi into the final directory
   unzip /opt/$NIFI_ZIP_FILE -d /opt
   rm /opt/$NIFI_ZIP_FILE
   mv /opt/$NIFI_DEFAULT_DIR /opt/nifi
+  # Adding Hadoop libraries to re-enable the HDFS related processors
+  wget -P /opt/nifi/extensions $NIFI_HADOOP_NAR
+  wget -P /opt/nifi/extensions $NIFI_HADOOP_LIBRARIES_NAR 
+  
   chown -R osbdet:osbdet /opt/nifi
   debug "nifi.getandextract DEBUG [`date +"%Y-%m-%d %T"`] NiFi downloading and extracting process done"
 }
