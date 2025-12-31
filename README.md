@@ -5,7 +5,7 @@ The following are some of the Big Data frameworks included in OSBDET:
 
 - Hadoop 3
 - Spark 3
-- Kafka 3
+- Kafka 4
 - ...
 
 OSBDET's architecture encourages the extension of the toolkit by introducing new frameworks with very little effort.
@@ -59,7 +59,7 @@ root@osbdet:~/osbdet# ./osbdet_builder.sh modules
 These are the modules available in OSBDET v26r1:
   - superset: Superset installation, depends on: foundation
   - labbuilder: Lab builder installation, depends on: foundation,hadoop3
-  - spark3: Spark 3 installation, depends on: foundation
+  - spark: Spark 3 installation, depends on: foundation
   - grafana: Grafana installation, depends on: foundation
   - openmetadata: Open Metadata installation, depends on: foundation
   - truckssim: Truck fleet simulator, depends on: foundation
@@ -70,7 +70,7 @@ These are the modules available in OSBDET v26r1:
   - mariadb: MariaDB installation, depends on: foundation
   - foundation: Configurations and dependencies to satisfy the installation of other modules, depends on: no_dependencies
   - kestra: Kestra installation, depends on: foundation
-  - kafka3: Kafka 3 installation, depends on: foundation
+  - kafka4: Kafka 4 installation, depends on: foundation
   - minio: MinIO (object store) installation, depends on: foundation
   - mongodb8: MongoDB 8 installation, depends on: foundation
   - clickhouse: ClickHouse installation, depends on: foundation
@@ -91,7 +91,7 @@ root@osbdet:~/osbdet# ./osbdet_builder.sh status
 The folowing list shows the status of all available modules:
   - superset: Module is installed [OK]
   - labbuilder: Module is not installed [KO]
-  - spark3: Module is installed [OK]
+  - spark: Module is installed [OK]
   - grafana: Module is installed [OK]
   - openmetadata: Module is installed [OK]
   - truckssim: Module is installed [OK]
@@ -102,7 +102,7 @@ The folowing list shows the status of all available modules:
   - mariadb: Module is installed [OK]
   - foundation: Module is installed [OK]
   - kestra: Module is installed [OK]
-  - kafka3: Module is installed [OK]
+  - kafka4: Module is installed [OK]
   - minio: Module is installed [OK]
   - mongodb8: Module is installed [OK]
   - clickhouse: Module is installed [OK]
