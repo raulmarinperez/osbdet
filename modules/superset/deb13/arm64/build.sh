@@ -26,10 +26,10 @@ bienv_install(){
   # we'll rely on uv to create a 3.11 Python Virtual Environment
   # On arm64, python-geohash needs to be compile, therefore I have to install build-essential
   apt update
-  apt-get install -y build-essential
+  apt-get install -y build-essential libffi-dev pkg-config
   su - osbdet -c 'curl -LsSf https://astral.sh/uv/install.sh | sh'
   su - osbdet -c '/home/osbdet/.local/bin/uv venv /opt/superset/ --python 3.11'
-  su - osbdet -c 'VIRTUAL_ENV=/opt/superset /home/osbdet/.local/bin/uv pip install apache-superset==5.0.0 mysqlclient marshmallow==3.26.1'
+  su - osbdet -c 'VIRTUAL_ENV=/opt/superset /home/osbdet/.local/bin/uv pip install apache-superset psycopg2-binary rich cachetools'
   debug "superset.bienv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the BI environment installed"
 }
 remove_bienv(){

@@ -24,13 +24,13 @@ debug() {
 miscinstall(){
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software installation"
   apt update
-  apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
+  apt install -y apt-transport-https ca-certificates wget dirmngr gnupg sudo \
                  tmux python3-pip emacs unzip ca-certificates-java default-jdk
   debug "foundation.miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software installation done"
 }
 remove_miscinstall(){
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Starting miscellaneous software uninstallation"
-  apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common \
+  apt remove -y apt-transport-https ca-certificates wget dirmngr gnupg sudo \
                 tmux python3-pip emacs unzip ca-certificates-java default-jdk --purge
   apt autoremove -y
   debug "foundation.remove_miscinstall DEBUG [`date +"%Y-%m-%d %T"`] Miscellaneous software uninstallation done" 
@@ -162,19 +162,23 @@ module_install(){
   #   6. Install cloud providers CLIs
   #   7. Install the OpenTelemetry collector
   printf "  Installing module 'foundation' ... "
-  miscinstall >> $OSBDET_LOGFILE 2>&1
+#  miscinstall >> $OSBDET_LOGFILE 2>&1
   miscsetup >> $OSBDET_LOGFILE 2>&1
-  add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
-  install_jdk11_21 >> $OSBDET_LOGFILE 2>&1
-  install_docker >> $OSBDET_LOGFILE 2>&1
-  install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
-  install_otel_collector >> $OSBDET_LOGFILE 2>&1
-  mkdir -p /home/osbdet/.osbdet/ && touch /home/osbdet/.osbdet/foundation >> $OSBDET_LOGFILE 2>&1
+#  add_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
+#  install_jdk11_21 >> $OSBDET_LOGFILE 2>&1
+#  install_docker >> $OSBDET_LOGFILE 2>&1
+#  install_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
+#  install_otel_collector >> $OSBDET_LOGFILE 2>&1
+#  mkdir -p /home/osbdet/.osbdet/ && touch /home/osbdet/.osbdet/foundation >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "foundation.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
 
 module_status() {
+  # during review
+  echo "Module is not installed [KO]"
+  exit 1
+    
   if [ -f "/home/osbdet/.osbdet/foundation" ]
   then
     echo "Module is installed [OK]"

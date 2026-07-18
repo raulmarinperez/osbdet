@@ -5,9 +5,9 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-HADOOP_BINARY_URL=https://dlcdn.apache.org/hadoop/common/hadoop-3.4.2/hadoop-3.4.2.tar.gz
-HADOOP_TGZ_FILE=hadoop-3.4.2.tar.gz
-HADOOP_DEFAULT_DIR=hadoop-3.4.2
+HADOOP_BINARY_URL="https://dlcdn.apache.org/hadoop/common/hadoop-3.5.0/hadoop-3.5.0-aarch64.tar.gz"
+HADOOP_TGZ_FILE=hadoop-3.5.0.tar.gz
+HADOOP_DEFAULT_DIR=hadoop-3.5.0
 
 # Aux functions
 
@@ -57,14 +57,14 @@ setenvvars(){
   export YARN_RESOURCEMANAGER_USER=osbdet
   export YARN_NODEMANAGER_USER=osbdet
   export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
-  export JAVA_HOME=/usr/lib/jvm/temurin-11-jdk-arm64
+  export JAVA_HOME=/usr/lib/jvm/temurin-21-jdk-arm64/
   export PATH=$PATH:$JAVA_HOME/bin
   debug "hadoop3.setenvvars DEBUG [`date +"%Y-%m-%d %T"`] Environment variables already defined"
 }
 
 configfilessetup(){
   debug "hadoop3.configfilessetup DEBUG [`date +"%Y-%m-%d %T"`] Copying Hadoop 3 configuration files"
-  sed -i '/^# export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/temurin-11-jdk-arm64\nexport HADOOP_HOME=/opt/hadoop3\n:' \
+  sed -i '/^# export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/lib/jvm/temurin-21-jdk-arm64\nexport HADOOP_HOME=/opt/hadoop3\n:' \
          $HADOOP_HOME/etc/hadoop/hadoop-env.sh
   sed -i '/^# export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop:' $HADOOP_HOME/etc/hadoop/hadoop-env.sh
   cp $SCRIPT_HOME/core-site.xml.template $HADOOP_HOME/etc/hadoop/core-site.xml.template

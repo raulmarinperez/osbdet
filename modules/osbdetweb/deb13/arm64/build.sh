@@ -21,21 +21,22 @@ debug() {
 
 install_nodejs20(){
   debug "osbdetweb.addcontent DEBUG [`date +"%Y-%m-%d %T"`] Installing NodeJS 20"
-  # Installation instructions documented at https://github.com/nodesource/distributions#debinstall
+  # Installation instructions documented at https://nodesource.com/products/distributions
   # The "chromium" package will be needed if decktape (PDF printing) is needed (ex. slides)
-  curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
-  apt-get update
-  apt-get install -y nodejs chromium
+  curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+
+  apt update
+  apt install -y nodejs chromium
   debug "osbdetweb.addcontent DEBUG [`date +"%Y-%m-%d %T"`] NodeJS 20 installed"
 }
 remove_nodejs20(){
   debug "osbdetweb.addcontent DEBUG [`date +"%Y-%m-%d %T"`] Removing NodeJS 20"
-  apt remove -y nodejs chromium
-  apt autoremove -y 
-  rm /etc/apt/keyrings/nodesource.gpg
-  rm /etc/apt/sources.list.d/nodesource.list
-  apt-get update 
+  apt purge -y nodejs chromium
+  apt autoremove -y --purge
+  rm -f /etc/apt/sources.list.d/nodesource.list
+  rm -f /etc/apt/keyrings/nodesource.gpg
+  
+  apt update 
   debug "osbdetweb.addcontent DEBUG [`date +"%Y-%m-%d %T"`] NodeJS 20 removed"
 }
 

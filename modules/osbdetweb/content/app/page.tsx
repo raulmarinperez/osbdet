@@ -10,7 +10,7 @@ import HadoopBox from '@/app/modules/hadoop/hadoop-box'
 import SparkBox from '@/app/modules/spark/spark-box'
 import KafkaBox from '@/app/modules/kafka/kafka-box'
 import TruckFleetSimBox from '@/app/modules/truckfleetsim/truckfleetsim-box'
-import MariaDBBox from '@/app/modules/mariadb/mariadb-box'
+import PostgresBox from '@/app/modules/postgres/postgres-box'
 import SuperSetBox from '@/app/modules/superset/superset-box'
 import MongoDBBox from '@/app/modules/mongodb/mongodb-box'
 import MinIOBox from '@/app/modules/minio/minio-box'
@@ -59,7 +59,7 @@ export default function Page() {
           <h1 className="sm:text-3xl text-2xl font-medium title-font text-gray-900">
             OSBDET, <em>Open Source Big Data Educational Toolkit</em>, Home Page.</h1>
           <p className="sm mt-4 leading-relaxed text-base">
-          Welcome to the <strong><em>OSBDET v2026r1</em></strong> homepage, your guide to exploring the environment&apos;s contents 
+          Welcome to the <strong><em>OSBDET v2027r1</em></strong> homepage, your guide to exploring the environment&apos;s contents 
           and understanding how to use them effectively. Please note that this is an educational environment and is 
           <strong><em> not suitable for production use cases</em></strong>, as it is designed to run on a single node and 
           cannot scale to handle large data volumes. Use OSBDET to learn about the available frameworks or to validate concepts with 
@@ -83,7 +83,7 @@ export default function Page() {
           <SparkBox/>
           <KafkaBox/>
           <TruckFleetSimBox/>
-          <MariaDBBox/>
+          <PostgresBox/>
           <SuperSetBox/>
           <MongoDBBox/>
           <MinIOBox/>

@@ -22,7 +22,7 @@ debug() {
 installation(){
   debug "clickhouse.installation DEBUG [`date +"%Y-%m-%d %T"`] Adding ClickHouse OSS repo and install ClickHouse"
   # Procedure as it's documented at https://clickhouse.com/docs/install/debian_ubuntu
-  apt-get install -y apt-transport-https ca-certificates curl gnupg
+  apt install -y apt-transport-https ca-certificates curl gnupg
   # Download the ClickHouse GPG key and store it in the keyring
   curl -fsSL 'https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key' | gpg --dearmor -o /usr/share/keyrings/clickhouse-keyring.gpg
   # Get the system architecture
@@ -30,8 +30,8 @@ installation(){
   # Add the ClickHouse repository to apt sources
   echo "deb [signed-by=/usr/share/keyrings/clickhouse-keyring.gpg arch=${ARCH}] https://packages.clickhouse.com/deb stable main" | tee /etc/apt/sources.list.d/clickhouse.list
   # Update apt package lists
-  apt-get update
-  DEBIAN_FRONTEND=noninteractive apt-get install -y clickhouse-server clickhouse-client
+  apt update
+  DEBIAN_FRONTEND=noninteractive apt install -y clickhouse-server clickhouse-client
   # Disable service
   systemctl disable clickhouse-server
   debug "clickhouse.installation DEBUG [`date +"%Y-%m-%d %T"`] ClickHouse OSS repo and ClickHouse added and installed" 
@@ -42,7 +42,7 @@ remove_installation(){
   apt autoremove -y 
   apt-key del "`apt-key list | $OSBDET_HOME/shared/givemekey.awk -v pattern=ClickHouse`" 
   rm /usr/share/keyrings/clickhouse-keyring.gpg /etc/apt/sources.list.d/clickhouse.list
-  apt-get update 
+  apt update 
   debug "clickhouse.remove_installation DEBUG [`date +"%Y-%m-%d %T"`] ClickHouse OSS repo and ClickHouse removed"
 }
 

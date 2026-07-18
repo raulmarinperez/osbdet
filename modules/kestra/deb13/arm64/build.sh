@@ -5,9 +5,7 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-KESTRA_BINARY_URL=https://repo1.maven.org/maven2/io/kestra/kestra/1.1.11/kestra-1.1.11-exec.zip
-KESTRA_ZIP_FILE=kestra-1.1.11-exec.zip
-KESTRA_DEFAULT_BIN=kestra-1.1.11
+KESTRA_BINARY_URL=https://github.com/kestra-io/kestra/releases/download/v1.3.28/kestra-1.3.28
 
 # Aux functions
 
@@ -25,14 +23,11 @@ debug() {
 getandextract(){
   debug "kestra.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting Kestra"
   # Download and extract
-  wget $KESTRA_BINARY_URL -O /opt/$KESTRA_ZIP_FILE
   mkdir /opt/kestra
-  unzip /opt/$KESTRA_ZIP_FILE -d /opt/kestra
-  # Reorganization, setup and cleaning
-  mv /opt/kestra/$KESTRA_DEFAULT_BIN /opt/kestra/kestra
+  wget $KESTRA_BINARY_URL -O /opt/kestra/kestra
+  # Permissions setup
   chown -R osbdet:osbdet /opt/kestra
   chmod 755 /opt/kestra/kestra
-  rm /opt/$KESTRA_ZIP_FILE
   debug "kestra.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Kestra downloading and extracting process done"
 }
 remove(){

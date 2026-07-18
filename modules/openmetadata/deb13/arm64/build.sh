@@ -6,6 +6,7 @@
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
 DOCKER_COMPOSE_FILE_URL="https://github.com/open-metadata/OpenMetadata/releases/download/1.11.0-release/docker-compose-postgres.yml"
+DOCKER_COMPOSE_FILE_URL="https://github.com/open-metadata/OpenMetadata/releases/download/1.12.6-release/docker-compose-postgres.yml"
 DOCKER_COMPOSE_FILENAME="docker-compose-postgres.yml" 
 REPOSITORIES=(
     "docker.getcollate.io/openmetadata/ingestion"
@@ -32,6 +33,7 @@ folderanddockercompose(){
   # Procedure as it's documented at https://docs.open-metadata.org/latest/quick-start/local-docker-deployment
   mkdir -p /opt/openmetadata
   curl -sL -o /opt/openmetadata/$DOCKER_COMPOSE_FILENAME $DOCKER_COMPOSE_FILE_URL
+  
   chown -R osbdet:osbdet /opt/openmetadata
   debug "openmetadata.folderanddockercompose DEBUG [`date +"%Y-%m-%d %T"`] Folder created and Docker Compose file downloaded"
 }

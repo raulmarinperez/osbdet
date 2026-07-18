@@ -5,12 +5,12 @@
 # Variables
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
-NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/2.7.2/nifi-2.7.2-bin.zip
-NIFI_ZIP_FILE=nifi-2.7.2-bin.zip
-NIFI_DEFAULT_DIR=nifi-2.7.2
+NIFI_BINARY_URL=https://dlcdn.apache.org/nifi/2.10.0/nifi-2.10.0-bin.zip
+NIFI_ZIP_FILE=nifi-2.10.0-bin.zip
+NIFI_DEFAULT_DIR=nifi-2.10.0
 
-NIFI_HADOOP_NAR=https://repo1.maven.org/maven2/org/apache/nifi/nifi-hadoop-nar/2.7.2/nifi-hadoop-nar-2.7.2.nar
-NIFI_HADOOP_LIBRARIES_NAR=https://repo1.maven.org/maven2/org/apache/nifi/nifi-hadoop-libraries-nar/2.7.2/nifi-hadoop-libraries-nar-2.7.2.nar
+NIFI_HADOOP_NAR=https://repo1.maven.org/maven2/org/apache/nifi/nifi-hadoop-nar/2.10.0/nifi-hadoop-nar-2.10.0.nar
+NIFI_HADOOP_LIBRARIES_NAR=https://repo1.maven.org/maven2/org/apache/nifi/nifi-hadoop-libraries-nar/2.10.0/nifi-hadoop-libraries-nar-2.10.0.nar
 
 # Aux functions
 # debug

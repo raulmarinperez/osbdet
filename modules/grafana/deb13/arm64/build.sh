@@ -22,19 +22,22 @@ debug() {
 installation(){
   debug "grafana.installation DEBUG [`date +"%Y-%m-%d %T"`] Adding Grafana OSS repo and install Grafana"
   # Procedure as it's documented at https://grafana.com/docs/grafana/latest/installation/debian/
-  apt-get install -y apt-transport-https software-properties-common wget
+  apt install -y apt-transport-https software-properties-common wget
   mkdir -p /etc/apt/keyrings/
-  wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | tee /etc/apt/keyrings/grafana.gpg > /dev/null
-  echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | tee -a /etc/apt/sources.list.d/grafana.list
-  apt-get update 
-  apt-get install -y grafana
+  wget -O /etc/apt/keyrings/grafana.asc https://apt.grafana.com/gpg-full.key
+  chmod 644 /etc/apt/keyrings/grafana.asc  
+  echo "deb [signed-by=/etc/apt/keyrings/grafana.asc] https://apt.grafana.com stable main" | tee -a /etc/apt/sources.list.d/grafana.list  
+  apt update 
+  apt install -y grafana
   debug "grafana.installation DEBUG [`date +"%Y-%m-%d %T"`] Grafana OSS repo and Grafana added and installed" 
 }
 remove_installation(){
   debug "grafana.remove_installation DEBUG [`date +"%Y-%m-%d %T"`] Removing Grafana OSS repo and Grafana"
+  service grafana-server stop
+  rm -rf /etc/grafana /var/lib/grafana
   apt remove -y grafana --purge 
   apt autoremove -y 
-  apt-key del "`apt-key list | $OSBDET_HOME/shared/givemekey.awk -v pattern=Grafana`" 
+  rm /etc/apt/keyrings/grafana.asc  
   rm /etc/apt/sources.list.d/grafana.list
   apt-get update 
   debug "grafana.remove_installation DEBUG [`date +"%Y-%m-%d %T"`] Grafana OSS repo and Grafana removed"
@@ -43,7 +46,7 @@ remove_installation(){
 set_default_pass(){
   debug "grafana.set_default_pass DEBUG [`date +"%Y-%m-%d %T"`] Setting up default password to admin user"
   service grafana-server start
-  grafana-cli admin reset-admin-password 'osbdet123$'
+  grafana cli admin reset-admin-password 'osbdet123$'
   chown -R grafana:grafana /var/lib/grafana/
   service grafana-server stop
   debug "grafana.set_default_pass DEBUG [`date +"%Y-%m-%d %T"`] Default password setup"

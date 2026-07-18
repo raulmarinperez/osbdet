@@ -1,11 +1,11 @@
 {
   "name": "osbdetweb",
-  "version": "2026.1.0",
+  "version": "2027.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 2026",
+    "dev": "next dev -p 2027",
     "build": "next build",
-    "start": "next start -p 2026",
+    "start": "next start -p 2027",
     "lint": "next lint"
   },
   "dependencies": {

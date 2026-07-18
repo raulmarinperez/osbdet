@@ -285,15 +285,15 @@ stop_minio() {
   exit 1
 }
 
-# status_mariadb
+# status_postgres
 #   desc: Identify if the module is up and running
 #   params:
 #     none
 #   return (status code/stdout):
 #     0/up message - module is up and running
 #     1/down message - module is not running
-status_mariadb() {
-  mariadb -u osbdet --password='osbdet123$' -e "select 'am i alive?';"  > /dev/null 2>&1
+status_postgres() {
+  pg_isready -q
   if [ $? -eq 0 ]
   then
     echo "up"
@@ -303,40 +303,40 @@ status_mariadb() {
   echo "down"
   return 1
 }
-# start_mariadb
+# start_postgres
 #   desc: Start the specified module if it wasn't running already
 #   params:
 #     none
 #   return (status code/stdout):
 #     0/ok message - module started correctly
 #     1/ko message - module doesn't exists or it was already running
-start_mariadb() {
-  status=$(status_mariadb)
+start_postgres() {
+  status=$(status_postgres)
   if [ "$status" == "down" ]
   then
-    sudo service mariadb start > /dev/null 2>&1
+    sudo service postgresql start > /dev/null 2>&1
     return 0
   fi
 
-  echo "MariaDB is already running"
+  echo "PostgreSQL is already running"
   exit 1
 }
-# stop_mariadb
+# stop_postgres
 #   desc: Stop the specified module if it wasn't running already
 #   params:
 #     none
 #   return (status code/stdout):
 #     0/ok message - module started correctly
 #     1/ko message - module doesn't exists or it was already running
-stop_mariadb() {
-  status=$(status_mariadb)
+stop_postgres() {
+  status=$(status_postgres)
   if [ "$status" == "up" ]
   then
-    sudo service mariadb stop > /dev/null 2>&1
+    sudo service postgresql stop > /dev/null 2>&1
     return 0
   fi
 
-  echo "MariaDB is not running"
+  echo "PostgreSQL is not running"
   exit 1
 }
 
@@ -696,9 +696,9 @@ module_status() {
     elif [ "$1" == "minio" ]
     then
       status_minio
-    elif [ "$1" == "mariadb" ]
+    elif [ "$1" == "postgres" ]
     then
-      status_mariadb
+      status_postgres
     elif [ "$1" == "mongodb" ]
     then
       status_mongodb
@@ -745,9 +745,9 @@ start_module() {
     elif [ "$1" == "minio" ]
     then
       start_minio
-    elif [ "$1" == "mariadb" ]
+    elif [ "$1" == "postgres" ]
     then
-      start_mariadb
+      start_postgres
     elif [ "$1" == "mongodb" ]
     then
       start_mongodb
@@ -794,9 +794,9 @@ stop_module() {
     elif [ "$1" == "minio" ]
     then
       stop_minio
-    elif [ "$1" == "mariadb" ]
+    elif [ "$1" == "postgres" ]
     then
-      stop_mariadb
+      stop_postgres
     elif [ "$1" == "mongodb" ]
     then
       stop_mongodb
@@ -839,7 +839,7 @@ usage() {
   echo "  kafka4              Real-time storage and processing at scale"
   echo "  truckssim           Real-time data/events generator"
   echo "  minio               S3 compatible Object storage"
-  echo "  mariadb             Open Source Relational Database Management System"
+  echo "  postgres            Open Source Relational Database Management System"
   echo "  mongodb             Open Source NoSQL Database"
   echo "  kestra              Unified orchestration platform"
   echo "  superset            Open Source BI visualization tool"
