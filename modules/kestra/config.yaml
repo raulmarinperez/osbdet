@@ -1,0 +1,20 @@
+# Kestra Embedded Test Instance Configuration
+kestra:
+  # 1. Pre-created administrator credentials
+  server:
+    basic-auth:
+      # The username MUST be a valid email format string
+      username: "admin@ie.edu"
+      password: "MySecurePassword123"
+  # 1. Local File Storage Configuration
+  storage:
+    type: local
+
+  # 2. Security & Data Protection
+  encryption:
+    secret-key: "5wN7fZJmQ5QmWGYMcGL8d0NTzbzxv8Wzn0MkKl6KWOY="
+
+# 3. Optional Web Server Settings
+micronaut:
+  server:
+    port: 8080

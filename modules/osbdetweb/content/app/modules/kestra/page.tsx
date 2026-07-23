@@ -42,7 +42,7 @@ export default function Kestra() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center ">Kestra 1.1.11</span>
+                                    <span className="relative text-xl lg:text-3xl text-center ">Kestra 1.3.28</span>
                                     <img className="mt-5" src="/images/kestra_banner.png"/>
                                 </span>
                             </h2>
@@ -54,7 +54,7 @@ export default function Kestra() {
 	                    <p><strong className="text-lg">How to access: </strong></p>
                         <ul className="pb-4 ml-8 mt-2 list-disc">
                             <li>
-                                <em><strong>Kestra Web UI -</strong></em> accessible via <a href="http://localhost:28080" className="underline" target="_blank">http://localhost:28080</a>; no username nor password are needed.
+                                <em><strong>Kestra Web UI -</strong></em> accessible via <a href="http://localhost:28080" className="underline" target="_blank">http://localhost:28080</a>; log into Kestra as user <em><strong>admin@ie.edu</strong></em> with password <em><strong>MySecurePassword123</strong></em>.
                             </li>   
                         </ul>
 	                    <p className="pb-4"><strong className="text-lg">Description: </strong>Kestra is a Unified Orchestration Platform to Simplify Business-Critical Workflows and Govern them as Code and from the UI.</p>

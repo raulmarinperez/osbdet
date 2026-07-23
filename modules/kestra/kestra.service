@@ -5,7 +5,7 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/bin/sh /opt/kestra/kestra server local
+ExecStart=/bin/sh /opt/kestra/kestra server local -c /opt/kestra/config.yaml
 User=osbdet
 Group=osbdet
 RestartSec=5

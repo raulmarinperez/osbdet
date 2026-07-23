@@ -129,10 +129,6 @@ module_install(){
 }
 
 module_status() {
-  # While reviewing
-  echo "Module is not installed [KO]"
-  exit 1
-  
   # Does Jupyter venv, where PySpark will live, exist?
   if [ -f "/home/osbdet/.jupyter_venv/bin/python3" ]
   then

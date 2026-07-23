@@ -20,15 +20,17 @@ debug() {
   fi
 }
 
-getandextract(){
-  debug "kestra.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Downloading and extracting Kestra"
+getextractconfig(){
+  debug "kestra.getextractconfig DEBUG [`date +"%Y-%m-%d %T"`] Downloading, extracting and configuring Kestra"
   # Download and extract
   mkdir /opt/kestra
   wget $KESTRA_BINARY_URL -O /opt/kestra/kestra
+  # Copy the configuration file
+  cp $SCRIPT_HOME/config.yaml /opt/kestra
   # Permissions setup
   chown -R osbdet:osbdet /opt/kestra
   chmod 755 /opt/kestra/kestra
-  debug "kestra.getandextract DEBUG [`date +"%Y-%m-%d %T"`] Kestra downloading and extracting process done"
+  debug "kestra.getextractconfig DEBUG [`date +"%Y-%m-%d %T"`] Kestra downloading, extracting and configuring process done"
 }
 remove(){
   debug "kestra.remove DEBUG [`date +"%Y-%m-%d %T"`] Removing Kestra binaries"
@@ -55,10 +57,10 @@ remove_initscript() {
 module_install(){
   debug "kestra.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
-  #   1. Get Kestra and extract it
+  #   1. Get Kestra, extract it and configure it
   #   2. Systemd script installation
   printf "  Installing module 'kestra' ... "
-  getandextract >> $OSBDET_LOGFILE 2>&1
+  getextractconfig >> $OSBDET_LOGFILE 2>&1
   initscript >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "kestra.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE

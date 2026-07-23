@@ -2,7 +2,7 @@
 
 # Global variables definition
 #
-OSBDET_VER=26r1
+OSBDET_VER=27r1
 OSBDET_HOME=/home/osbdet
 NIFI_HOME=/opt/nifi
 
@@ -670,6 +670,61 @@ stop_openmetadata() {
   exit 1
 }
 
+# status_nessie
+#   desc: Identify if the module is up and running
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/up message - module is up and running
+#     1/down message - module is not running
+status_nessie() {
+  curl -sSf http://localhost:19120/  > /dev/null 2>&1
+  if [ $? -eq 0 ]
+  then
+    echo "up"
+    return 0
+  fi
+
+  echo "down"
+  return 1
+}
+# start_nessie
+#   desc: Start the specified module if it wasn't running already
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/ok message - module started correctly
+#     1/ko message - module doesn't exists or it was already running
+start_nessie() {
+  status=$(status_nessie)
+  if [ "$status" == "down" ]
+  then
+    sudo service nessie start > /dev/null 2>&1
+    return 0
+  fi
+
+  echo "Nessie is already running"
+  exit 1
+}
+# stop_nessie
+#   desc: Stop the specified module if it wasn't running already
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/ok message - module started correctly
+#     1/ko message - module doesn't exists or it was already running
+stop_nessie() {
+  status=$(status_nessie)
+  if [ "$status" == "up" ]
+  then
+    sudo service nessie stop > /dev/null 2>&1
+    return 0
+  fi
+
+  echo "Nessie is not running"
+  exit 1
+}
+
 # Main functions
 #
 
@@ -717,6 +772,9 @@ module_status() {
     elif [ "$1" == "openmetadata" ]
     then
       status_openmetadata
+    elif [ "$1" == "nessie" ]
+    then
+      status_nessie
     fi
 
     return 0
@@ -766,6 +824,9 @@ start_module() {
     elif [ "$1" == "openmetadata" ]
     then
       start_openmetadata
+    elif [ "$1" == "nessie" ]
+    then
+      start_nessie
     fi
 
     return 0
@@ -815,6 +876,9 @@ stop_module() {
     elif [ "$1" == "openmetadata" ]
     then
       stop_openmetadata
+    elif [ "$1" == "nessie" ]
+    then
+      stop_nessie
     fi
 
     return 0
@@ -846,6 +910,7 @@ usage() {
   echo "  grafana             Open Source operational visualization tool"
   echo "  clickhouse          Open Source Columnar Database"
   echo "  openmetadata        Open and unified metadata platform for data discovery, observability and governance"
+  echo "  nessie              Open-source, transactional data catalog for data lakes"
 }
 
 # eval_args

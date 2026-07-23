@@ -18,6 +18,7 @@ import KestraBox from '@/app/modules/kestra/kestra-box'
 import GrafanaBox from '@/app/modules/grafana/grafana-box'
 import ClickHouseBox from '@/app/modules/clickhouse/clickhouse-box'
 import OpenMetadataBox from '@/app/modules/openmetadata/openmetadata-box'
+import NessieBox from '@/app/modules/nessie/nessie-box'
 
 export default function Page() {
 
@@ -91,6 +92,7 @@ export default function Page() {
           <GrafanaBox/>
           <ClickHouseBox/>
           <OpenMetadataBox/>
+          <NessieBox/>
         </div>
       </div>
     </section>
