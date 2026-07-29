@@ -8,10 +8,10 @@ SCRIPT_HOME=""  # OS and Architecture agnostic
 
 SPARK_VERSION=4.2.0
 SPARK_JARS_DIR=/home/osbdet/.jupyter_venv/lib/python3.13/site-packages/pyspark/jars
-HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
-HADOOP_AWS_JAR_NAME=hadoop-aws-3.3.4.jar
-AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.780/aws-java-sdk-bundle-1.12.780.jar
-AWS_JAVA_SDK_JAR_NAME=aws-java-sdk-bundle-1.12.780.jar
+HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.5.0/hadoop-aws-3.5.0.jar
+HADOOP_AWS_JAR_NAME=hadoop-aws-3.5.0.jar
+AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.35.4/bundle-2.35.4.jar
+AWS_JAVA_SDK_JAR_NAME=bundle-2.35.4.jar
 NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/refs/tags/v0.40.5/install.sh
 NVM_DIR=/home/osbdet/.nvm
 
@@ -109,10 +109,11 @@ module_install(){
   #   3. Deploy jars to connect Spark with S3 compatible object storage (ex. MinIO)
   #   4. Update jupyter systemd script accordingly
   printf "  Installing module 'spark' ... "
-#  install_dependencies >> $OSBDET_LOGFILE 2>&1
-#  install_pyspark >> $OSBDET_LOGFILE 2>&1
+  install_dependencies >> $OSBDET_LOGFILE 2>&1
+  install_pyspark >> $OSBDET_LOGFILE 2>&1
 
-  #  deploy_jars >> $OSBDET_LOGFILE 2>&1
+  # Trying to add jars to simplify notebooks
+  deploy_jars >> $OSBDET_LOGFILE 2>&1
   #  no longer needed, dynamically loaded as: pyspark --packages org.apache.hadoop:hadoop-aws:3.5.0,software.amazon.awssdk:bundle:2.35.4
 
   #  configure at the Spark session level as:

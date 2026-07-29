@@ -19,6 +19,7 @@ import GrafanaBox from '@/app/modules/grafana/grafana-box'
 import ClickHouseBox from '@/app/modules/clickhouse/clickhouse-box'
 import OpenMetadataBox from '@/app/modules/openmetadata/openmetadata-box'
 import NessieBox from '@/app/modules/nessie/nessie-box'
+import LibreChatBox from '@/app/modules/librechat/librechat-box'
 
 export default function Page() {
 
@@ -93,6 +94,7 @@ export default function Page() {
           <ClickHouseBox/>
           <OpenMetadataBox/>
           <NessieBox/>
+          <LibreChatBox/>
         </div>
       </div>
     </section>

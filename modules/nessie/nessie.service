@@ -1,14 +1,13 @@
 # Contents of /lib/systemd/system/nessie.service
 [Unit]
-Description=Nessie Catalog Service
+Wants=postgresql.service
+PropagatesStopTo=postgresql.service
 After=network.target postgresql.service
-Requires=postgresql.service
 [Service]
 Type=simple
 Restart=always
 User=root
 ExecStart=docker run --rm --name nessie-catalog --network="host" -e QUARKUS_MANAGEMENT_PORT=9010 -e NESSIE_VERSION_STORE_TYPE=JDBC -e QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://localhost:5432/nessie_catalog -e QUARKUS_DATASOURCE_USERNAME=nessie -e QUARKUS_DATASOURCE_PASSWORD=osbdet123$ ghcr.io/projectnessie/nessie:0.108.2-java
 ExecStop=docker stop nessie-catalog
-ExecStop=systemctl stop postgresql.service
 [Install]
 WantedBy=multi-user.target

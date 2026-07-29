@@ -725,6 +725,63 @@ stop_nessie() {
   exit 1
 }
 
+# status_librechat
+#   desc: Identify if the module is up and running
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/up message - module is up and running
+#     1/down message - module is not running
+status_librechat() {
+  URL="http://localhost:3080/health"
+  STATUS=$(curl -o /dev/null -s -w "%{http_code}" $URL)
+  
+  if [ "$STATUS" -eq 200 ]
+  then
+    echo "up"
+    return 0
+  fi
+
+  echo "down"
+  return 1
+}
+# start_librechat
+#   desc: Start the specified module if it wasn't running already
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/ok message - module started correctly
+#     1/ko message - module doesn't exists or it was already running
+start_librechat() {
+  status=$(status_librechat)
+  if [ "$status" == "down" ]
+  then
+    sudo service librechat start > /dev/null 2>&1
+    return 0
+  fi
+
+  echo "LibreChat is already running"
+  exit 1
+}
+# stop_librechat
+#   desc: Stop the specified module if it wasn't running already
+#   params:
+#     none
+#   return (status code/stdout):
+#     0/ok message - module started correctly
+#     1/ko message - module doesn't exists or it was already running
+stop_librechat() {
+  status=$(status_librechat)
+  if [ "$status" == "up" ]
+  then
+    sudo service librechat stop > /dev/null 2>&1
+    return 0
+  fi
+
+  echo "LibreChat is not running"
+  exit 1
+}
+
 # Main functions
 #
 
@@ -775,6 +832,9 @@ module_status() {
     elif [ "$1" == "nessie" ]
     then
       status_nessie
+    elif [ "$1" == "librechat" ]
+    then
+      status_librechat
     fi
 
     return 0
@@ -827,6 +887,9 @@ start_module() {
     elif [ "$1" == "nessie" ]
     then
       start_nessie
+    elif [ "$1" == "librechat" ]
+    then
+      start_librechat
     fi
 
     return 0
@@ -879,6 +942,9 @@ stop_module() {
     elif [ "$1" == "nessie" ]
     then
       stop_nessie
+    elif [ "$1" == "librechat" ]
+    then
+      stop_librechat
     fi
 
     return 0
@@ -911,6 +977,7 @@ usage() {
   echo "  clickhouse          Open Source Columnar Database"
   echo "  openmetadata        Open and unified metadata platform for data discovery, observability and governance"
   echo "  nessie              Open-source, transactional data catalog for data lakes"
+  echo "  librechat           Open-source tool to have AI conversations in one unified interface"
 }
 
 # eval_args

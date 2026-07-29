@@ -1,0 +1,17 @@
+# Contents of /lib/systemd/system/librechat.service
+[Unit]
+Description=LibreChat service for OSBDET
+Wants=ollama.service
+PropagatesStopTo=ollama.service
+After=network.target ollama.service
+[Service]
+Type=simple
+Restart=always
+User=ollama
+Environment="PORT=3080"
+Environment="RAG_PORT=8000"
+WorkingDirectory=/opt/LibreChat
+ExecStart=docker compose up
+ExecStop=docker compose down
+[Install]
+WantedBy=multi-user.target
