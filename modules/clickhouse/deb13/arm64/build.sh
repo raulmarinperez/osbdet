@@ -46,14 +46,29 @@ remove_installation(){
   debug "clickhouse.remove_installation DEBUG [`date +"%Y-%m-%d %T"`] ClickHouse OSS repo and ClickHouse removed"
 }
 
+override_config(){
+  debug "clickhouse.override_config DEBUG [`date +"%Y-%m-%d %T"`] Copying files to override default configuration"
+  cp $SCRIPT_HOME/01-network.xml /etc/clickhouse-server/config.d
+  chown clickhouse:clickhouse /etc/clickhouse-server/config.d/*
+  chmod 400 /etc/clickhouse-server/config.d/*
+  debug "clickhouse.override_config DEBUG [`date +"%Y-%m-%d %T"`] Configuration files to override default configuration copied"
+}
+remove_overriden_config(){
+  debug "clickhouse.remove_overriden_config DEBUG [`date +"%Y-%m-%d %T"`] Removing files to override default configuration"
+  rm -f /etc/clickhouse-server/config.d/*
+  debug "clickhouse.remove_overriden_config DEBUG [`date +"%Y-%m-%d %T"`] Configuration files to override default configuration removed"  
+}
+
 # Primary functions
 #
 module_install(){
   debug "clickhouse.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
   #   1. Add ClickHouse OSS repo and install ClickHouse
+  #   2. Override default configuration
   printf "  Installing module 'clickhouse' ... "
   installation >> $OSBDET_LOGFILE 2>&1
+  override_config >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "clickhouse.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -72,8 +87,10 @@ module_status() {
 module_uninstall(){
   debug "clickhouse.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
-  #   1. Removing Grafana OSS repo and Grafana
+  #   1. Remove overriden configuration
+  #   2. Removing Grafana OSS repo and Grafana
   printf "  Uninstalling module 'clickhouse' ... "
+  remove_overriden_config >> $OSBDET_LOGFILE 2>&1
   remove_installation >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "clickhouse.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE

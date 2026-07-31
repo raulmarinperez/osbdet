@@ -114,16 +114,6 @@ module_install(){
 
   # Trying to add jars to simplify notebooks
   deploy_jars >> $OSBDET_LOGFILE 2>&1
-  #  no longer needed, dynamically loaded as: pyspark --packages org.apache.hadoop:hadoop-aws:3.5.0,software.amazon.awssdk:bundle:2.35.4
-
-  #  configure at the Spark session level as:
-  #spark = SparkSession.builder \
-  #  .appName("LocalSpark4S3") \
-  ##  .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.5.0,software.amazon.awssdk:bundle:2.35.4") \
-  #  .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
-  #  .config("spark.hadoop.fs.s3a.aws.credentials.provider", "software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider") \
-  #  .getOrCreate()
-  
   jupyterspark >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "spark.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE

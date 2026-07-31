@@ -54,6 +54,7 @@ librechat_setup() {
   debug "LibreChat.env_setup DEBUG [`date +"%Y-%m-%d %T"`] Create an out of the box environment file"
   cp $SCRIPT_HOME/env $LIBRECHAT_HOME/.env
   cp $SCRIPT_HOME/librechat.yaml $LIBRECHAT_HOME
+  cp $SCRIPT_HOME/docker-compose.yml $LIBRECHAT_HOME
   sed -i '/^    volumes:/a \      - type: bind\n        source: .\/librechat.yaml\n        target: \/app\/librechat.yaml' $LIBRECHAT_HOME/docker-compose.yml
 
   debug "LibreChat.env_setup DEBUG [`date +"%Y-%m-%d %T"`] Out of the box environment file created"
@@ -84,7 +85,7 @@ create_user() {
     echo "API is initializing... retrying in 3 seconds."
     sleep 3
   done  
-  docker compose exec -T api npm run create-user -- --email-verified=true admin@osbdet.edu osbdet osbdet osbdet123\$
+  docker compose exec -T api npm run create-user -- --email-verified=true admin@osbdet.org osbdet osbdet osbdet123\$
   cd $OLDPWD
   service librechat stop  
   debug "LibreChat.create_user DEBUG [`date +"%Y-%m-%d %T"`] LiberChat user created"
@@ -131,29 +132,29 @@ EOF
   debug "LibreChat.ollama_bound_to_all_interfaces DEBUG [`date +"%Y-%m-%d %T"`] Ollama service bound to all interfaces"
 }
 
-deploy_qwen() {
-  debug "LibreChat.deploy_qwen DEBUG [`date +"%Y-%m-%d %T"`] Deploying qwen2.5 coder on Ollama"
+deploy_models() {
+  debug "LibreChat.deploy_models DEBUG [`date +"%Y-%m-%d %T"`] Deploying some models on Ollama"
   service ollama start
   # Wait until Ollama responds to api ping requests
   until curl -s http://localhost:11434/api/tags > /dev/null; do
     echo "Waiting for Ollama service to start..."
     sleep 2
   done  
-  ollama pull qwen2.5-coder:7b
+  ollama pull qwen2.5:7b
   service ollama stop
-  debug "LibreChat.deploy_qwen DEBUG [`date +"%Y-%m-%d %T"`] Qwen2.5 coder deployed on Ollama"
+  debug "LibreChat.deploy_models DEBUG [`date +"%Y-%m-%d %T"`] Some models deployed on Ollama"
 }
-undeploy_qwen() {
-  debug "LibreChat.undeploy_qwen DEBUG [`date +"%Y-%m-%d %T"`] Undeploying qwen2.5 coder on Ollama"
+undeploy_models() {
+  debug "LibreChat.undeploy_models DEBUG [`date +"%Y-%m-%d %T"`] Undeploying some models from Ollama"
   service ollama start
   # Wait until Ollama responds to api ping requests
   until curl -s http://localhost:11434/api/tags > /dev/null; do
     echo "Waiting for Ollama service to start..."
     sleep 2
   done
-  ollama rm qwen2.5-coder:7b
+  ollama rm qwen2.5:7b
   service ollama stop
-  debug "LibreChat.undeploy_qwen DEBUG [`date +"%Y-%m-%d %T"`] Qwen2.5 coder undeployed from Ollama"
+  debug "LibreChat.undeploy_models DEBUG [`date +"%Y-%m-%d %T"`] Models undeployed from Ollama"
 }
 
 # Primary functions
@@ -163,7 +164,7 @@ module_install(){
   # The installation of this module consists on:
   #   1. Install Ollama service
   #   2. Bound Ollama service to all interfaces
-  #   3. Deploy qwen on Ollama
+  #   3. Deploy models on Ollama
   #   4. Clone the librechat repo to /opt
   #   5. Pull images to speed up first execution
   #   6. Create the LibreChat configuration
@@ -172,7 +173,7 @@ module_install(){
   printf "  Installing module 'LibreChat' ... "
   install_ollama >> $OSBDET_LOGFILE 2>&1
   ollama_bound_to_all_interfaces >> $OSBDET_LOGFILE 2>&1
-  deploy_qwen >> $OSBDET_LOGFILE 2>&1
+  deploy_models >> $OSBDET_LOGFILE 2>&1
   repo_clone >> $OSBDET_LOGFILE 2>&1
   docker_images_pulling >> $OSBDET_LOGFILE 2>&1
   librechat_setup >> $OSBDET_LOGFILE 2>&1
@@ -204,13 +205,13 @@ module_uninstall(){
   #   1. Remove Librechat service
   #   2. Remove Docker images
   #   3. Remove the repo locally
-  #   4. Undeploy Qwen model
+  #   4. Undeploy models
   #   5. Uninstall Ollama
   printf "  Uninstalling module 'LibreChat' ... "
   remove_serviceinstall >> $OSBDET_LOGFILE 2>&1
   remove_docker_images >> $OSBDET_LOGFILE 2>&1
   remove_repo >> $OSBDET_LOGFILE 2>&1
-  undeploy_qwen >> $OSBDET_LOGFILE 2>&1
+  undeploy_models >> $OSBDET_LOGFILE 2>&1
   uninstall_ollama >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "LibreChat.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE

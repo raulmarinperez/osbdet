@@ -10,10 +10,10 @@ cache: true
 # Custom interface configuration
 interface:
   customWelcome: 'Welcome to LibreChat! Enjoy your experience.'
-  # Enable/disable file search as a chatarea selection (default: true)
-  # Note: This setting does not disable the Agents File Search Capability.
-  # To disable the Agents Capability, see the Agents Endpoint configuration instead.
-  fileSearch: true
+  # Functionality available
+  runCode: false
+  webSearch: false
+  fileSearch: false
   # Privacy policy settings
   privacyPolicy:
     externalUrl: 'https://librechat.ai/privacy-policy'
@@ -70,20 +70,22 @@ interface:
     create: true
     share: false
     public: false
-  bookmarks: true
-  multiConvo: true
-  agents:
-    use: true
-    create: true
+  bookmarks: false
+  multiConvo: false
+  memories: false
+  agents: 
+    use: false
+    create: false
     share: false
     public: false
   peoplePicker:
-    users: true
-    groups: true
-    roles: true
-  marketplace:
+    users: false
+    groups: false
+    roles: false
+  marketplace: 
     use: false
-  fileCitations: true
+  fileCitations: false
+  defaultPinnedTools: []
   # Tools pinned to the prompt bar by default for all users.
   # Only seeds the initial state — once a user pins/unpins a tool, their choice is kept.
   # Valid tool keys: artifacts, execute_code, web_search, file_search, skills.
@@ -114,6 +116,9 @@ interface:
   # - create: Allow users to create and manage new MCP servers
   # - share: Allow users to share MCP servers with other users
   # - public: Allow users to share MCP servers publicly (with everyone)
+  mcpServers:
+    use: true
+    share: false
 
   # Creation / edit MCP server config Dialog config example
   # trustCheckbox:
@@ -195,6 +200,16 @@ interface:
 #       - -y
 #       - "mcp-obsidian"
 #       - /path/to/obsidian/vault
+mcpServers:
+  mcp-clickhouse:
+    command: "npx"
+    args:
+      - "-y"
+      - "@arvoretech/clickhouse-mcp"
+    env:
+      CLICKHOUSE_URL: "http://host.docker.internal:8123"
+      CLICKHOUSE_USER: "default"
+      CLICKHOUSE_PASSWORD: ""
 
 # Definition of custom endpoints
 endpoints:
@@ -332,22 +347,33 @@ endpoints:
   #     #   claude-3.5-haiku:
   #     #     deploymentName: claude-3-5-haiku@20241022  # Override for this model
 
+
   custom:
-    - name: "Ollama"
-      apiKey: "qwen2.5"          # Can be any string; Ollama doesn't require a real key
+    - name: "OllamaLocal"
       baseURL: "http://host.docker.internal:11434/v1"
+      apiKey: "ollama"
       models:
-        default: ["qwen2.5-coder:7b"]
-        fetch: true             # Automatically fetches available models from Ollama
+        default: ["qwen2.5:7b"]
+        fetch: true
+      capabilities: ["tools"]
       titleConvo: true
-      titleModel: "current_model"
-      summarize: false
-      summaryModel: "qwen2.5-coder:7b"
-      forcePrompt: false
-      modelDisplayLabel: "Ollama"
+      # THE FIX FOR THE TOOLS ICON DROPDOWN:
+      # Explicitly disable older plugin/action wrappers to clean up the UI list
+      plugins:
+        sharing: false
+        custom: []
+      actions: false
+      artifacts: false
+  
     # Anthropic-compatible Example (native `/v3/messages` API)
     # Set `provider: anthropic` to use the native Anthropic client instead of the
     # default OpenAI-compatible one — for Anthropic itself or Anthropic-compatible
     # gateways (e.g. AI gateways, OpenCode Zen). The `baseURL` must be the API root
     # the Anthropic SDK appends `/v1/messages` to. List models explicitly: model
     # auto-fetch uses the OpenAI `/models` convention and is not used for this provider.
+
+# THIS ENTIRELY REMOVES THE PAPERCLIP ICON FROM THE GUI
+fileConfig:
+  endpoints:
+    custom:
+      disabled: true
