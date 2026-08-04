@@ -7,7 +7,7 @@ export default function PostgresBox() {
       <div className="flex flex-col relative">
         {/* Box image */}
         <img alt="gallery" className="absolute inset-0 w-full object-cover object-center drop-shadow-md" 
-             src="/images/mariadb_box_bg.png"/>
+             src="/images/postgres_box_bg.png"/>
         {/* row containing switch and links - implemented as a one column grid */}
         <div className="grid grid-cols-3 gap-2 relative w-full z-10">
           <div className="col-span-2">

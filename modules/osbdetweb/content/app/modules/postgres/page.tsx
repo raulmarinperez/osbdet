@@ -42,20 +42,20 @@ export default function Postgres() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center "> MariaDB 11.8.3</span>
-                                    <img className="mt-5" src="/images/mariadb_banner.png"/>
+                                    <span className="relative text-xl lg:text-3xl text-center "> PostgreSQL 17</span>
+                                    <img className="mt-5" src="/images/postgres_banner.png"/>
                                 </span>
                             </h2>
                         </div>
                         <p className="pt-4 pb-4"><strong className="text-lg">How to manually start it up: </strong>Type the <code className="bg-slate-300 p-1">sudo service postgresql start</code> command in a Jupyter Terminal window:</p>
-                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/mariadb_start.png"/>
+                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/postgres_start.png"/>
                         <p className="pb-4"><strong className="text-lg">How to manually shut it down: </strong>Type the <code className="bg-slate-300 p-1">sudo service postgresql stop</code> command in a Jupyter Terminal window:</p>
-                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/mariadb_stop.png"/>
+                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/postgres_stop.png"/>
                         <p><strong className="text-lg">How to access: </strong></p>
                         <ul className="ml-8 mt-2 list-disc">
                             <li><em><strong>PostgreSQL CLI - </strong></em>PostgreSQL&apos;s Command Line Interface allows you to interact with your databases; type the <code className="bg-slate-300 p-1">psql -h localhost -U osbdet -d your_database</code> command in a Jupter Terminal windows:
                                 <div className="pt-4 pb-4">
-                                    <img className="w-[600px] drop-shadow-md" src="/images/mariadb_cli.png"/>
+                                    <img className="w-[600px] drop-shadow-md" src="/images/postgres_cli.png"/>
                                     <em className="text-sm">* Type <strong>osbdet123$</strong> when prompted for the password; bear in mind no text will show up while typing the password.</em>
                                 </div>
                             </li>

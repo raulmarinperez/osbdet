@@ -25,7 +25,7 @@ export default function Nessie() {
             <div className="container px-5 py-5 mx-auto">
                 <div className="grid grid-cols-2 gap-1">
                     <div className="col-start-1 col-span-1">
-                        <CurrentPath current_path="OpenMetadata"/>
+                        <CurrentPath current_path="Nessie Catalog"/>
                     </div>
                     <div className="col-start-2 col-span-1">
                         <div className="flex flex-row-reverse mr-5">
@@ -42,8 +42,8 @@ export default function Nessie() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center ">OpenMetadata 1.11.0</span>
-                                    <img className="mt-5" src="/images/openmetadata_banner.png"/>
+                                    <span className="relative text-xl lg:text-3xl text-center ">Nessie Catalog 0.108.2</span>
+                                    <img className="mt-5" src="/images/nessie_banner.png"/>
                                 </span>
                             </h2>
                         </div>
@@ -51,17 +51,17 @@ export default function Nessie() {
                             <strong className="text-lg">How to manually start it up: </strong>Type the <code className="bg-slate-300 p-1">sudo service nessie start</code> command in a 
                             Jupyter Terminal window:
                         </p>
-                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/openmetadata_start.png"/>
+                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/nessie_start.png"/>
                         <p className="pb-4">
                             <strong className="text-lg">How to manually shut it down: </strong>Type the <code className="bg-slate-300 p-1">sudo service nessie stop</code> command in a 
                             Jupyter Terminal window:
                         </p>
-                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/openmetadata_stop.png"/>
+                        <img className="w-[600px] pb-4 drop-shadow-md" src="/images/nessie_stop.png"/>
                         <p className="pb-4"><strong className="text-lg">How to access: </strong></p>
                         <ul className="ml-8 mt-2 list-disc">
                             <li>
                                 <em><strong>OpenMetadata Web UI -</strong></em> accessible via <a href="http://localhost:28585" className="underline" target="_blank">http://localhost:28585</a>; log into OpenMetadata as user <em><strong>admin@open-metadata.org</strong></em> with password <em><strong>admin</strong></em>.                                    
-                                <img className="w-[600px] drop-shadow-md pt-4 pb-4" src="/images/openmetadata_login.png"/>
+                                <img className="w-[600px] drop-shadow-md pt-4 pb-4" src="/images/nessie_login.png"/>
                             </li>   
                         </ul>	
                         <p className="pb-4"><strong className="text-lg">Description: </strong>OpenMetadata is designed to support both technical and non-technical data practitioners across various use cases, 
