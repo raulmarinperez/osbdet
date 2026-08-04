@@ -6,13 +6,13 @@
 SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
 
-SPARK_VERSION=3.5.7
+SPARK_VERSION=4.2.0
 SPARK_JARS_DIR=/home/osbdet/.jupyter_venv/lib/python3.13/site-packages/pyspark/jars
-HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
-HADOOP_AWS_JAR_NAME=hadoop-aws-3.3.4.jar
-AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.780/aws-java-sdk-bundle-1.12.780.jar
-AWS_JAVA_SDK_JAR_NAME=aws-java-sdk-bundle-1.12.780.jar
-NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/refs/tags/v0.40.3/install.sh
+HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.5.0/hadoop-aws-3.5.0.jar
+HADOOP_AWS_JAR_NAME=hadoop-aws-3.5.0.jar
+AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.35.4/bundle-2.35.4.jar
+AWS_JAVA_SDK_JAR_NAME=bundle-2.35.4.jar
+NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/refs/tags/v0.40.5/install.sh
 NVM_DIR=/home/osbdet/.nvm
 
 # Aux functions
@@ -46,7 +46,7 @@ remove_dependencies(){
 install_pyspark(){
   debug "spark.install_pyspark DEBUG [`date +"%Y-%m-%d %T"`] Installing pyspark, jupyterlab-sql-editor and others"
 
-  su osbdet -c "export TMPDIR=/var/tmp;/home/osbdet/.jupyter_venv/bin/python3 -m pip install bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark==$SPARK_VERSION"
+  su osbdet -c "export TMPDIR=/var/tmp;/home/osbdet/.jupyter_venv/bin/python3 -m pip install bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark==$SPARK_VERSION graphframes-py"
   # the following file makes the sparksql magic available in Jupyter
   su osbdet -c "mkdir -p /home/osbdet/.ipython/profile_default/"
   su osbdet -c "cp -f $SCRIPT_HOME/ipython_config.py /home/osbdet/.ipython/profile_default/ipython_config.py"
@@ -56,7 +56,7 @@ install_pyspark(){
 remove_pyspark(){
   debug "spark.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] Removing pyspark, jupyterlab-sql-editor and others"
 
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark graphframes-py"
 
   debug "spark.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] pyspark, jupyterlab-sql-editor and others removed"
 }
@@ -76,7 +76,6 @@ jupyterspark(){
   then
      service jupyter stop
      sed -i '/User=osbdet/a Environment="NVM_DIR=/home/osbdet/.nvm"' /lib/systemd/system/jupyter.service 
-     sed -i '/User=osbdet/a Environment="AWS_JAVA_V1_DISABLE_DEPRECATION_ANNOUNCEMENT=true"' /lib/systemd/system/jupyter.service 
      systemctl daemon-reload
      service jupyter start
      debug "spark.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script updated"
@@ -91,7 +90,6 @@ remove_jupyterspark(){
   then
      service jupyter stop
      sed -i '/Environment="NVM_DIR=\/home\/osbdet\/.nvm"/d' /lib/systemd/system/jupyter.service
-     sed -i '/Environment="AWS_JAVA_V1_DISABLE_DEPRECATION_ANNOUNCEMENT=true"/d' /lib/systemd/system/jupyter.service 
      systemctl daemon-reload
      service jupyter start
      debug "spark.remove_jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] Jupyter systemd script updated"

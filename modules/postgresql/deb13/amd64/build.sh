@@ -20,53 +20,50 @@ debug() {
 }
 
 install(){
-  debug "mariadb.install DEBUG [`date +"%Y-%m-%d %T"`] Install MariaDB"
-  apt-get update
-  apt-get install -y mariadb-server libmariadbd-dev libmariadb-java build-essential python3-dev
+  debug "postgresql.install DEBUG [`date +"%Y-%m-%d %T"`] Install PostgreSQL"
+  apt update
+  apt install -y postgresql libpq-dev libpostgresql-jdbc-java
   su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install --upgrade pip setuptools wheel"
   su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install pkgconfig"
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install mariadb"
-  debug "mariadb.install DEBUG [`date +"%Y-%m-%d %T"`] MariaDB installed"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install psycopg2"
+  debug "postgresql.install DEBUG [`date +"%Y-%m-%d %T"`] PostgreSQL installed"
 }
 remove_install(){
-  debug "mariadb.remove_install DEBUG [`date +"%Y-%m-%d %T"`] Removing MariaDB"
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y mariadb"
-  apt remove -y mariadb-server libmariadbclient-dev --purge
-  rm -rf /var/lib/mysql /var/log/mysql
-  rm /etc/mysql/mariadb.conf.d/50-sqlmode.cnf
+  debug "postgresql.remove_install DEBUG [`date +"%Y-%m-%d %T"`] Removing PostgreSQL"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y psycopg2"
+  apt remove -y postgresql libpq-dev libpostgresql-jdbc-java --purge
   apt autoremove -y
   apt clean
+  rm -rf /var/lib/postgresql /var/log/postgresql /etc/postgresql  
   debug "mariadb.remove_install DEBUG [`date +"%Y-%m-%d %T"`] MariaDB removed"
 }
 
 initialsetup(){
-  debug "mariadb.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of MariaDB" 
-  systemctl disable mariadb
-  systemctl disable mysql
-  cp $SCRIPT_HOME/50-sqlmode.cnf /etc/mysql/mariadb.conf.d
-  service mariadb start
-  mariadb < $SCRIPT_HOME/init.sql
-  service mariadb stop
-  debug "mariadb.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of MariaDB done"
+  debug "postgresql.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of PostgreSQL"
+  systemctl disable postgresql
+  service postgresql start
+  su postgres -c "psql < $SCRIPT_HOME/init.sql"
+  service postgresql stop
+  debug "postgresql.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of PostgreSQL done"
 }
 
 # Primary functions
 #
 module_install(){
-  debug "mariadb.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
+  debug "postgresql.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
-  #   1. Install the mariadb-server package
+  #   1. Install the PostgreSQL package
   #   2. Initial setup
-  printf "  Installing module 'mariadb' ... "
+  printf "  Installing module 'postgresql' ... "
   install >> $OSBDET_LOGFILE 2>&1
   initialsetup >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
-  debug "mariadb.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
+  debug "postgresql.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 
 }
 
 module_status() {
-  if [ -f "/usr/bin/mariadb" ]
+  if [ -f "/usr/bin/psql" ]
   then
     echo "Module is installed [OK]"
     exit 0
@@ -77,17 +74,17 @@ module_status() {
 }
 
 module_uninstall(){
-  debug "mariadb.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
+  debug "postgresql.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
-  #   1. Removing MariaDB
-  printf "  Uninstalling module 'mariadb' ... "
+  #   1. Removing PostgreSQL
+  printf "  Uninstalling module 'postgresql' ... "
   remove_install >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
-  debug "mariadb.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
+  debug "postgresql.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE
 }
 
 usage() {
-  echo Starting \'mariadb\' module
+  echo Starting \'postgresql\' module
   echo Usage: script.sh [OPTION]
   echo 
   echo Available options for this module:
@@ -102,7 +99,7 @@ main(){
     export OSBDET_LOGFILE=/dev/null
   fi
   # 2. Main function
-  debug "mariadb DEBUG [`date +"%Y-%m-%d %T"`] Starting activity with the mariadb module" >> $OSBDET_LOGFILE
+  debug "postgresql DEBUG [`date +"%Y-%m-%d %T"`] Starting activity with the postgresql module" >> $OSBDET_LOGFILE
   if [ $# -eq 1 ]
   then
     if [ "$1" == "install" ]
@@ -122,7 +119,7 @@ main(){
     usage
     exit -1
   fi
-  debug "mariadb DEBUG [`date +"%Y-%m-%d %T"`] Activity with the mariadb module is done" >> $OSBDET_LOGFILE
+  debug "postgresql DEBUG [`date +"%Y-%m-%d %T"`] Activity with the postgresql module is done" >> $OSBDET_LOGFILE
 }
 
 if ! [ -z "$*" ]

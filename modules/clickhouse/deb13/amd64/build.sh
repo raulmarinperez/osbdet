@@ -22,7 +22,7 @@ debug() {
 installation(){
   debug "clickhouse.installation DEBUG [`date +"%Y-%m-%d %T"`] Adding ClickHouse OSS repo and install ClickHouse"
   # Procedure as it's documented at https://clickhouse.com/docs/install/debian_ubuntu
-  apt-get install -y apt-transport-https ca-certificates curl gnupg
+  apt install -y apt-transport-https ca-certificates curl gnupg
   # Download the ClickHouse GPG key and store it in the keyring
   curl -fsSL 'https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key' | gpg --dearmor -o /usr/share/keyrings/clickhouse-keyring.gpg
   # Get the system architecture
@@ -30,8 +30,8 @@ installation(){
   # Add the ClickHouse repository to apt sources
   echo "deb [signed-by=/usr/share/keyrings/clickhouse-keyring.gpg arch=${ARCH}] https://packages.clickhouse.com/deb stable main" | tee /etc/apt/sources.list.d/clickhouse.list
   # Update apt package lists
-  apt-get update
-  DEBIAN_FRONTEND=noninteractive apt-get install -y clickhouse-server clickhouse-client
+  apt update
+  DEBIAN_FRONTEND=noninteractive apt install -y clickhouse-server clickhouse-client
   # Disable service
   systemctl disable clickhouse-server
   debug "clickhouse.installation DEBUG [`date +"%Y-%m-%d %T"`] ClickHouse OSS repo and ClickHouse added and installed" 
@@ -42,8 +42,21 @@ remove_installation(){
   apt autoremove -y 
   apt-key del "`apt-key list | $OSBDET_HOME/shared/givemekey.awk -v pattern=ClickHouse`" 
   rm /usr/share/keyrings/clickhouse-keyring.gpg /etc/apt/sources.list.d/clickhouse.list
-  apt-get update 
+  apt update 
   debug "clickhouse.remove_installation DEBUG [`date +"%Y-%m-%d %T"`] ClickHouse OSS repo and ClickHouse removed"
+}
+
+override_config(){
+  debug "clickhouse.override_config DEBUG [`date +"%Y-%m-%d %T"`] Copying files to override default configuration"
+  cp $SCRIPT_HOME/01-network.xml /etc/clickhouse-server/config.d
+  chown clickhouse:clickhouse /etc/clickhouse-server/config.d/*
+  chmod 400 /etc/clickhouse-server/config.d/*
+  debug "clickhouse.override_config DEBUG [`date +"%Y-%m-%d %T"`] Configuration files to override default configuration copied"
+}
+remove_overriden_config(){
+  debug "clickhouse.remove_overriden_config DEBUG [`date +"%Y-%m-%d %T"`] Removing files to override default configuration"
+  rm -f /etc/clickhouse-server/config.d/*
+  debug "clickhouse.remove_overriden_config DEBUG [`date +"%Y-%m-%d %T"`] Configuration files to override default configuration removed"  
 }
 
 # Primary functions
@@ -52,8 +65,9 @@ module_install(){
   debug "clickhouse.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
   #   1. Add ClickHouse OSS repo and install ClickHouse
-  printf "  Installing module 'clickhouse' ... "
+  #   2. Override default configuration  printf "  Installing module 'clickhouse' ... "
   installation >> $OSBDET_LOGFILE 2>&1
+  override_config >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "clickhouse.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
 }
@@ -73,7 +87,9 @@ module_uninstall(){
   debug "clickhouse.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Starting module uninstallation" >> $OSBDET_LOGFILE
   # The uninstallation of this module consists on:
   #   1. Removing Grafana OSS repo and Grafana
+  #   2. Removing Grafana OSS repo and Grafana  
   printf "  Uninstalling module 'clickhouse' ... "
+  remove_overriden_config >> $OSBDET_LOGFILE 2>&1
   remove_installation >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "clickhouse.module_uninstall DEBUG [`date +"%Y-%m-%d %T"`] Module uninstallation done" >> $OSBDET_LOGFILE

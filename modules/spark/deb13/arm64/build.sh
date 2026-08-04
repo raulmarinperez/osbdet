@@ -56,7 +56,7 @@ install_pyspark(){
 remove_pyspark(){
   debug "spark.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] Removing pyspark, jupyterlab-sql-editor and others"
 
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y bokeh jupyterlab-lsp jupyterlab-sql-editor pyspark graphframes-py"
 
   debug "spark.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] pyspark, jupyterlab-sql-editor and others removed"
 }
@@ -111,8 +111,6 @@ module_install(){
   printf "  Installing module 'spark' ... "
   install_dependencies >> $OSBDET_LOGFILE 2>&1
   install_pyspark >> $OSBDET_LOGFILE 2>&1
-
-  # Trying to add jars to simplify notebooks
   deploy_jars >> $OSBDET_LOGFILE 2>&1
   jupyterspark >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"

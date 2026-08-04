@@ -21,16 +21,16 @@ debug() {
 
 dsenv_install(){
   debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Installing all the software for the data science environment"
-  apt-get install -y pandoc texlive-xetex texlive-fonts-recommended python3-venv
+  apt install -y pandoc texlive-xetex texlive-fonts-recommended python3-venv
   su osbdet -c "mkdir /home/osbdet/.jupyter_venv"
   su osbdet -c "python3 -m venv /home/osbdet/.jupyter_venv"
   su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install --upgrade pip"
-  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install jupyter numpy pandas seaborn statsmodels streamlit"
+  su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip install jupyter numpy 'pandas>=2.2.0,<3.0.0' 'pyarrow>=18.0.0' seaborn statsmodels streamlit scikit-learn"
   debug "jupyter.dsenv_install DEBUG [`date +"%Y-%m-%d %T"`] Software for the data science environment installed"
 }
 remove_dsenv(){
   debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Removing data science environment software"
-  apt-get remove -y pandoc texlive-xetex texlive-fonts-recommended python3-venv --purge
+  apt remove -y pandoc texlive-xetex texlive-fonts-recommended python3-venv --purge
   apt autoremove -y
   rm -rf /home/osbdet/.jupyter_venv
   debug "jupyter.remove_dsenv DEBUG [`date +"%Y-%m-%d %T"`] Data science environment software removed"

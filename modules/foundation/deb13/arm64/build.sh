@@ -79,20 +79,6 @@ remove_adoptiumopenjdkrepo(){
   debug "foundation.remove_adoptiumopen_jdkrepo DEBUG [`date +"%Y-%m-%d %T"`] AdoptiumOpenJDK repo removed"
 }
 
-#install_jdk11_21(){
-#  debug "foundation.install_jdk11_21 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 11 and 21"
-#  # JDK 11 needed by Hadoop, JDK 21 needed by NiFi
-#  apt install -y temurin-11-jdk temurin-21-jdk
-#  # Removes platform dependency while using JDK 21 CACERTS (NiFi's Binance Lab)
-#  sudo ln -s /usr/lib/jvm/temurin-21-jdk-arm64/lib/security/cacerts /opt/jdk-21-cacerts
-#  debug "foundation.install_jdk11_21 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 and 21 installation done"
-#}
-#remove_jdk11_21(){
-#  debug "foundation.remove_jdk11_21 DEBUG [`date +"%Y-%m-%d %T"`] Removing JDK 11 and 21"
-#  rm /opt/jdk-21-cacerts
-#  apt remove -y temurin-11-jdk temurin-21-jdk
-#  debug "foundation.remove_jdk11_21 DEBUG [`date +"%Y-%m-%d %T"`] JDK 11 and 21 removed"
-#}
 install_jdk21(){
   debug "foundation.install_jdk21 DEBUG [`date +"%Y-%m-%d %T"`] Installing JDK 21"
   # JDK 21 needed by Hadoop 3.5 and NiFi
@@ -183,7 +169,7 @@ module_install(){
   #   1. Installation miscellaneous software
   #   2. Miscellaneous setup
   #   3. Adding AdoptiumOpenJDK repo
-  #   4. Installing JDK 11 and 21
+  #   4. Installing JDK 21
   #   5. Docker installation
   #   6. Install cloud providers CLIs
   #   7. Install the OpenTelemetry collector
@@ -217,7 +203,7 @@ module_uninstall(){
   #   1. Remove the OpenTelemetry collector
   #   2. Remove cloud providers CLIs
   #   3. Remove Docker
-  #   4. Uninstall JDK 11 and 21
+  #   4. Uninstall JDK 21
   #   5. Remove AdoptiumOpenJDK repo
   #   6. Miscellaneous setup
   #   7. Uninstallation miscellaneous software
@@ -226,7 +212,7 @@ module_uninstall(){
   remove_otel_collector >> $OSBDET_LOGFILE 2>&1
   remove_cloudproviders_clis >> $OSBDET_LOGFILE 2>&1
   remove_docker >> $OSBDET_LOGFILE 2>&1
-  remove_jdk11_21 >> $OSBDET_LOGFILE 2>&1
+  remove_jdk21 >> $OSBDET_LOGFILE 2>&1
   remove_adoptiumopenjdkrepo >> $OSBDET_LOGFILE 2>&1
   remove_miscsetup >> $OSBDET_LOGFILE 2>&1
   remove_miscinstall >> $OSBDET_LOGFILE 2>&1

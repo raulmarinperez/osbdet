@@ -39,7 +39,7 @@ remove_installation(){
   apt autoremove -y 
   rm /etc/apt/keyrings/grafana.asc  
   rm /etc/apt/sources.list.d/grafana.list
-  apt-get update 
+  apt update 
   debug "grafana.remove_installation DEBUG [`date +"%Y-%m-%d %T"`] Grafana OSS repo and Grafana removed"
 }
 

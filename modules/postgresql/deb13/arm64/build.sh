@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 # Imports
@@ -42,7 +43,7 @@ initialsetup(){
   debug "postgresql.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of PostgreSQL"
   systemctl disable postgresql
   service postgresql start
-  su postgres -c "psql < modules/postgresql/init.sql"
+  su postgres -c "psql < $SCRIPT_HOME/init.sql"
   service postgresql stop
   debug "postgresql.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of PostgreSQL done"
 }
@@ -52,7 +53,7 @@ initialsetup(){
 module_install(){
   debug "postgresql.module_install DEBUG [`date +"%Y-%m-%d %T"`] Starting module installation" >> $OSBDET_LOGFILE
   # The installation of this module consists on:
-  #   1. Install the mariadb-server package
+  #   1. Install the PostgreSQL package
   #   2. Initial setup
   printf "  Installing module 'postgresql' ... "
   install >> $OSBDET_LOGFILE 2>&1
