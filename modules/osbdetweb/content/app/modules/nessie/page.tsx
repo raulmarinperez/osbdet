@@ -60,13 +60,12 @@ export default function Nessie() {
                         <p className="pb-4"><strong className="text-lg">How to access: </strong></p>
                         <ul className="ml-8 mt-2 list-disc">
                             <li>
-                                <em><strong>OpenMetadata Web UI -</strong></em> accessible via <a href="http://localhost:28585" className="underline" target="_blank">http://localhost:28585</a>; log into OpenMetadata as user <em><strong>admin@open-metadata.org</strong></em> with password <em><strong>admin</strong></em>.                                    
-                                <img className="w-[600px] drop-shadow-md pt-4 pb-4" src="/images/nessie_login.png"/>
+                                <em><strong>Nessie Catalog UI -</strong></em> accessible via <a href="http://localhost:19120" className="underline" target="_blank">http://localhost:19120</a>; no credentials needed to log into Nessie Catalog.                                    
+                                <img className="w-[600px] drop-shadow-md pt-4 pb-4" src="/images/nessie_ui.png"/>
                             </li>   
                         </ul>	
-                        <p className="pb-4"><strong className="text-lg">Description: </strong>OpenMetadata is designed to support both technical and non-technical data practitioners across various use cases, 
-                        including data discovery, lineage, observability, quality, collaboration, governance, and insights.</p>
-                        <p className="pb-4"><strong className="text-lg">Project website: </strong> <a href="https://open-metadata.org/" className="underline" target="_blank">https://open-metadata.org/</a></p>
+                        <p className="pb-4"><strong className="text-lg">Description: </strong>Nessie is an OSS service and libraries that enable you to maintain multiple versions of your data and leverage Git-like Branches & Tags for your Data Lake. Nessie enhances the Apache Iceberg table format with version control techniques!</p>
+                        <p className="pb-4"><strong className="text-lg">Project website: </strong> <a href="https://projectnessie.org" className="underline" target="_blank">https://projectnessie.org</a></p>
                         <p className="pb-4 "><strong className="text-lg">Additional notes:</strong><br/>
                         No additional notes.</p>
                     </div>

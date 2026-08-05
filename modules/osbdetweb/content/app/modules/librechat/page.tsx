@@ -58,7 +58,7 @@ export default function LibreChat() {
                                 <img className="pt-4 pb-4 w-[600px] drop-shadow-md" src="/images/librechat_login.png"/>
                             </li>   
                         </ul>
-	                    <p className="pb-4"><strong className="text-lg">Description: </strong>Query, visualize, alert on, and understand your data no matter where it&apos;s stored. With Grafana you can create, explore, and share all of your data through beautiful, flexible dashboards.</p>
+	                    <p className="pb-4"><strong className="text-lg">Description: </strong>LibreChat is a free, open-source AI platform that unifies multiple AI models into a single, highly customizable, and private interface. It lets you access and compare models from providers like OpenAI, Anthropic (Claude), Google, and open-source models like Ollama, all in one place.</p>
                         <p className="pb-4"><strong className="text-lg">Project website: </strong> <a href="https://librechat.ai/" className="underline" target="_blank">https://librechat.ai</a></p>
                     </div>
                 </article>

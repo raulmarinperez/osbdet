@@ -33,7 +33,7 @@ export default function NessieBox() {
           <div className="flex flex-col w-full border-4 p-4 border-gray-200 bg-white ">
             <h2 className="tracking-widest text-sm title-font font-medium text-indigo-500 mb-1">Nessie 0.108.2</h2>
             <h1 className="title-font text-lg font-medium text-gray-900 mb-3">Data Catalog</h1>
-            <p className="leading-relaxed">End-to-end metadata management solution including data governance, data quality, ...</p>
+            <p className="leading-relaxed">Service and libraries that enable you to maintain multiple versions of your data.</p>
           </div>
         </div>
       </div>

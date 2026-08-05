@@ -42,7 +42,7 @@ export default function Postgres() {
                         <div className="max-w-8xl mx-auto">        
                             <h2 className=" mb-0 lg:mb-6 font-sans text-lg lg:text-3xl text-center lg:text-left font-bold leading-none tracking-tight text-gray-900   md:mx-auto">
                                 <span className="relative inline-block">
-                                    <span className="relative text-xl lg:text-3xl text-center "> PostgreSQL 17</span>
+                                    <span className="relative text-xl lg:text-3xl text-center "> PostgreSQL 17.10</span>
                                     <img className="mt-5" src="/images/postgres_banner.png"/>
                                 </span>
                             </h2>
@@ -60,7 +60,7 @@ export default function Postgres() {
                                 </div>
                             </li>
                         </ul>
-                        <p className="pb-4"><strong className="text-lg">Description: </strong>PostgreSQL is one of the most popular open source relational databases. It was created by the original developers of MySQL and guaranteed to stay open source. It is part of most cloud offerings and the default in most Linux distributions.</p>
+                        <p className="pb-4"><strong className="text-lg">Description: </strong>PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance.</p>
                         <p className="pb-4"><strong className="text-lg">Project website: </strong> <a href="https://www.postgresql.org/" className="underline" target="_blank">https://www.postgresql.org/</a></p>
                         <p className="pb-4 "><strong className="text-lg">Additional notes:</strong><br/>
                             There is a default user called <em><strong>osbdet</strong></em> with password <em><strong>osbdet123$</strong></em>.

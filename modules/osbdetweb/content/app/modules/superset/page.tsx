@@ -63,7 +63,7 @@ export default function Superset() {
                           detailed geospatial charts.</p>
                         <p className="pb-4"><strong className="text-lg">Project website: </strong> <a href="https://superset.apache.org" className="underline" target="_blank">https://superset.apache.org</a></p>
                         <p className="pb-4 "><strong className="text-lg">Additional notes:</strong><br/>
-                          MySQL client libraries (MariaDB compatible) allowing the access to the MariaDB instance are available in 
+                          PostgreSQL client libraries allowing the access to the PostgreSQL instance are available in 
                           the course environment.</p>
                     </div>
                 </article>

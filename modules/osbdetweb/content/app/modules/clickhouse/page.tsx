@@ -54,8 +54,8 @@ export default function ClickHouse() {
 	                    <p><strong className="text-lg">How to access: </strong></p>
                         <ul className="ml-8 mt-2 list-disc">
                             <li>
-                                <em><strong>ClickHouse Client -</strong></em> The ClickHouse Client allows you to interact with your databases; just type the <code className="bg-slate-300 p-1">clickhouse</code> command in a Jupyter Terminal window (no password needed):
-                                <img className="pt-4 pb-4 w-[600px] drop-shadow-md" src="/images/grafana_login.png"/>
+                                <em><strong>ClickHouse Client -</strong></em> The ClickHouse Client allows you to interact with your databases; just type the <code className="bg-slate-300 p-1">clickhouse-client</code> command in a Jupyter Terminal window (no password needed):
+                                <img className="pt-4 pb-4 w-[600px] drop-shadow-md" src="/images/clickhouse_cli.png"/>
                             </li>   
                         </ul>
 	                    <p className="pb-4"><strong className="text-lg">Description: </strong>ClickHouse is a high-performance, column-oriented SQL database management system (DBMS) for online analytical processing (OLAP). It is available as both an open-source software and a cloud offering.</p>
