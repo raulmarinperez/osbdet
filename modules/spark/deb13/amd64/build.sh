@@ -7,11 +7,6 @@ SCRIPT_PATH=""  # OS and Architecture dependant
 SCRIPT_HOME=""  # OS and Architecture agnostic
 
 SPARK_VERSION=4.2.0
-SPARK_JARS_DIR=/home/osbdet/.jupyter_venv/lib/python3.13/site-packages/pyspark/jars
-HADOOP_AWS_JAR_URL=https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.5.0/hadoop-aws-3.5.0.jar
-HADOOP_AWS_JAR_NAME=hadoop-aws-3.5.0.jar
-AWS_JAVA_SDK_JAR_URL=https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.35.4/bundle-2.35.4.jar
-AWS_JAVA_SDK_JAR_NAME=bundle-2.35.4.jar
 NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/refs/tags/v0.40.5/install.sh
 NVM_DIR=/home/osbdet/.nvm
 
@@ -61,15 +56,6 @@ remove_pyspark(){
   debug "spark.remove_pyspark DEBUG [`date +"%Y-%m-%d %T"`] pyspark, jupyterlab-sql-editor and others removed"
 }
 
-deploy_jars(){
-  debug "spark.deploy_jars DEBUG [`date +"%Y-%m-%d %T"`] Deploying JARs to make S3-compatible storage accessible from Spark"
-
-  su osbdet -c "wget -O $SPARK_JARS_DIR/$AWS_JAVA_SDK_JAR_NAME $AWS_JAVA_SDK_JAR_URL"
-  su osbdet -c "wget -O $SPARK_JARS_DIR/$HADOOP_AWS_JAR_NAME $HADOOP_AWS_JAR_URL"
-
-  debug "spark.deploy_jars DEBUG [`date +"%Y-%m-%d %T"`] JARs to make S3-compatible storage accessible from Spark deployed"
-}
-
 jupyterspark(){
   debug "spark.jupyterspark DEBUG [`date +"%Y-%m-%d %T"`] If Jupyter is installed, the service is updated to consider Spark"
   if [ -f "/lib/systemd/system/jupyter.service" ]
@@ -106,12 +92,10 @@ module_install(){
   # The installation of this module consists on:
   #   1. Install dependencies, NVM, to make jupyterlab-lsp work
   #   2. Install PySpark module, jupyterlab-sql-editor and others
-  #   3. Deploy jars to connect Spark with S3 compatible object storage (ex. MinIO)
-  #   4. Update jupyter systemd script accordingly
+  #   3. Update jupyter systemd script accordingly
   printf "  Installing module 'spark' ... "
   install_dependencies >> $OSBDET_LOGFILE 2>&1
   install_pyspark >> $OSBDET_LOGFILE 2>&1
-  deploy_jars >> $OSBDET_LOGFILE 2>&1
   jupyterspark >> $OSBDET_LOGFILE 2>&1
   printf "[Done]\n"
   debug "spark.module_install DEBUG [`date +"%Y-%m-%d %T"`] Module installation done" >> $OSBDET_LOGFILE
