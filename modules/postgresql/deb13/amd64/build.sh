@@ -31,18 +31,18 @@ install(){
 remove_install(){
   debug "postgresql.remove_install DEBUG [`date +"%Y-%m-%d %T"`] Removing PostgreSQL"
   su osbdet -c "/home/osbdet/.jupyter_venv/bin/python3 -m pip uninstall -y psycopg2"
-  apt remove -y postgresql libpq-dev libpostgresql-jdbc-java --purge
+  apt remove -y postgresql libpq-dev libpostgresql-jdbc-java postgresql-client-17 --purge
   apt autoremove -y
   apt clean
   rm -rf /var/lib/postgresql /var/log/postgresql /etc/postgresql  
-  debug "mariadb.remove_install DEBUG [`date +"%Y-%m-%d %T"`] MariaDB removed"
+  debug "postgresql.remove_install DEBUG [`date +"%Y-%m-%d %T"`] PostgreSQL removed"
 }
 
 initialsetup(){
   debug "postgresql.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of PostgreSQL"
   systemctl disable postgresql
   service postgresql start
-  su postgres -c "psql < $SCRIPT_HOME/init.sql"
+  su postgres -c "psql" < $SCRIPT_HOME/init.sql
   service postgresql stop
   debug "postgresql.initialsetup DEBUG [`date +"%Y-%m-%d %T"`] Initial setup of PostgreSQL done"
 }
