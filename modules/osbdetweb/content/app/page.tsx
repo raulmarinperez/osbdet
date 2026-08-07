@@ -11,15 +11,15 @@ import SparkBox from '@/app/modules/spark/spark-box'
 import KafkaBox from '@/app/modules/kafka/kafka-box'
 import TruckFleetSimBox from '@/app/modules/truckfleetsim/truckfleetsim-box'
 import PostgresBox from '@/app/modules/postgres/postgres-box'
-import SuperSetBox from '@/app/modules/superset/superset-box'
+//import SuperSetBox from '@/app/modules/superset/superset-box'
 import MongoDBBox from '@/app/modules/mongodb/mongodb-box'
 import MinIOBox from '@/app/modules/minio/minio-box'
-import KestraBox from '@/app/modules/kestra/kestra-box'
+//import KestraBox from '@/app/modules/kestra/kestra-box'
 import GrafanaBox from '@/app/modules/grafana/grafana-box'
-import ClickHouseBox from '@/app/modules/clickhouse/clickhouse-box'
-import OpenMetadataBox from '@/app/modules/openmetadata/openmetadata-box'
+//import ClickHouseBox from '@/app/modules/clickhouse/clickhouse-box'
+//import OpenMetadataBox from '@/app/modules/openmetadata/openmetadata-box'
 import NessieBox from '@/app/modules/nessie/nessie-box'
-import LibreChatBox from '@/app/modules/librechat/librechat-box'
+//import LibreChatBox from '@/app/modules/librechat/librechat-box'
 
 export default function Page() {
 
@@ -86,15 +86,15 @@ export default function Page() {
           <KafkaBox/>
           <TruckFleetSimBox/>
           <PostgresBox/>
-          <SuperSetBox/>
+          {/* <SuperSetBox/> */}
           <MongoDBBox/>
           <MinIOBox/>
-          <KestraBox/>
+          {/* <KestraBox/> */}
           <GrafanaBox/>
-          <ClickHouseBox/>
-          <OpenMetadataBox/>
+          {/* <ClickHouseBox/> */}
+          {/* <OpenMetadataBox/> */}
           <NessieBox/>
-          <LibreChatBox/>
+          {/* <LibreChatBox/> */}
         </div>
       </div>
     </section>
